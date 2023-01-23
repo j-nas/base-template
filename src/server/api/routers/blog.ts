@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 
 export const blogRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -16,7 +16,7 @@ export const blogRouter = createTRPCRouter({
         },
       });
     }),
-  create: protectedProcedure
+  create: editorProcedure
     .input(z.object({
       title: z.string(),
       summary: z.string(),
@@ -36,7 +36,7 @@ export const blogRouter = createTRPCRouter({
         },
       });
     }),
-  edit: protectedProcedure
+  edit: editorProcedure
     .input(z.object({
       id: z.string(),
       title: z.string(),

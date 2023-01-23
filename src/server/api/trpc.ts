@@ -122,3 +122,30 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+/**
+ * Reusable middleware that enforces users are editors before running the
+ * procedure
+ * 
+ * @see https://trpc.io/docs/middleware
+ * 
+ * 
+ */
+
+const enforoceUserCanEdit = protectedProcedure.use(({ ctx, next }) => {
+  if (!ctx.session.user.editor) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "You are not an editor" });
+  }
+  return next();
+});
+
+/**
+ * Editor procedure
+ * 
+ * This is a protected procedure that enforces the user is an editor
+ * 
+ */
+
+
+export const editorProcedure = enforoceUserCanEdit;
+
