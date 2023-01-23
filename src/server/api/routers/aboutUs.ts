@@ -2,15 +2,15 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 
-export const blogRouter = createTRPCRouter({
+export const aboutUsRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.blog.findMany();
+    return ctx.prisma.aboutUs.findMany();
   }
   ),
   get: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
-      return ctx.prisma.blog.findUnique({
+      return ctx.prisma.aboutUs.findUnique({
         where: {
           id: input.id,
         },
@@ -22,17 +22,18 @@ export const blogRouter = createTRPCRouter({
       summary: z.string(),
       markdown: z.string(),
       imageUrl: z.string(),
+      insetImageUrl: z.string(),
 
 
     }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.blog.create({
+      return ctx.prisma.aboutUs.create({
         data: {
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
           imageUrl: input.imageUrl,
-          userId: ctx.session.user.id
+          insetImageUrl: input.insetImageUrl,
         },
       });
     }),
@@ -43,9 +44,10 @@ export const blogRouter = createTRPCRouter({
       summary: z.string(),
       markdown: z.string(),
       imageUrl: z.string(),
+      insetImageUrl: z.string(),
     }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.blog.update({
+      return ctx.prisma.aboutUs.update({
         where: {
           id: input.id,
         },
@@ -54,13 +56,14 @@ export const blogRouter = createTRPCRouter({
           summary: input.summary,
           markdown: input.markdown,
           imageUrl: input.imageUrl,
+          insetImageUrl: input.insetImageUrl,
         },
       });
     }),
   delete: editorProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.blog.delete({
+      return ctx.prisma.aboutUs.delete({
         where: {
           id: input.id,
         },

@@ -142,7 +142,12 @@ const enforoceUserCanEdit = protectedProcedure.use(({ ctx, next }) => {
 /**
  * Editor procedure
  * 
- * This is a protected procedure that enforces the user is an editor
+ * This procedure extends `protectedProcedure`. If you want a query or mutation to
+ * ONLY be accessible to users flagged as editors, use this. It verifies the
+ * session is valid and guarantees `ctx.session.user` is not null, as well as
+ * `ctx.session.user.editor` is true
+ * 
+ * @see https://trpc.io/docs/procedures
  * 
  */
 

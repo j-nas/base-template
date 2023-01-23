@@ -76,58 +76,68 @@ model BusinessInfo {
     email             String
     createdAt         DateTime @default(now())
     updatedAt         DateTime @updatedAt
+    inUse             Boolean  @default(false)
+    ownerName         String
+    ownerTitle        String
+    ownerQuote        String
+    facebookUrl       String?
+    twitterUrl        String?
+    instagramUrl      String?
+    linkedInUrl       String?
+    youtubeUrl        String?
+    pinterestUrl      String?
+    tiktokUrl         String?
+    snapchatUrl       String?
+    whatsappUrl       String?
 }
 
-model MainHero {
-    id        String   @id @default(cuid())
+model Hero {
+    id        String        @id @default(cuid())
     title     String
     subtitle  String
     image     String
-    createdAt DateTime @default(now())
-}
-
-model BottomHero {
-    id        String   @id @default(cuid())
-    title     String
-    subtitle  String
-    image     String
-    createdAt DateTime @default(now())
+    createdAt DateTime      @default(now())
+    position  HeroPosition? @unique
 }
 
 model Service {
-    id        String    @id @default(cuid())
-    title     String
-    summary   String
-    longForm  String
-    imageUrl  String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    position  Services? @unique
+    id               String    @id @default(cuid())
+    title            String
+    summary          String
+    shortDescription String
+    markdown         String
+    imageUrl         String
+    icon             String
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+    position         Services? @unique
 }
 
 model AboutUs {
     id            String   @id @default(cuid())
     title         String
     summary       String
-    longForm      String
+    markdown      String
     imageUrl      String
     insetImageUrl String
     createdAt     DateTime @default(now())
+    inUse         Boolean  @default(false)
 }
 
-model LandingPageBlurb {
+model MiddleHero {
     id            String   @id @default(cuid())
     title         String
-    summary       String
-    longForm      String
+    subtitle      String
     imageUrl      String
     insetImageUrl String
     createdAt     DateTime @default(now())
+    inUse         Boolean  @default(false)
 }
 
 model Testimonial {
     id          String   @id @default(cuid())
     name        String
+    title       String
     quote       String
     avatarUrl   String
     createdAt   DateTime @default(now())
@@ -138,7 +148,7 @@ model Blog {
     id        String   @id @default(cuid())
     title     String
     summary   String
-    longForm  String
+    markdown  String
     imageUrl  String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -152,5 +162,9 @@ enum Services {
     SERVICE3
     SERVICE4
     SERVICE5
-    NOT_SET
+}
+
+enum HeroPosition {
+    TOP
+    BOTTOM
 }

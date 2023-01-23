@@ -46,16 +46,20 @@ export const serviceRouter = createTRPCRouter({
     .input(z.object({
       title: z.string(),
       summary: z.string(),
-      longForm: z.string(),
+      markdown: z.string(),
       imageUrl: z.string(),
+      shortDescription: z.string(),
+      icon: z.string(),
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.service.create({
         data: {
           title: input.title,
           summary: input.summary,
-          longForm: input.longForm,
+          markdown: input.markdown,
           imageUrl: input.imageUrl,
+          shortDescription: input.shortDescription,
+          icon: input.icon,
         },
       });
     }
@@ -65,7 +69,7 @@ export const serviceRouter = createTRPCRouter({
       id: z.string(),
       title: z.string(),
       summary: z.string(),
-      longForm: z.string(),
+      markdown: z.string(),
       imageUrl: z.string(),
     }))
     .mutation(({ ctx, input }) => {
@@ -76,7 +80,7 @@ export const serviceRouter = createTRPCRouter({
         data: {
           title: input.title,
           summary: input.summary,
-          longForm: input.longForm,
+          markdown: input.markdown,
           imageUrl: input.imageUrl,
         },
       });
