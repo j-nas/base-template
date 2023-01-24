@@ -6,18 +6,18 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: 'Jon Snow',
-      email: 'jon@shorecel.com',
+      email: 'jon@thewall.we',
     },
   })
   const client = await prisma.user.create({
     data: {
       name: 'Client',
-      email: 'jonnaske@hotmail.com',
+      email: 'danaeris@targ.com',
     },
   })
   const business = await prisma.businessInfo.create({
     data: {
-      title: 'Shorecel',
+      title: 'Business name here',
       email: 'email@email.com',
       telephone: '123456789',
       addressFirstLine: 'First line',
@@ -48,8 +48,9 @@ async function main() {
   const topHero = await prisma.hero.create({
     data: {
       title: 'Top hero',
-      subtitle: 'Top hero subtitle',
-      image: 'https://placeimg.com/2500/1667/any',
+      subtitle: 'Business name',
+      image: 'https://placeimg.com/2500/1667/arch',
+      description: "this is the hero description. include an exciting call to action here."
     },
   })
   await prisma.hero.update({
@@ -64,8 +65,9 @@ async function main() {
   const bottomHero = await prisma.hero.create({
     data: {
       title: 'Bottom hero',
-      subtitle: 'Bottom hero subtitle',
-      image: 'https://placeimg.com/2500/1667/any',
+      subtitle: 'Service Name',
+      image: 'https://placeimg.com/2500/1667/arch',
+      description: "this is the hero description. include an exciting call to action here."
     },
   })
   await prisma.hero.update({
@@ -81,7 +83,7 @@ async function main() {
     data: {
       title: 'Service 1',
       summary: 'Two paragraphs about the service. This is another sentence.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc.',
-      imageUrl: 'https://placeimg.com/2500/1667/any',
+      imageUrl: 'https://placeimg.com/2500/1667/arch',
       shortDescription: 'Short description, two sentences. This is another sentence.',
       markdown: "This the long form lorem ipsum. Lorem ipsum is dummy text, "
         + "which is used in the publishing industry or by web designers to "
@@ -111,7 +113,7 @@ async function main() {
     data: {
       title: 'Service 2',
       summary: 'Two paragraphs about the service. This is another sentence.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc.',
-      imageUrl: 'https://placeimg.com/2500/1667/any',
+      imageUrl: 'https://placeimg.com/2500/1667/arch',
       shortDescription: 'Short description, two sentences. This is another sentence.',
       markdown: "This the long form lorem ipsum. Lorem ipsum is dummy text, " +
         "which is used in the publishing industry or by web designers to " +
@@ -141,7 +143,7 @@ async function main() {
     data: {
       title: 'Service 3',
       summary: 'Two paragraphs about the service. This is another sentence.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc.',
-      imageUrl: 'https://placeimg.com/2500/1667/any',
+      imageUrl: 'https://placeimg.com/2500/1667/arch',
       shortDescription: 'Short description, two sentences. This is another sentence.',
       markdown: "This the long form lorem ipsum. Lorem ipsum is dummy text, " +
 
@@ -173,8 +175,8 @@ async function main() {
     data: {
       title: 'About Us',
       summary: 'Two paragraphs about the service. This is another sentence.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc.',
-      imageUrl: 'https://placeimg.com/2500/1667/any',
-      insetImageUrl: 'https://placeimg.com/2500/1667/any',
+      imageUrl: 'https://placeimg.com/2500/1667/arch',
+      insetImageUrl: 'https://placeimg.com/2500/1667/arch',
       markdown: "This the long form lorem ipsum. Lorem ipsum is dummy text, " +
 
         "which is used in the publishing industry or by web designers to " +
@@ -205,8 +207,8 @@ async function main() {
     data: {
       title: 'Middle Hero',
       subtitle: 'Two sentences about the hero. This is another sentence.',
-      imageUrl: 'https://placeimg.com/2500/1667/any',
-      insetImageUrl: 'https://placeimg.com/2500/1667/any',
+      imageUrl: 'https://placeimg.com/2500/1667/arch',
+      insetImageUrl: 'https://placeimg.com/2500/1667/arch',
     }
   })
 
@@ -243,7 +245,7 @@ async function main() {
     data: {
       title: 'Sample blog post',
       summary: 'This is a sample blog post. This is another sentence.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc. Donec auctor, nisl eget ultricies lacinia, nunc nisl aliquam nisl, eget aliquam nunc nisl eget nunc.',
-      imageUrl: 'https://placeimg.com/2500/1667/any',
+      imageUrl: 'https://placeimg.com/2500/1667/arch',
       markdown: "This the long form lorem ipsum. Lorem ipsum is dummy text, " +
         "which is used in the publishing industry or by web designers to " +
         "fill up their space. It is a long established fact that a reader " +

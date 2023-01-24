@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
-
+import { exclude } from "../../../utils/exclude";
 
 
 export const heroRouter = createTRPCRouter({
@@ -8,21 +8,24 @@ export const heroRouter = createTRPCRouter({
     return ctx.prisma.hero.findMany();
   }
   ),
-  getTop: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.hero.findUnique({
+  getTop: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.hero.findUniqueOrThrow({
       where: {
         position: "TOP",
       },
     });
+    return exclude(data, ["createdAt"]);
 
   }
   ),
-  getBottom: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.hero.findUnique({
+  getBottom: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.hero.findUniqueOrThrow({
       where: {
         position: "BOTTOM",
       },
     });
+
+    return exclude(data, ["createdAt",]);
 
   }
   ),
@@ -31,6 +34,8 @@ export const heroRouter = createTRPCRouter({
       title: z.string(),
       subtitle: z.string(),
       image: z.string(),
+      description: z.string(),
+
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.hero.create({
@@ -38,6 +43,7 @@ export const heroRouter = createTRPCRouter({
           title: input.title,
           subtitle: input.subtitle,
           image: input.image,
+          description: input.description,
         },
       });
     }

@@ -92,12 +92,13 @@ model BusinessInfo {
 }
 
 model Hero {
-    id        String        @id @default(cuid())
-    title     String
-    subtitle  String
-    image     String
-    createdAt DateTime      @default(now())
-    position  HeroPosition? @unique
+    id          String        @id @default(cuid())
+    title       String
+    subtitle    String
+    image       String
+    description String
+    createdAt   DateTime      @default(now())
+    position    HeroPosition? @unique
 }
 
 model Service {

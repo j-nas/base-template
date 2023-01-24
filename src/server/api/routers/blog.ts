@@ -1,6 +1,6 @@
 import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { exclude } from "../../../utils/exclude";
 
 export const blogRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -9,12 +9,13 @@ export const blogRouter = createTRPCRouter({
   ),
   get: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.blog.findUnique({
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.blog.findUniqueOrThrow({
         where: {
           id: input.id,
         },
       });
+      return exclude(data, ["createdAt", "updatedAt"])
     }),
   create: editorProcedure
     .input(z.object({

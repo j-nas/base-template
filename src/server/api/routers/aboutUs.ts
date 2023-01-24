@@ -1,6 +1,6 @@
 import { z } from "zod";
-
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { exclude } from "../../../utils/exclude";
 
 export const aboutUsRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -16,6 +16,15 @@ export const aboutUsRouter = createTRPCRouter({
         },
       });
     }),
+  getCurrent: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.aboutUs.findFirstOrThrow({
+      where: {
+        inUse: true,
+      },
+    });
+    return exclude(data, ["createdAt"]);
+  }
+  ),
   create: editorProcedure
     .input(z.object({
       title: z.string(),

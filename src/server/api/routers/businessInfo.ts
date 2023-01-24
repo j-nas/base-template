@@ -1,16 +1,21 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { exclude } from "../../../utils/exclude";
+
 
 export const businessInfoRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.businessInfo.findMany();
   }),
-  getLatest: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.businessInfo.findFirst({
-      orderBy: {
-        updatedAt: "desc"
+  getActive: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.businessInfo.findFirstOrThrow({
+      where: {
+        inUse: true,
       }
     });
+
+    return exclude(data, ["createdAt", "updatedAt"]);
+
   }),
   create: editorProcedure
     .input(z.object({
@@ -147,3 +152,4 @@ export const businessInfoRouter = createTRPCRouter({
 
 
 });
+

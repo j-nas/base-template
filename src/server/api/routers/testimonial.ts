@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, editorProcedure } from '../trpc';
+import { exclude } from '../../../utils/exclude';
 
 export const testimonialRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -83,13 +84,15 @@ export const testimonialRouter = createTRPCRouter({
 
     }
     ),
-  getFirstTwoHighlighted: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.testimonial.findMany({
+  getFirstTwoHighlighted: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.testimonial.findMany({
       where: {
         highlighted: true,
       },
       take: 2,
     });
+
+    return data.map((item) => exclude(item, ["createdAt"]));
   }
   ),
 

@@ -1,16 +1,20 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, editorProcedure } from '../trpc';
-export const heroRouter = createTRPCRouter({
+import { exclude } from '../../../utils/exclude';
+
+export const middleHeroRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.hero.findMany();
   }
   ),
-  getCurrent: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.middleHero.findFirst({
+  getCurrent: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.middleHero.findFirstOrThrow({
       where: {
         inUse: true,
       },
     });
+
+    return exclude(data, ["createdAt"]);
 
 
   }

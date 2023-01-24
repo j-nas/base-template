@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 import { Services } from "@prisma/client";
+import { exclude } from "../../../utils/exclude";
 
 export const serviceRouter = createTRPCRouter({
 
@@ -18,6 +19,17 @@ export const serviceRouter = createTRPCRouter({
       });
     }
     ),
+  getActive: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.service.findMany({
+      where: {
+        position: {
+          not: null,
+        },
+      },
+    });
+    return data.map((service) => exclude(service, ["createdAt", "updatedAt"]))
+  }
+  ),
   getByPosition: publicProcedure
     .input(z.object({ position: z.nativeEnum(Services) }))
     .query(({ ctx, input }) => {
