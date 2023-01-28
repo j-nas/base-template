@@ -98,7 +98,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
       <main data-theme={theme} className=" h-full ">
         {/* Navbar */}
         <div
-          className={`navbar fixed z-50 w-full bg-base-300/50 
+          className={`navbar fixed z-50 w-full bg-base-300/10 
           `}
         >
           <div
@@ -143,8 +143,10 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               backgroundImage: `url(${topHero ? topHero.image : ""})`,
             }}
           >
-            <div className="hero-overlay z-10 bg-opacity-50 bg-gradient-to-b from-base-300/5 via-base-300/50 to-base-100"></div>
-            <div className="hero-content z-20 text-center  ">
+            <div
+              className={`hero-overlay z-10   bg-gradient-to-b from-base-100/5 via-base-100/5  to-base-100 `}
+            ></div>
+            <div className="hero-content z-20 text-center text-white ">
               <div className="max-w-md">
                 <h1 className="mb-5 -mt-32 font-semibold uppercase text-primary">
                   {topHero?.subtitle}
@@ -162,7 +164,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* Services summary Section */}
-        <section className=" mx-auto flex justify-center lg:w-5/6">
+        <section className=" mx-auto flex w-10/12 justify-center lg:w-5/6">
           <div className="z-30 -mt-32 grid w-fit justify-center gap-0 rounded-t-md border-t-8 border-primary shadow-lg lg:w-11/12 lg:grid-cols-3">
             {services?.map((service) => (
               <div className="card rounded-none bg-base-300 " key={service.id}>
