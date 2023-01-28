@@ -68,93 +68,141 @@ model VerificationToken {
 }
 
 model BusinessInfo {
-    id                String   @id @default(cuid())
-    title             String
-    addressFirstLine  String
-    addressSecondLine String
-    telephone         String
-    email             String
-    createdAt         DateTime @default(now())
-    updatedAt         DateTime @updatedAt
-    inUse             Boolean  @default(false)
-    ownerName         String
-    ownerTitle        String
-    ownerQuote        String
-    facebookUrl       String?
-    twitterUrl        String?
-    instagramUrl      String?
-    linkedInUrl       String?
-    youtubeUrl        String?
-    pinterestUrl      String?
-    tiktokUrl         String?
-    snapchatUrl       String?
-    whatsappUrl       String?
+    id           String   @id @default(cuid())
+    title        String
+    address      String
+    city         String
+    province     String
+    postalCode   String
+    telephone    String
+    email        String
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    isActive     Boolean  @default(false)
+    ownerName    String
+    ownerTitle   String
+    ownerQuote   String
+    facebookUrl  String?
+    twitterUrl   String?
+    instagramUrl String?
+    linkedInUrl  String?
+    youtubeUrl   String?
+    pinterestUrl String?
+    tiktokUrl    String?
+    snapchatUrl  String?
+    whatsappUrl  String?
 }
 
 model Hero {
-    id          String        @id @default(cuid())
-    title       String
-    subtitle    String
-    image       String
-    description String
-    createdAt   DateTime      @default(now())
-    position    HeroPosition? @unique
+    id           String         @id @default(cuid())
+    title        String
+    ctaText      String
+    createdAt    DateTime       @default(now())
+    position     HeroPosition?  @unique
+    PrimaryImage PrimaryImage[]
 }
 
 model Service {
-    id               String    @id @default(cuid())
+    id               String           @id @default(cuid())
     title            String
     summary          String
     shortDescription String
     markdown         String
-    imageUrl         String
     icon             String
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    position         Services? @unique
+    createdAt        DateTime         @default(now())
+    updatedAt        DateTime         @updatedAt
+    position         Services?        @unique
+    PrimaryImage     PrimaryImage[]
+    SecondaryImage   SecondaryImage[]
 }
 
 model AboutUs {
-    id            String   @id @default(cuid())
-    title         String
-    summary       String
-    markdown      String
-    imageUrl      String
-    insetImageUrl String
-    createdAt     DateTime @default(now())
-    inUse         Boolean  @default(false)
-}
-
-model MiddleHero {
-    id            String   @id @default(cuid())
-    title         String
-    subtitle      String
-    imageUrl      String
-    insetImageUrl String
-    createdAt     DateTime @default(now())
-    inUse         Boolean  @default(false)
+    id             String           @id @default(cuid())
+    title          String
+    summary        String
+    markdown       String
+    createdAt      DateTime         @default(now())
+    inUse          Boolean          @default(false)
+    PrimaryImage   PrimaryImage[]
+    SecondaryImage SecondaryImage[]
 }
 
 model Testimonial {
-    id          String   @id @default(cuid())
-    name        String
-    title       String
-    quote       String
-    avatarUrl   String
-    createdAt   DateTime @default(now())
-    highlighted Boolean  @default(false)
+    id           String         @id @default(cuid())
+    name         String
+    title        String
+    quote        String
+    createdAt    DateTime       @default(now())
+    highlighted  Boolean        @default(false)
+    PrimaryImage PrimaryImage[]
 }
 
 model Blog {
+    id           String         @id @default(cuid())
+    title        String
+    summary      String
+    markdown     String
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    author       User           @relation(fields: [userId], references: [id])
+    userId       String
+    PrimaryImage PrimaryImage[]
+}
+
+model Image {
+    id              String            @id
+    public_Id       String            @unique
+    format          String
+    width           Int
+    height          Int
+    bytes           Int
+    secure_url      String
+    type            String
+    createdAt       DateTime          @default(now())
+    PrimaryImage    PrimaryImage[]
+    SecondaryImage  SecondaryImage[]
+    ImageForGallery ImageForGallery[]
+}
+
+model ImageForGallery {
+    image     Image   @relation(fields: [imageId], references: [id])
+    imageId   String
+    gallery   Gallery @relation(fields: [galleryId], references: [id])
+    galleryId String
+
+    @@id([imageId, galleryId])
+}
+
+model Gallery {
+    id              String            @id @default(cuid())
+    name            String
+    ImageForGallery ImageForGallery[]
+}
+
+model PrimaryImage {
+    id            String       @id @default(cuid())
+    image         Image        @relation(fields: [imageId], references: [id])
+    imageId       String
+    hero          Hero?        @relation(fields: [heroId], references: [id])
+    heroId        String?
+    service       Service?     @relation(fields: [serviceId], references: [id])
+    serviceId     String?
+    aboutUs       AboutUs?     @relation(fields: [aboutUsId], references: [id])
+    aboutUsId     String?
+    blog          Blog?        @relation(fields: [blogId], references: [id])
+    blogId        String?
+    testimonial   Testimonial? @relation(fields: [testimonialId], references: [id])
+    testimonialId String?
+}
+
+model SecondaryImage {
     id        String   @id @default(cuid())
-    title     String
-    summary   String
-    markdown  String
-    imageUrl  String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    author    User     @relation(fields: [userId], references: [id])
-    userId    String
+    image     Image    @relation(fields: [imageId], references: [id])
+    imageId   String
+    aboutUs   AboutUs? @relation(fields: [aboutUsId], references: [id])
+    aboutUsId String?
+    service   Service? @relation(fields: [serviceId], references: [id])
+    serviceId String?
 }
 
 enum Services {
