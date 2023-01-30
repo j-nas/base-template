@@ -229,8 +229,8 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   <CldImg
                     alt="About us"
                     format={aboutPrimaryImage.format}
-                    height={1200}
-                    width={1600}
+                    height={600}
+                    width={800}
                     public_Id={aboutPrimaryImage.public_Id}
                     id={aboutPrimaryImage.id}
                     className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
@@ -240,8 +240,8 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   <CldImg
                     alt="About us"
                     format={aboutSecondaryImage.format}
-                    height={1200}
-                    width={1600}
+                    height={600}
+                    width={800}
                     public_Id={aboutSecondaryImage.public_Id}
                     id={aboutSecondaryImage.id}
                     className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
