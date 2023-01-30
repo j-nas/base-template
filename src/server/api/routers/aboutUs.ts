@@ -14,12 +14,68 @@ export const aboutUsRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          PrimaryImage: {
+            select: {
+              image: {
+                select: {
+                  format: true,
+                  height: true,
+                  width: true,
+                  public_Id: true,
+                  id: true,
+                },
+              }
+            }
+          },
+          SecondaryImage: {
+            select: {
+              image: {
+                select: {
+                  format: true,
+                  height: true,
+                  width: true,
+                  public_Id: true,
+                  id: true,
+                },
+              }
+            }
+          },
+        },
       });
     }),
   getCurrent: publicProcedure.query(async ({ ctx }) => {
     const data = await ctx.prisma.aboutUs.findFirstOrThrow({
       where: {
         inUse: true,
+      },
+      include: {
+        PrimaryImage: {
+          select: {
+            image: {
+              select: {
+                format: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                id: true,
+              },
+            }
+          }
+        },
+        SecondaryImage: {
+          select: {
+            image: {
+              select: {
+                format: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                id: true,
+              },
+            }
+          }
+        },
       },
     });
     return exclude(data, ["createdAt"]);
@@ -30,8 +86,8 @@ export const aboutUsRouter = createTRPCRouter({
       title: z.string(),
       summary: z.string(),
       markdown: z.string(),
-      imageUrl: z.string(),
-      insetImageUrl: z.string(),
+      primaryImage: z.string(),
+      secondaryImage: z.string(),
 
 
     }))
@@ -41,8 +97,16 @@ export const aboutUsRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          imageUrl: input.imageUrl,
-          insetImageUrl: input.insetImageUrl,
+          PrimaryImage: {
+            create: {
+              imageId: input.primaryImage
+            }
+          },
+          SecondaryImage: {
+            create: {
+              imageId: input.secondaryImage
+            }
+          },
         },
       });
     }),
@@ -52,8 +116,9 @@ export const aboutUsRouter = createTRPCRouter({
       title: z.string(),
       summary: z.string(),
       markdown: z.string(),
-      imageUrl: z.string(),
-      insetImageUrl: z.string(),
+      primaryImage: z.string(),
+      secondaryImage: z.string(),
+
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.aboutUs.update({
@@ -64,8 +129,16 @@ export const aboutUsRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          imageUrl: input.imageUrl,
-          insetImageUrl: input.insetImageUrl,
+          PrimaryImage: {
+            create: {
+              imageId: input.primaryImage
+            }
+          },
+          SecondaryImage: {
+            create: {
+              imageId: input.secondaryImage
+            }
+          },
         },
       });
     }),

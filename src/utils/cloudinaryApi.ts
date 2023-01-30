@@ -11,7 +11,7 @@ export type CloudinaryResource = {
     secure_url: string;
     bytes: number;
     type: string;
-    id: string;
+    asset_id: string;
   }]
 }
 
@@ -22,4 +22,16 @@ export const getResources = async () => {
   )
   return response.data as CloudinaryResource
 
+}
+
+export const formattedResources = async () => {
+  const resources = await getResources()
+  return resources.resources.map((resource) => ({
+    ...resource,
+    public_id: resource.public_id.replace(`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/`, ''),
+  }))
+}
+
+export const cloudinaryUrlGenerator = (id = "", format = "") => {
+  return `https://res.cloudinary.com/dkascnwj7/image/upload/base-template/${id}.${format}`
 }

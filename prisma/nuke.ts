@@ -27,10 +27,17 @@ async function main() {
   await prisma.blog.deleteMany();
   await prisma.businessInfo.deleteMany();
   await prisma.hero.deleteMany();
-  await prisma.middleHero.deleteMany();
   await prisma.service.deleteMany();
   await prisma.testimonial.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.user.deleteMany()
+  await prisma.imageForGallery.deleteMany()
+  await prisma.avatarImage.deleteMany()
+  await prisma.primaryImage.deleteMany()
+  await prisma.secondaryImage.deleteMany()
+  await prisma.gallery.deleteMany()
+  await prisma.businessLogo.deleteMany()
+  await prisma.image.deleteMany()
+    ;
 
 }
 

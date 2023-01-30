@@ -4,14 +4,22 @@ import { exclude } from '../../../utils/exclude';
 
 export const testimonialRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.testimonial.findMany();
+    return ctx.prisma.testimonial.findMany({
+      include: {
+        AvatarImage: {
+          include: {
+            image: true,
+          }
+        }
+      },
+    });
   }
   ),
   create: editorProcedure
     .input(z.object({
       name: z.string(),
       quote: z.string(),
-      avatarUrl: z.string(),
+      avatarImage: z.string(),
       title: z.string(),
     }))
     .mutation(({ ctx, input }) => {
@@ -19,7 +27,12 @@ export const testimonialRouter = createTRPCRouter({
         data: {
           name: input.name,
           quote: input.quote,
-          avatarUrl: input.avatarUrl,
+          AvatarImage: {
+            create: {
+              imageId: input.avatarImage
+            }
+          }
+          ,
           title: input.title,
         },
       });
@@ -30,7 +43,7 @@ export const testimonialRouter = createTRPCRouter({
       id: z.string(),
       name: z.string(),
       quote: z.string(),
-      avatarUrl: z.string(),
+      avatarImage: z.string(),
       title: z.string(),
     }))
     .mutation(({ ctx, input }) => {
@@ -41,7 +54,11 @@ export const testimonialRouter = createTRPCRouter({
         data: {
           name: input.name,
           quote: input.quote,
-          avatarUrl: input.avatarUrl,
+          AvatarImage: {
+            create: {
+              imageId: input.avatarImage
+            }
+          },
           title: input.title,
         },
       });
@@ -88,6 +105,13 @@ export const testimonialRouter = createTRPCRouter({
     const data = await ctx.prisma.testimonial.findMany({
       where: {
         highlighted: true,
+      },
+      include: {
+        AvatarImage: {
+          include: {
+            image: true,
+          }
+        }
       },
       take: 2,
     });

@@ -13,6 +13,21 @@ export const heroRouter = createTRPCRouter({
       where: {
         position: "TOP",
       },
+      include: {
+        PrimaryImage: {
+          include: {
+            image: {
+              select: {
+                id: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                format: true,
+              }
+            }
+          }
+        }
+      },
     });
     return exclude(data, ["createdAt"]);
 
@@ -23,27 +38,69 @@ export const heroRouter = createTRPCRouter({
       where: {
         position: "BOTTOM",
       },
+      include: {
+        PrimaryImage: {
+          include: {
+            image: {
+              select: {
+                id: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                format: true,
+              }
+            }
+          }
+        }
+      },
     });
+    return exclude(data, ["createdAt"]);
 
-    return exclude(data, ["createdAt",]);
 
+
+  }
+  ),
+  getFront: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.hero.findUniqueOrThrow({
+      where: {
+        position: "FRONT",
+      },
+      include: {
+        PrimaryImage: {
+          include: {
+            image: {
+              select: {
+                id: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                format: true,
+              }
+            }
+          }
+        }
+      },
+    });
+    return exclude(data, ["createdAt"]);
   }
   ),
   create: editorProcedure
     .input(z.object({
-      title: z.string(),
-      subtitle: z.string(),
-      image: z.string(),
-      description: z.string(),
+      heading: z.string(),
+      ctaText: z.string(),
+      primaryImage: z.string(),
 
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.hero.create({
         data: {
-          title: input.title,
-          subtitle: input.subtitle,
-          image: input.image,
-          description: input.description,
+          heading: input.heading,
+          ctaText: input.ctaText,
+          PrimaryImage: {
+            connect: {
+              id: input.primaryImage,
+            },
+          },
         },
       });
     }
@@ -51,9 +108,9 @@ export const heroRouter = createTRPCRouter({
   edit: editorProcedure
     .input(z.object({
       id: z.string(),
-      title: z.string(),
-      subtitle: z.string(),
-      image: z.string(),
+      heading: z.string(),
+      ctaText: z.string(),
+      primaryImage: z.string(),
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.hero.update({
@@ -61,9 +118,13 @@ export const heroRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          title: input.title,
-          subtitle: input.subtitle,
-          image: input.image,
+          heading: input.heading,
+          ctaText: input.ctaText,
+          PrimaryImage: {
+            connect: {
+              id: input.primaryImage,
+            },
+          },
         },
       });
     }
@@ -125,6 +186,31 @@ export const heroRouter = createTRPCRouter({
           },
           data: {
             position: "BOTTOM",
+          },
+        }),
+      ]);
+    }
+    ),
+  setFront: editorProcedure
+    .input(z.object({
+      id: z.string(),
+    }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.$transaction([
+        ctx.prisma.hero.update({
+          where: {
+            position: "FRONT",
+          },
+          data: {
+            position: undefined,
+          },
+        }),
+        ctx.prisma.hero.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            position: "FRONT",
           },
         }),
       ]);

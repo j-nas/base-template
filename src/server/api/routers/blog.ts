@@ -32,8 +32,12 @@ export const blogRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          imageUrl: input.imageUrl,
-          userId: ctx.session.user.id
+          userId: ctx.session.user.id,
+          PrimaryImage: {
+            create: {
+              imageId: input.imageUrl
+            }
+          },
         },
       });
     }),
@@ -43,7 +47,7 @@ export const blogRouter = createTRPCRouter({
       title: z.string(),
       summary: z.string(),
       markdown: z.string(),
-      imageUrl: z.string(),
+      primaryImage: z.string(),
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.blog.update({
@@ -54,7 +58,11 @@ export const blogRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          imageUrl: input.imageUrl,
+          PrimaryImage: {
+            create: {
+              imageId: input.primaryImage
+            }
+          },
         },
       });
     }),

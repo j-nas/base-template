@@ -10,7 +10,7 @@ export const businessInfoRouter = createTRPCRouter({
   getActive: publicProcedure.query(async ({ ctx }) => {
     const data = await ctx.prisma.businessInfo.findFirstOrThrow({
       where: {
-        inUse: true,
+        isActive: true,
       }
     });
 
@@ -20,13 +20,17 @@ export const businessInfoRouter = createTRPCRouter({
   create: editorProcedure
     .input(z.object({
       title: z.string(),
-      addressFirstLine: z.string(),
-      addressSecondLine: z.string(),
+      address: z.string(),
+      city: z.string(),
+      province: z.string(),
+      postalCode: z.string(),
       telephone: z.string(),
       email: z.string().email(),
       ownerName: z.string(),
       ownerTitle: z.string(),
       ownerQuote: z.string(),
+      avatarImage: z.string(),
+      businessLogo: z.string(),
       facebookUrl: z.string().url().optional(),
       instagramUrl: z.string().url().optional(),
       twitterUrl: z.string().url().optional(),
@@ -42,8 +46,20 @@ export const businessInfoRouter = createTRPCRouter({
       return ctx.prisma.businessInfo.create({
         data: {
           title: input.title,
-          addressFirstLine: input.addressFirstLine,
-          addressSecondLine: input.addressSecondLine,
+          address: input.address,
+          city: input.city,
+          province: input.province,
+          postalCode: input.postalCode,
+          businessLogo: {
+            create: {
+              imageId: input.businessLogo,
+            },
+          },
+          avatarImage: {
+            create: {
+              imageId: input.avatarImage,
+            },
+          },
           telephone: input.telephone,
           email: input.email,
           ownerName: input.ownerName,
@@ -67,8 +83,12 @@ export const businessInfoRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
       title: z.string(),
-      addressFirstLine: z.string(),
-      addressSecondLine: z.string(),
+      address: z.string(),
+      city: z.string(),
+      province: z.string(),
+      postalCode: z.string(),
+      avatarImage: z.string(),
+      businessLogo: z.string(),
       telephone: z.string(),
       email: z.string().email(),
       ownerName: z.string(),
@@ -92,8 +112,10 @@ export const businessInfoRouter = createTRPCRouter({
         },
         data: {
           title: input.title,
-          addressFirstLine: input.addressFirstLine,
-          addressSecondLine: input.addressSecondLine,
+          address: input.address,
+          city: input.city,
+          province: input.province,
+          postalCode: input.postalCode,
           telephone: input.telephone,
           email: input.email,
           ownerName: input.ownerName,
@@ -108,6 +130,19 @@ export const businessInfoRouter = createTRPCRouter({
           tiktokUrl: input.tiktokUrl,
           snapchatUrl: input.snapchatUrl,
           whatsappUrl: input.whatsappUrl,
+          avatarImage: {
+            deleteMany: {},
+            create: {
+              imageId: input.avatarImage,
+            },
+          },
+          businessLogo: {
+            deleteMany: {},
+            create: {
+              imageId: input.businessLogo,
+            },
+          },
+
         },
       });
     }
@@ -122,7 +157,7 @@ export const businessInfoRouter = createTRPCRouter({
         ctx.prisma.businessInfo.updateMany({
 
           data: {
-            inUse: false,
+            isActive: false,
           },
         }),
         ctx.prisma.businessInfo.update({
@@ -130,7 +165,7 @@ export const businessInfoRouter = createTRPCRouter({
             id: input.id,
           },
           data: {
-            inUse: input.inUse,
+            isActive: input.inUse,
           },
         }),
       ]);

@@ -8,9 +8,17 @@ import Logo from "../components/Logo";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
-import { api } from "../utils/api";
 import superjson from "superjson";
-import { getResources } from "../utils/cloudinaryApi";
+import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
+import { Icon } from "@iconify-icon/react";
+import CldImg from "../components/CldImg";
+type Img = {
+  public_Id: string;
+  height: number;
+  width: number;
+  format: string;
+  id: string;
+};
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
@@ -71,29 +79,47 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   };
 
   const {} = props;
-  const { data: business } = api.businessInfo.getActive.useQuery();
-  const { data: topHero } = api.hero.getTop.useQuery();
-  const { data: services } = api.service.getActive.useQuery();
-  const { data: aboutUs } = api.aboutUs.getCurrent.useQuery();
-  // const { data: middleHero } = api.middleHero.getCurrent.useQuery();
-  const { data: testimonials } =
-    api.testimonial.getFirstTwoHighlighted.useQuery();
-  const { data: bottomHero } = api.hero.getBottom.useQuery();
-  const mainService = services?.find(
+  const {
+    business,
+    frontHero,
+    frontHeroImageUrl,
+    aboutUs,
+    bottomHero,
+    bottomHeroImageUrl,
+    services,
+    testimonials,
+  } = props;
+  const mainService = services.find(
     (service) => service.position === "SERVICE1"
   );
 
   const pageTitle = () => {
-    if (business?.title && mainService?.title && business?.addressSecondLine) {
+    if (
+      business.title &&
+      mainService?.title &&
+      business?.city &&
+      business?.province
+    ) {
       return (
         business?.title +
         " | " +
         mainService?.title +
         " | " +
-        business?.addressSecondLine
+        business?.city +
+        ", " +
+        business?.province
       );
     }
   };
+
+  const mainServicePrimaryImage = validateImage(
+    mainService?.PrimaryImage[0]?.image
+  );
+  const mainServiceSecondaryImage = validateImage(
+    mainService?.SecondaryImage[0]?.image
+  );
+  const aboutPrimaryImage = validateImage(aboutUs?.PrimaryImage[0]?.image);
+  const aboutSecondaryImage = validateImage(aboutUs?.SecondaryImage[0]?.image);
 
   return (
     <>
@@ -153,19 +179,19 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <div
             className="clip-path hero relative min-h-[130vh] lg:bg-fixed"
             style={{
-              backgroundImage: `url(${topHero ? topHero.image : ""})`,
+              backgroundImage: `url(${frontHeroImageUrl})`,
             }}
           >
             <div className={`hero-overlay relative z-10  bg-opacity-60 `}></div>
             <div className="hero-content z-20 text-center text-white ">
               <div className="max-w-md">
                 <h1 className="mb-5 -mt-32 font-semibold uppercase text-primary">
-                  {topHero?.subtitle}
+                  {business?.title}
                 </h1>
                 <h2 className="mb-5 text-5xl font-bold md:text-7xl">
-                  {topHero?.title}
+                  {frontHero?.heading}
                 </h2>
-                <p className="mb-5 text-xl">{topHero?.description}</p>
+                <p className="mb-5 text-xl">{frontHero?.ctaText}</p>
                 <button className="btn-primary btn rounded-none">
                   Get Started
                 </button>
@@ -180,13 +206,8 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             {services?.map((service) => (
               <div className="card rounded-none bg-base-300 " key={service.id}>
                 <div className="card-body">
-                  <div className="mb-8 h-fit w-fit place-self-center rounded-full bg-primary p-8 text-center">
-                    <Image
-                      src={service.icon}
-                      height={40}
-                      width={40}
-                      alt={service.title}
-                    />
+                  <div className="mb-8 h-auto w-fit place-self-center rounded-full bg-primary py-4 px-5 text-center">
+                    <Icon icon={service.icon} className="text-6xl" />
                   </div>
                   <h2 className=" text-center text-xl font-medium">
                     {service.title}
@@ -205,21 +226,25 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             {aboutUs && (
               <>
                 <div className="col-span-10 col-start-1 row-start-1 ">
-                  <Image
-                    src={aboutUs?.imageUrl}
-                    height={1600}
-                    width={2400}
-                    className="rounded-xl border-8 border-secondary"
-                    alt={aboutUs?.title}
+                  <CldImg
+                    alt="About us"
+                    format={aboutPrimaryImage.format}
+                    height={aboutPrimaryImage.height}
+                    width={aboutPrimaryImage.width}
+                    public_Id={aboutPrimaryImage.public_Id}
+                    id={aboutPrimaryImage.id}
+                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
                   />
                 </div>
                 <div className="col-start-5 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
-                  <Image
-                    src={aboutUs?.imageUrl}
-                    height={1600}
-                    width={2400}
-                    className="rounded-xl border-8 border-secondary"
-                    alt={aboutUs?.title}
+                  <CldImg
+                    alt="About us"
+                    format={aboutSecondaryImage.format}
+                    height={aboutSecondaryImage.height}
+                    width={aboutSecondaryImage.width}
+                    public_Id={aboutSecondaryImage.public_Id}
+                    id={aboutSecondaryImage.id}
+                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
                   />
                 </div>
               </>
@@ -274,21 +299,25 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             {mainService && (
               <>
                 <div className="col-span-10 col-start-3 row-start-1 ">
-                  <Image
-                    src={mainService?.imageUrl}
-                    height={1600}
-                    width={2400}
-                    className="rounded-xl border-8 border-secondary"
-                    alt={mainService?.title}
+                  <CldImg
+                    alt={mainService.title}
+                    format={mainServicePrimaryImage.format}
+                    height={mainServicePrimaryImage.height}
+                    width={mainServicePrimaryImage.width}
+                    public_Id={mainServicePrimaryImage.public_Id}
+                    id={mainServicePrimaryImage.id}
+                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
                   />
                 </div>
                 <div className="col-start-1 col-end-9 row-start-1 pt-32">
-                  <Image
-                    src={mainService.imageUrl}
-                    height={1600}
-                    width={2400}
-                    className="rounded-xl border-8 border-secondary"
-                    alt={mainService?.title}
+                  <CldImg
+                    alt={mainService.title}
+                    format={mainServiceSecondaryImage.format}
+                    height={mainServiceSecondaryImage.height}
+                    width={mainServiceSecondaryImage.width}
+                    public_Id={mainServiceSecondaryImage.public_Id}
+                    id={mainServiceSecondaryImage.id}
+                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
                   />
                 </div>
               </>
@@ -333,15 +362,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 key={testimonial.id}
                 className=" relative mt-12 rounded-lg bg-base-300 p-6 shadow-2xl"
               >
-                <div className="absolute -top-8 left-8 w-20 rounded-full">
-                  <Image
-                    src={testimonial.avatarUrl}
-                    width={300}
-                    height={300}
-                    alt="Movie"
-                    className="rounded-full"
-                  />
-                </div>
+                <div className="absolute -top-8 left-8 w-20 rounded-full"></div>
                 <div className="grid grid-cols-2 ">
                   <p className="col-span-2 border-b-2 border-secondary pb-4 pt-6">
                     Lorem ipsum dolor sit, amet consectetur adipisicing elit.
@@ -374,19 +395,19 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <div
             className="hero min-h-[80vh] "
             style={{
-              backgroundImage: `url(${topHero ? topHero.image : ""})`,
+              backgroundImage: `url(${bottomHeroImageUrl})`,
             }}
           >
             <div className="hero-overlay bg-base-100 bg-opacity-50"></div>
             <div className="hero-content text-center  ">
               <div className="max-w-md">
                 <span className="text-medium uppercase text-accent">
-                  {bottomHero?.subtitle}
+                  {business?.title}
                 </span>
                 <h2 className="mb-5 text-5xl font-bold md:text-7xl">
-                  {bottomHero?.title}
+                  {bottomHero?.heading}
                 </h2>
-                <p className="mb-5 text-xl">{bottomHero?.description}</p>
+                <p className="mb-5 text-xl">{bottomHero?.ctaText}</p>
                 <button className="btn-primary btn rounded-none">
                   Get Started
                 </button>
@@ -454,9 +475,13 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 </i>
               </h2>
               <div className="flex flex-col pb-2">
-                <span>{business?.addressFirstLine}</span>
-                <span>{business?.addressSecondLine}</span>
-                <span>Postal Code</span>
+                <span>{business?.address}</span>
+                <span>
+                  {business?.city}
+                  {", "}
+                  {business?.province}
+                </span>
+                <span>{business?.postalCode}</span>
                 <span className="before:content-['📞']">604-123-4567</span>
               </div>
             </div>
@@ -553,26 +578,44 @@ export async function getStaticProps() {
 
   const business = await ssg.businessInfo.getActive.fetch();
   const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getTop.fetch();
-  const middleHero = await ssg.middleHero.getCurrent.fetch();
+  const frontHero = await ssg.hero.getFront.fetch();
   const bottomHero = await ssg.hero.getBottom.fetch();
   const testimonials = await ssg.testimonial.getFirstTwoHighlighted.fetch();
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
 
-  const results = await getResources();
-
-  console.log(results);
-
+  const frontHeroImageUrl = cloudinaryUrlGenerator(
+    frontHero?.PrimaryImage[0]?.image?.public_Id,
+    frontHero?.PrimaryImage[0]?.image?.format
+  );
+  const bottomHeroImageUrl = cloudinaryUrlGenerator(
+    bottomHero?.PrimaryImage[0]?.image?.public_Id,
+    bottomHero?.PrimaryImage[0]?.image?.format
+  );
   return {
     props: {
       trpcState: ssg.dehydrate(),
       business,
       services,
-      topHero,
-      middleHero,
+      frontHero,
       bottomHero,
       testimonials,
       aboutUs,
+      frontHeroImageUrl,
+      bottomHeroImageUrl,
     },
   };
+}
+
+function validateImage(image: Img | undefined): Img {
+  if (image) {
+    return image;
+  } else {
+    return {
+      public_Id: "placeholder",
+      height: 0,
+      width: 0,
+      format: "png",
+      id: "placeholder",
+    };
+  }
 }

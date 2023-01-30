@@ -6,7 +6,20 @@ import { exclude } from "../../../utils/exclude";
 export const serviceRouter = createTRPCRouter({
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.service.findMany();
+    return ctx.prisma.service.findMany({
+      include: {
+        PrimaryImage: {
+          select: {
+            image: true,
+          }
+        },
+        SecondaryImage: {
+          select: {
+            image: true,
+          }
+        },
+      },
+    });
   }
   ),
   get: publicProcedure
@@ -15,6 +28,34 @@ export const serviceRouter = createTRPCRouter({
       return ctx.prisma.service.findUnique({
         where: {
           id: input.id,
+        },
+        include: {
+          PrimaryImage: {
+            select: {
+              image: {
+                select: {
+                  format: true,
+                  height: true,
+                  width: true,
+                  public_Id: true,
+                  id: true,
+                },
+              }
+            },
+          },
+          SecondaryImage: {
+            select: {
+              image: {
+                select: {
+                  format: true,
+                  height: true,
+                  width: true,
+                  public_Id: true,
+                  id: true,
+                },
+              }
+            },
+          },
         },
       });
     }
@@ -26,8 +67,41 @@ export const serviceRouter = createTRPCRouter({
           not: null,
         },
       },
+      include: {
+        PrimaryImage: {
+          select: {
+            image: {
+              select: {
+                format: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                id: true,
+              },
+            }
+          }
+        },
+        SecondaryImage: {
+          select: {
+            image: {
+              select: {
+                format: true,
+                height: true,
+                width: true,
+                public_Id: true,
+                id: true,
+              },
+            }
+          },
+        },
+      },
     });
-    return data.map((service) => exclude(service, ["createdAt", "updatedAt"]))
+    //return data with createdAt and updatedAt excluded, as well as createdAt and updatedAt in any nested objects
+    return data.map((service) => {
+
+      return exclude(service, ["createdAt", "updatedAt"]);
+    })
+
   }
   ),
   getByPosition: publicProcedure
@@ -36,6 +110,18 @@ export const serviceRouter = createTRPCRouter({
       return ctx.prisma.service.findUnique({
         where: {
           position: input.position,
+        },
+        include: {
+          PrimaryImage: {
+            select: {
+              image: true,
+            }
+          },
+          SecondaryImage: {
+            select: {
+              image: true,
+            }
+          },
         },
       });
     }
@@ -57,9 +143,9 @@ export const serviceRouter = createTRPCRouter({
   create: editorProcedure
     .input(z.object({
       title: z.string(),
-      summary: z.string(),
       markdown: z.string(),
-      imageUrl: z.string(),
+      primaryImage: z.string(),
+      secondaryImage: z.string(),
       shortDescription: z.string(),
       icon: z.string(),
     }))
@@ -67,11 +153,19 @@ export const serviceRouter = createTRPCRouter({
       return ctx.prisma.service.create({
         data: {
           title: input.title,
-          summary: input.summary,
           markdown: input.markdown,
-          imageUrl: input.imageUrl,
           shortDescription: input.shortDescription,
           icon: input.icon,
+          PrimaryImage: {
+            create: {
+              imageId: input.primaryImage
+            }
+          },
+          SecondaryImage: {
+            create: {
+              imageId: input.secondaryImage
+            }
+          },
         },
       });
     }
@@ -80,9 +174,11 @@ export const serviceRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
       title: z.string(),
-      summary: z.string(),
       markdown: z.string(),
-      imageUrl: z.string(),
+      primaryImage: z.string(),
+      secondaryImage: z.string(),
+      shortDescription: z.string(),
+      icon: z.string(),
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.service.update({
@@ -91,9 +187,19 @@ export const serviceRouter = createTRPCRouter({
         },
         data: {
           title: input.title,
-          summary: input.summary,
           markdown: input.markdown,
-          imageUrl: input.imageUrl,
+          shortDescription: input.shortDescription,
+          icon: input.icon,
+          PrimaryImage: {
+            create: {
+              imageId: input.primaryImage
+            }
+          },
+          SecondaryImage: {
+            create: {
+              imageId: input.secondaryImage
+            }
+          },
         },
       });
     }

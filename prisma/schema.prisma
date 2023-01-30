@@ -68,7 +68,7 @@ model VerificationToken {
 }
 
 model BusinessInfo {
-    id           String   @id @default(cuid())
+    id           String         @id @default(cuid())
     title        String
     address      String
     city         String
@@ -76,12 +76,14 @@ model BusinessInfo {
     postalCode   String
     telephone    String
     email        String
-    createdAt    DateTime @default(now())
-    updatedAt    DateTime @updatedAt
-    isActive     Boolean  @default(false)
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    isActive     Boolean        @default(false)
     ownerName    String
     ownerTitle   String
     ownerQuote   String
+    avatarImage  AvatarImage[]
+    businessLogo BusinessLogo[]
     facebookUrl  String?
     twitterUrl   String?
     instagramUrl String?
@@ -95,7 +97,7 @@ model BusinessInfo {
 
 model Hero {
     id           String         @id @default(cuid())
-    title        String
+    heading      String
     ctaText      String
     createdAt    DateTime       @default(now())
     position     HeroPosition?  @unique
@@ -105,7 +107,6 @@ model Hero {
 model Service {
     id               String           @id @default(cuid())
     title            String
-    summary          String
     shortDescription String
     markdown         String
     icon             String
@@ -128,13 +129,13 @@ model AboutUs {
 }
 
 model Testimonial {
-    id           String         @id @default(cuid())
-    name         String
-    title        String
-    quote        String
-    createdAt    DateTime       @default(now())
-    highlighted  Boolean        @default(false)
-    PrimaryImage PrimaryImage[]
+    id          String        @id @default(cuid())
+    name        String
+    title       String
+    quote       String
+    createdAt   DateTime      @default(now())
+    highlighted Boolean       @default(false)
+    AvatarImage AvatarImage[]
 }
 
 model Blog {
@@ -162,6 +163,8 @@ model Image {
     PrimaryImage    PrimaryImage[]
     SecondaryImage  SecondaryImage[]
     ImageForGallery ImageForGallery[]
+    AvatarImage     AvatarImage[]
+    BusinessLogo    BusinessLogo[]
 }
 
 model ImageForGallery {
@@ -169,30 +172,32 @@ model ImageForGallery {
     imageId   String
     gallery   Gallery @relation(fields: [galleryId], references: [id])
     galleryId String
+    altText   String
 
     @@id([imageId, galleryId])
 }
 
 model Gallery {
-    id              String            @id @default(cuid())
-    name            String
+    id       String           @id @default(cuid())
+    name     String
+    position GalleryPosition? @unique
+
+    createdAt       DateTime          @default(now())
     ImageForGallery ImageForGallery[]
 }
 
 model PrimaryImage {
-    id            String       @id @default(cuid())
-    image         Image        @relation(fields: [imageId], references: [id])
-    imageId       String
-    hero          Hero?        @relation(fields: [heroId], references: [id])
-    heroId        String?
-    service       Service?     @relation(fields: [serviceId], references: [id])
-    serviceId     String?
-    aboutUs       AboutUs?     @relation(fields: [aboutUsId], references: [id])
-    aboutUsId     String?
-    blog          Blog?        @relation(fields: [blogId], references: [id])
-    blogId        String?
-    testimonial   Testimonial? @relation(fields: [testimonialId], references: [id])
-    testimonialId String?
+    id        String   @id @default(cuid())
+    image     Image    @relation(fields: [imageId], references: [id])
+    imageId   String
+    hero      Hero?    @relation(fields: [heroId], references: [id])
+    heroId    String?
+    service   Service? @relation(fields: [serviceId], references: [id])
+    serviceId String?
+    aboutUs   AboutUs? @relation(fields: [aboutUsId], references: [id])
+    aboutUsId String?
+    blog      Blog?    @relation(fields: [blogId], references: [id])
+    blogId    String?
 }
 
 model SecondaryImage {
@@ -203,6 +208,25 @@ model SecondaryImage {
     aboutUsId String?
     service   Service? @relation(fields: [serviceId], references: [id])
     serviceId String?
+}
+
+model AvatarImage {
+    id             String        @id @default(cuid())
+    image          Image         @relation(fields: [imageId], references: [id])
+    imageId        String
+    businessInfo   BusinessInfo? @relation(fields: [businessInfoId], references: [id])
+    businessInfoId String?
+    testimonial    Testimonial?  @relation(fields: [testimonialId], references: [id])
+    testimonialId  String?
+}
+
+model BusinessLogo {
+    image          Image        @relation(fields: [imageId], references: [id])
+    imageId        String
+    businessInfo   BusinessInfo @relation(fields: [businessInfoId], references: [id])
+    businessInfoId String
+
+    @@id([imageId, businessInfoId])
 }
 
 enum Services {
@@ -216,4 +240,10 @@ enum Services {
 enum HeroPosition {
     TOP
     BOTTOM
+    FRONT
+}
+
+enum GalleryPosition {
+    FRONT
+    MAIN
 }

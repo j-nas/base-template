@@ -4,7 +4,6 @@ import { aboutUsRouter } from "./routers/aboutUs";
 import { blogRouter } from "./routers/blog";
 import { businessInfoRouter } from "./routers/businessInfo";
 import { heroRouter } from "./routers/hero";
-import { middleHeroRouter } from "./routers/middleHero";
 import { serviceRouter } from "./routers/service";
 import { testimonialRouter } from "./routers/testimonial";
 
@@ -18,7 +17,6 @@ export const appRouter = createTRPCRouter({
   blog: blogRouter,
   businessInfo: businessInfoRouter,
   hero: heroRouter,
-  middleHero: middleHeroRouter,
   service: serviceRouter,
   testimonial: testimonialRouter
   // add more routers here
