@@ -33,5 +33,5 @@ export const formattedResources = async () => {
 }
 
 export const cloudinaryUrlGenerator = (id = "", format = "") => {
-  return `https://res.cloudinary.com/dkascnwj7/image/upload/q_auto/base-template/${id}.${format}`
+  return `https://res.cloudinary.com/dkascnwj7/image/upload/q_auto:eco,f_auto/base-template/${id}.${format}`
 }
