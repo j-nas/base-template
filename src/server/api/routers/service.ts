@@ -156,6 +156,7 @@ export const serviceRouter = createTRPCRouter({
           markdown: input.markdown,
           shortDescription: input.shortDescription,
           icon: input.icon,
+          pageName: input.title.toLowerCase().replace(/ /g, "-"),
           PrimaryImage: {
             create: {
               imageId: input.primaryImage

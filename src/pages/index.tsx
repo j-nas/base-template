@@ -8,10 +8,10 @@ import Logo from "../components/Logo";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
-import superjson from "superjson";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
-import { Icon } from "@iconify-icon/react";
+// import { Icon } from "@iconify-icon/react";
 import CldImg from "../components/CldImg";
+import Testimonial from "../components/Testimonial";
 type Img = {
   public_Id: string;
   height: number;
@@ -167,7 +167,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             {services
               ?.filter((service?) => service.position)
               .map((service) => (
-                <Link href={``} key={service.id}>
+                <Link href={`/${service.pageName}`} key={service.id}>
                   <button className="btn-ghost btn ">{service.title}</button>
                 </Link>
               ))}
@@ -177,7 +177,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         {/* Hero Section */}
         <section className="">
           <div
-            className="clip-path hero relative min-h-[130vh] lg:bg-fixed"
+            className="clip-path hero relative min-h-[130vh]  lg:bg-fixed"
             style={{
               backgroundImage: `url(${frontHeroImageUrl})`,
             }}
@@ -203,11 +203,16 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         {/* Services summary Section */}
         <section className=" mx-auto flex w-10/12 justify-center lg:w-5/6">
           <div className="z-30 -mt-32 grid w-fit justify-center gap-0 rounded-t-md border-t-8 border-primary shadow-lg lg:w-11/12 lg:grid-cols-3">
-            {services?.map((service) => (
+            {services.slice(0, 3).map((service) => (
               <div className="card rounded-none bg-base-300 " key={service.id}>
                 <div className="card-body">
-                  <div className="mb-8 h-auto w-fit place-self-center rounded-full bg-primary py-4 px-5 text-center">
-                    <Icon icon={service.icon} className="text-6xl" />
+                  <div className="mb-8 h-auto w-fit place-self-center rounded-full bg-primary py-4 px-4 text-center">
+                    <Image
+                      src="https://icons.getbootstrap.com/assets/icons/1-circle.svg"
+                      width={24}
+                      height={24}
+                      alt="icon"
+                    />
                   </div>
                   <h2 className=" text-center text-xl font-medium">
                     {service.title}
@@ -220,12 +225,12 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* About us summary */}
-        <section className=" mx-auto mt-32 grid w-11/12 place-items-center gap-12 lg:grid-cols-2">
+        <section className=" mx-auto mt-32 grid w-11/12 gap-12 lg:grid-cols-2">
           {/* image with inset image */}
-          <div className="relative grid grid-cols-12 ">
+          <div className="relative  mr-2 grid h-full grid-cols-12 ">
             {aboutUs && (
               <>
-                <div className="col-span-10 col-start-1 row-start-1 ">
+                <div className="col-span-10 col-start-1 row-start-1 h-full ">
                   <CldImg
                     alt="About us"
                     format={aboutPrimaryImage.format}
@@ -233,10 +238,10 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     width={800}
                     public_Id={aboutPrimaryImage.public_Id}
                     id={aboutPrimaryImage.id}
-                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
+                    className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
                   />
                 </div>
-                <div className="col-start-5 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
+                <div className="col-start-3 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
                   <CldImg
                     alt="About us"
                     format={aboutSecondaryImage.format}
@@ -244,7 +249,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     width={800}
                     public_Id={aboutSecondaryImage.public_Id}
                     id={aboutSecondaryImage.id}
-                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
+                    className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
               </>
@@ -262,7 +267,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   {paragraph}
                 </p>
               ))}
-            <blockquote className="rounded-xl bg-base-300 bg-[url(/quote-white.svg)] bg-right-bottom bg-no-repeat p-4">
+            <blockquote className="mx-auto rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
               <p className="mb-4 text-lg">{business?.ownerQuote}</p>
               <span className="font-medium uppercase text-accent">
                 {business?.ownerName}
@@ -274,10 +279,10 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* Middle Hero Section */}
-        <section className=" mx-auto mt-32 grid w-11/12 place-items-stretch lg:grid-cols-2">
+        <section className=" mx-auto mt-32 grid w-11/12 place-items-stretch lg:grid-cols-2 ">
           {/* text */}
-          <div className="prose flex flex-col justify-center ">
-            <span className="font-medium uppercase text-accent">
+          <div className="prose order-last flex flex-col justify-center lg:order-first ">
+            <span className="mt-12 font-medium uppercase text-accent">
               {mainService?.shortDescription}
             </span>
             <h2 className="mt-0 text-4xl font-bold">{mainService?.title}</h2>
@@ -295,29 +300,29 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             </button>
           </div>
           {/* image with inset image */}
-          <div className="relative grid grid-cols-12 pt-20 md:pt-40 lg:pt-48">
+          <div className="relative grid grid-cols-12   ">
             {mainService && (
               <>
                 <div className="col-span-10 col-start-3 row-start-1 ">
                   <CldImg
                     alt={mainService.title}
                     format={mainServicePrimaryImage.format}
-                    height={mainServicePrimaryImage.height}
-                    width={mainServicePrimaryImage.width}
+                    height={600}
+                    width={800}
                     public_Id={mainServicePrimaryImage.public_Id}
                     id={mainServicePrimaryImage.id}
-                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
+                    className=" rounded-lg border-4 border-secondary  shadow-2xl md:border-[12px]"
                   />
                 </div>
-                <div className="col-start-1 col-end-9 row-start-1 pt-32">
+                <div className="col-start-1 col-end-11 row-start-1 pt-24 md:pt-48">
                   <CldImg
                     alt={mainService.title}
                     format={mainServiceSecondaryImage.format}
-                    height={mainServiceSecondaryImage.height}
-                    width={mainServiceSecondaryImage.width}
+                    height={600}
+                    width={800}
                     public_Id={mainServiceSecondaryImage.public_Id}
                     id={mainServiceSecondaryImage.id}
-                    className="box-content rounded-lg border-[12px] border-secondary shadow-2xl"
+                    className=" rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
               </>
@@ -356,36 +361,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             deleniti? Temporibus!
           </p>
           {/* div with 2 cards in a grid */}
-          <div className="mt-12 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24">
+          <div className="mt-12 mb-6 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24">
             {testimonials?.slice(0, 2).map((testimonial) => (
-              <div
-                key={testimonial.id}
-                className=" relative mt-12 rounded-lg bg-base-300 p-6 shadow-2xl"
-              >
-                <div className="absolute -top-8 left-8 w-20 rounded-full"></div>
-                <div className="grid grid-cols-2 ">
-                  <p className="col-span-2 border-b-2 border-secondary pb-4 pt-6">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Aut vero explicabo animi hic non, nemo nisi cum voluptatem
-                    dicta quos molestiae. Ipsum, maiores esse? Minus mollitia
-                    neque fugit ratione quasi, nam laudantium, deleniti,
-                    excepturi cumque iure non consequuntur ea rem?
-                  </p>
-                  <div className="">
-                    <div className="flex flex-col  text-left">
-                      <span className="font-medium">{testimonial.name}</span>
-                      <span className="text-base">{testimonial.title}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-end ">
-                    <div className="mask mask-star w-6 bg-warning text-base"></div>
-                    <div className="mask mask-star w-6 bg-warning text-base"></div>
-                    <div className="mask mask-star w-6 bg-warning text-base"></div>
-                    <div className="mask mask-star w-6 bg-warning text-base"></div>
-                    <div className="mask mask-star w-6 bg-warning text-base"></div>
-                  </div>
-                </div>
-              </div>
+              <Testimonial testimonial={testimonial} key={testimonial.id} />
             ))}
           </div>
           <button className="btn-primary btn">More reviews</button>
@@ -398,16 +376,18 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               backgroundImage: `url(${bottomHeroImageUrl})`,
             }}
           >
-            <div className="hero-overlay bg-base-100 bg-opacity-50"></div>
+            <div className="hero-overlay bg-black bg-opacity-50"></div>
             <div className="hero-content text-center  ">
-              <div className="max-w-md">
+              <div className="max-w-md text-white">
                 <span className="text-medium uppercase text-accent">
                   {business?.title}
                 </span>
-                <h2 className="mb-5 text-5xl font-bold md:text-7xl">
+                <h2 className="mb-5 text-5xl font-bold  md:text-7xl">
                   {bottomHero?.heading}
                 </h2>
-                <p className="mb-5 text-xl">{bottomHero?.ctaText}</p>
+                <p className="inline-flix mb-5 flex text-xl">
+                  {bottomHero?.ctaText}
+                </p>
                 <button className="btn-primary btn rounded-none">
                   Get Started
                 </button>
@@ -451,18 +431,16 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               </Link>
             </nav>
             <div>
-              <span className="footer-title text-base-content">
-                Useful Links
-              </span>
-              <Link href="https://www.wcb.ab.ca/" className="link-hover link">
-                WCB Alberta
-              </Link>
-              <Link
-                href="https://www.worksafebc.com/"
-                className="link-hover link"
-              >
-                WorkSafeBC
-              </Link>
+              <span className="footer-title text-base-content">Services</span>
+              {services?.map((service) => (
+                <Link
+                  key={service.id}
+                  href={`/services/${service.pageName}`}
+                  className="link-hover link"
+                >
+                  {service.title}
+                </Link>
+              ))}
             </div>
             <div className="prose">
               <h3>About us</h3>
@@ -488,20 +466,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </footer>
 
           <footer className="footer border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
-            <div className="grid-flow-col items-center ">
-              <Image
-                src="/logo.svg"
-                alt="COMPANY LOGO HERE"
-                width={40}
-                height={40}
-              />
-              <p>
-                <span className=" text-2xl tracking-wider">
-                  {business?.title}
-                </span>
-                <br />
-                Copyright © {new Date().getFullYear()}
-              </p>
+            <div className=" flex grid-flow-col flex-col items-baseline ">
+              <Logo className="z-50 h-auto w-[160px] fill-base-content" />
+              <p className="mx-auto">Copyright © {new Date().getFullYear()}</p>
             </div>
             <div className="pr-4 md:place-self-center md:justify-self-end">
               <div className="grid grid-flow-col gap-4 text-2xl">
@@ -557,7 +524,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             <p className="inline-block w-1/2 text-xs">
               Designed and hosted by{" "}
               <a className="link" href="https://www.shorecel.com">
-                Shorecel Web Solutions
+                Shorecel Web Services
               </a>
             </p>
           </footer>
@@ -573,7 +540,6 @@ export async function getStaticProps() {
   const ssg = createProxySSGHelpers({
     router: appRouter,
     ctx: createInnerTRPCContext({ session: null }),
-    transformer: superjson,
   });
 
   const business = await ssg.businessInfo.getActive.fetch();
@@ -591,6 +557,11 @@ export async function getStaticProps() {
     bottomHero?.PrimaryImage[0]?.image?.public_Id,
     bottomHero?.PrimaryImage[0]?.image?.format
   );
+
+  // const galleryImages = gallery?.ImageForGallery.map((image) => {
+  //   return cloudinaryUrlGenerator(image., image.format);
+  // });
+
   return {
     props: {
       trpcState: ssg.dehydrate(),

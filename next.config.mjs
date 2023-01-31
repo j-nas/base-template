@@ -4,8 +4,17 @@
  * This is especially useful for Docker builds.
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
+import NextBundleAnalyzer from "@next/bundle-analyzer";
 
-/** @type {import("next").NextConfig} */
+/**
+ * @template {import('next').NextConfig} T
+ * @param {T} config - A generic parameter that flows through to the return type
+ * @constraint {{import('next').NextConfig}}
+ */
+function defineNextConfig(config) {
+  return config;
+}
+
 const config = {
   reactStrictMode: true,
   /* If trying out the experimental appDir, comment the i18n config out
@@ -18,4 +27,7 @@ const config = {
     domains: ["placeimg.com", "i.pravatar.cc", "res.cloudinary.com"],
   },
 };
-export default config;
+
+export default NextBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(defineNextConfig(config));

@@ -106,6 +106,7 @@ model Hero {
 
 model Service {
     id               String           @id @default(cuid())
+    pageName         String
     title            String
     shortDescription String
     markdown         String
