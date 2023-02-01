@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 import { Services } from "@prisma/client";
-import { exclude } from "../../../utils/exclude";
 
 export const serviceRouter = createTRPCRouter({
 
@@ -60,50 +59,60 @@ export const serviceRouter = createTRPCRouter({
       });
     }
     ),
-  getActive: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.prisma.service.findMany({
-      where: {
-        position: {
-          not: null,
+  getActive: publicProcedure
+    .output(z.array(z.object({
+      id: z.string(),
+      title: z.string(),
+      position: z.nativeEnum(Services).nullable(),
+      pageName: z.string(),
+      icon: z.string(),
+      shortDescription: z.string(),
+      markdown: z.string(),
+      PrimaryImage: z.array(z.object({
+        id: z.string(),
+        image: z.object({
+          id: z.string(),
+          height: z.number(),
+          width: z.number(),
+          public_Id: z.string(),
+          format: z.string(),
+        }),
+      })),
+      SecondaryImage: z.array(z.object({
+        id: z.string(),
+        image: z.object({
+          id: z.string(),
+          height: z.number(),
+          width: z.number(),
+          public_Id: z.string(),
+          format: z.string(),
+        }),
+      }))
+    })))
+    .query(async ({ ctx }) => {
+      const data = await ctx.prisma.service.findMany({
+        where: {
+          position: {
+            not: null,
+          },
         },
-      },
-      include: {
-        PrimaryImage: {
-          select: {
-            image: {
-              select: {
-                format: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                id: true,
-              },
+        include: {
+          PrimaryImage: {
+            include: {
+              image: true,
             }
-          }
-        },
-        SecondaryImage: {
-          select: {
-            image: {
-              select: {
-                format: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                id: true,
-              },
+          },
+          SecondaryImage: {
+            include: {
+              image: true,
             }
           },
         },
-      },
-    });
-    //return data with createdAt and updatedAt excluded, as well as createdAt and updatedAt in any nested objects
-    return data.map((service) => {
+      });
+      return data
 
-      return exclude(service, ["createdAt", "updatedAt"]);
-    })
-
-  }
-  ),
+    }
+    ),
   getByPosition: publicProcedure
     .input(z.object({ position: z.nativeEnum(Services) }))
     .query(({ ctx, input }) => {
@@ -115,12 +124,16 @@ export const serviceRouter = createTRPCRouter({
           PrimaryImage: {
             select: {
               image: true,
-            }
+
+            },
+            take: 1,
+
           },
           SecondaryImage: {
             select: {
               image: true,
-            }
+            },
+            take: 1
           },
         },
       });

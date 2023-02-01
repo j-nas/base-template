@@ -35,7 +35,7 @@ export default function Testimonial(props: Props) {
   };
 
   const placeholder = (
-    <div className="placeholder avatar absolute -top-8 left-16">
+    <div className="placeholder avatar absolute -top-8 left-8">
       <div className="w-16 rounded-full bg-neutral-focus text-neutral-content">
         <span className="text-xl">
           {name.split(" ").map((n) => n[0] ?? "")}
@@ -45,13 +45,13 @@ export default function Testimonial(props: Props) {
   );
 
   const avatar = (
-    <div className="avatar absolute -top-8 left-16">
+    <div className=" absolute -top-8 left-8">
       <Image
-        src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/q_80/w_64,h_64,c_fill,g_face,r_max/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}.${format}`}
+        src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/q_80/w_80,h_80,c_fill,g_face/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}.${format}`}
         alt={name}
-        width={64}
-        height={64}
-        className="w-16 rounded-full"
+        width={80}
+        height={80}
+        className="w-20 rounded-full"
       />
     </div>
   );
@@ -63,7 +63,7 @@ export default function Testimonial(props: Props) {
     >
       {public_Id !== "" ? avatar : placeholder}
       <div className="grid grid-cols-2 ">
-        <p className="col-span-2 border-b-2 border-secondary pb-4 pt-6">
+        <p className="col-span-2 border-b-2 border-secondary pb-4 pt-8">
           {quote}
         </p>
         <div className="">

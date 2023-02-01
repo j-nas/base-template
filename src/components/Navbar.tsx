@@ -1,0 +1,168 @@
+import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import Logo from "./Logo";
+import DarkModeButton from "./DarkModeButton";
+import HamburgerMenu from "./HamburgerMenu";
+import { type BusinessInfo } from "@prisma/client";
+
+type Props = {
+  scrollPosition: number;
+  services: {
+    title: string;
+    PrimaryImage: {
+      image: {
+        id: string;
+        public_Id: string;
+        format: string;
+        width: number;
+        height: number;
+      };
+      id: string;
+    }[];
+    SecondaryImage: {
+      image: {
+        id: string;
+        public_Id: string;
+        format: string;
+        width: number;
+        height: number;
+      };
+      id: string;
+    }[];
+    id: string;
+    pageName: string;
+    shortDescription: string;
+    markdown: string;
+    icon: string;
+  }[];
+  business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
+};
+
+export default function Navbar({ scrollPosition, services, business }: Props) {
+  const { theme, setTheme } = useTheme();
+
+  const router = useRouter();
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  return (
+    <div
+      className={`navbar fixed z-50 w-full ${
+        scrollPosition ? "" : "text-white"
+      } 
+    `}
+    >
+      <div
+        className={` absolute inset-0 -z-10 h-full w-full -translate-y-full bg-base-100 transition-all duration-300 ease-in-out ${
+          scrollPosition ? "translate-y-0 shadow-2xl" : ""
+        }`}
+      ></div>
+      <div className="navbar-start">
+        <button className="btn-ghost btn fill-white stroke-white text-xl lowercase">
+          <Logo
+            className={`z-50 h-auto w-40 ${
+              scrollPosition ? "fill-base-content" : ""
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="navbar-end mr-2">
+        <ul className="menu menu-horizontal hidden border-none bg-transparent lg:flex  ">
+          <li>
+            <Link
+              href="/"
+              className={`${
+                router.pathname === "/" ? "btn-accent" : ""
+              } btn rounded-l-lg border-none `}
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/about"
+              className={`${
+                router.pathname === "/about" ? "btn-accent" : "btn-ghost"
+              } btn rounded-none`}
+            >
+              About
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/contact"
+              className={`${
+                router.pathname === "/contact" ? "btn-accent" : "btn-ghost"
+              } btn rounded-none `}
+            >
+              Contact
+            </Link>
+          </li>
+          <li tabIndex={0}>
+            <Link
+              href="/services"
+              className={`${
+                router.pathname.startsWith("/services")
+                  ? "btn-accent"
+                  : "btn-ghost"
+              } btn rounded-none `}
+            >
+              Services
+              <svg
+                className="fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+              >
+                <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+              </svg>
+            </Link>
+            <ul className="bg-base-100 p-2">
+              {services.map((service) => (
+                <li key={service.id}>
+                  <Link
+                    href={`/services/${service.pageName}`}
+                    className={`btn rounded-none ${
+                      router.pathname === `/services/${service.pageName}`
+                        ? "btn-accent"
+                        : "btn-ghost"
+                    }`}
+                  >
+                    {service.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li>
+            <Link
+              href="/gallery"
+              className={`${
+                router.pathname === "/gallery" ? "btn-accent" : "btn-ghost"
+              } btn rounded-none `}
+            >
+              Gallery
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/blog"
+              className={`${
+                router.pathname === "/blog" ? "btn-accent" : "btn-ghost"
+              } btn rounded-r-lg`}
+            >
+              Blog
+            </Link>
+          </li>
+        </ul>
+        <DarkModeButton theme={theme} toggleTheme={toggleTheme} />
+        <HamburgerMenu services={services} business={business} />
+      </div>
+    </div>
+  );
+}
