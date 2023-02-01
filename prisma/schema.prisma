@@ -160,6 +160,7 @@ model Image {
     bytes           Int
     secure_url      String
     type            String
+    blur_url        String
     createdAt       DateTime          @default(now())
     PrimaryImage    PrimaryImage[]
     SecondaryImage  SecondaryImage[]

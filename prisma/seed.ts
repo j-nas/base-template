@@ -1,13 +1,15 @@
 import { PrismaClient } from '@prisma/client'
 import { formattedResources } from '../src/utils/cloudinaryApi'
+import getBase64ImageUrl from '../src/utils/generateBlurPlaceholder';
 import { faker } from '@faker-js/faker';
 
 export const prisma = new PrismaClient()
 
 async function main() {
   const imagesRes = await formattedResources()
+
   await prisma.image.createMany({
-    data: imagesRes.map((resource) => ({
+    data: imagesRes.map(async (resource) => ({
       public_Id: resource.public_id,
       format: resource.format,
       width: resource.width,
@@ -16,6 +18,7 @@ async function main() {
       type: resource.type,
       secure_url: resource.secure_url,
       id: resource.asset_id,
+      blur_url: await resource.blur_url
     })),
   })
   console.log('Images created')
