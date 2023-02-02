@@ -31,7 +31,7 @@ export default function HamburgerButton({ services, business }: Props) {
 
   return (
     <>
-      <label className="swap swap-rotate pl-4 lg:hidden ">
+      <label aria-label="nav menu" className="swap-rotate swap pl-4 lg:hidden ">
         <input type="checkbox" checked={isOpen} onChange={toggleOpen} />
 
         <svg

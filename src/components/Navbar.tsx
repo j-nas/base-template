@@ -35,7 +35,10 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
         }`}
       ></div>
       <div className="navbar-start">
-        <button className="btn-ghost btn fill-white stroke-white text-xl lowercase">
+        <button
+          aria-label="home button logo"
+          className="btn-ghost btn fill-white stroke-white text-xl lowercase"
+        >
           <Logo
             className={`z-50 h-auto w-40 ${
               scrollPosition ? "fill-base-content" : ""
