@@ -1,15 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 import { formattedResources } from '../src/utils/cloudinaryApi'
-import getBase64ImageUrl from '../src/utils/generateBlurPlaceholder';
 import { faker } from '@faker-js/faker';
 
 export const prisma = new PrismaClient()
 
 async function main() {
-  const imagesRes = await formattedResources()
-
+  const imagesRes = await Promise.all(await formattedResources())
+  console.log('Images fetched, formatted and blur url generated')
   await prisma.image.createMany({
-    data: imagesRes.map(async (resource) => ({
+    data: imagesRes.map((resource) => ({
       public_Id: resource.public_id,
       format: resource.format,
       width: resource.width,
@@ -18,7 +17,7 @@ async function main() {
       type: resource.type,
       secure_url: resource.secure_url,
       id: resource.asset_id,
-      blur_url: await resource.blur_url
+      blur_url: resource.blur_url
     })),
   })
   console.log('Images created')
@@ -73,12 +72,15 @@ async function main() {
       facebookUrl: 'https://facebook.com',
       instagramUrl: 'https://instagram.com',
       twitterUrl: 'https://twitter.com',
-      youtubeUrl: 'https://youtube.com',
-      linkedInUrl: 'https://linkedin.com',
-      pinterestUrl: 'https://pinterest.com',
-      tiktokUrl: 'https://tiktok.com',
-      snapchatUrl: 'https://snapchat.com',
       whatsappUrl: 'https://whatsapp.com',
+      ///////////////////////////////////////////////////////////////
+      // Uncomment the following lines to add more social media links
+      ///////////////////////////////////////////////////////////////
+      // youtubeUrl: 'https://youtube.com',
+      // linkedInUrl: 'https://linkedin.com',
+      // pinterestUrl: 'https://pinterest.com',
+      // tiktokUrl: 'https://tiktok.com',
+      // snapchatUrl: 'https://snapchat.com',
     },
   })
   console.log('Business created')

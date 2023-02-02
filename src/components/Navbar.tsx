@@ -61,7 +61,7 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
         }`}
       ></div>
       <div className="navbar-start">
-        <button className="btn-ghost btn fill-white stroke-white text-xl lowercase">
+        <button className="btn btn-ghost fill-white stroke-white text-xl lowercase">
           <Logo
             className={`z-50 h-auto w-40 ${
               scrollPosition ? "fill-base-content" : ""
@@ -70,14 +70,14 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
         </button>
       </div>
 
-      <div className="navbar-end mr-2">
-        <ul className="menu menu-horizontal hidden border-none bg-transparent lg:flex  ">
+      <div className="navbar-end mr-2 w-full flex-grow">
+        <ul className="menu menu-compact menu-horizontal hidden border-none bg-transparent lg:flex  ">
           <li>
             <Link
               href="/"
               className={`${
-                router.pathname === "/" ? "btn-accent" : ""
-              } btn rounded-l-lg border-none `}
+                router.pathname === "/" ? "btn  btn-accent" : "btn  btn-ghost"
+              } rounded-l-lg border-none `}
             >
               Home
             </Link>
@@ -86,8 +86,10 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
             <Link
               href="/about"
               className={`${
-                router.pathname === "/about" ? "btn-accent" : "btn-ghost"
-              } btn rounded-none`}
+                router.pathname === "/about"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
+              } rounded-none`}
             >
               About
             </Link>
@@ -96,8 +98,10 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
             <Link
               href="/contact"
               className={`${
-                router.pathname === "/contact" ? "btn-accent" : "btn-ghost"
-              } btn rounded-none `}
+                router.pathname === "/contact"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
+              } rounded-none `}
             >
               Contact
             </Link>
@@ -107,9 +111,9 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
               href="/services"
               className={`${
                 router.pathname.startsWith("/services")
-                  ? "btn-accent"
-                  : "btn-ghost"
-              } btn rounded-none `}
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
+              } rounded-none `}
             >
               Services
               <svg
@@ -127,10 +131,10 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
                 <li key={service.id}>
                   <Link
                     href={`/services/${service.pageName}`}
-                    className={`btn rounded-none ${
+                    className={`rounded-none ${
                       router.pathname === `/services/${service.pageName}`
-                        ? "btn-accent"
-                        : "btn-ghost"
+                        ? "btn  btn-accent"
+                        : "btn  btn-ghost"
                     }`}
                   >
                     {service.title}
@@ -143,8 +147,10 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
             <Link
               href="/gallery"
               className={`${
-                router.pathname === "/gallery" ? "btn-accent" : "btn-ghost"
-              } btn rounded-none `}
+                router.pathname === "/gallery"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
+              } rounded-none `}
             >
               Gallery
             </Link>
@@ -153,8 +159,10 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
             <Link
               href="/blog"
               className={`${
-                router.pathname === "/blog" ? "btn-accent" : "btn-ghost"
-              } btn rounded-r-lg`}
+                router.pathname === "/blog"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
+              } rounded-r-lg`}
             >
               Blog
             </Link>

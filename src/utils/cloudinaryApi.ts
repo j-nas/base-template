@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { env } from '../env/server.mjs'
-import getBase64ImageUrl from './generateBlurPlaceholder.js';
+import getBase64ImageUrl from './generateBlurPlaceholder';
 
 export type CloudinaryResource = {
   resources: [{
@@ -32,9 +32,9 @@ export const formattedResources = async () => {
   const formattedResources = resources.resources.map(async (resource) => ({
     ...resource,
     public_id: resource.public_id.replace(`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/`, ''),
-    blur_url: getBase64ImageUrl(resource.public_id, resource.format).then((url) => url)
+    blur_url: await getBase64ImageUrl(resource.public_id, resource.format).then((url) => url)
   }))
-  return formattedResources
+  return formattedResources.map(async (resource) => await resource)
 }
 
 export const cloudinaryUrlGenerator = (id = "", format = "") => {
