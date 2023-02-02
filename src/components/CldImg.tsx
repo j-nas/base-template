@@ -1,4 +1,5 @@
 import Image from "next/image";
+
 type Props = {
   public_Id: string;
   height: number;
@@ -7,6 +8,7 @@ type Props = {
   id: string;
   format: string;
   className?: string;
+  blur: string;
 };
 
 export const CldImg = ({
@@ -17,6 +19,7 @@ export const CldImg = ({
   id,
   format,
   className,
+  blur,
 }: Props) => {
   return (
     <Image
@@ -26,6 +29,8 @@ export const CldImg = ({
       width={width}
       id={id}
       className={className}
+      blurDataURL={blur}
+      placeholder="blur"
     />
   );
 };

@@ -1,6 +1,33 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
-import { exclude } from "../../../utils/exclude";
+
+const aboutUsOutputSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  markdown: z.string(),
+  inUse: z.boolean(),
+  PrimaryImage: z.object({
+    format: z.string(),
+    height: z.number(),
+    width: z.number(),
+    public_Id: z.string(),
+    id: z.string(),
+    blur_url: z.string(),
+  }),
+  SecondaryImage: z.object({
+    format: z.string(),
+    height: z.number(),
+    width: z.number(),
+    public_Id: z.string(),
+    id: z.string(),
+    blur_url: z.string(),
+  }),
+});
+
+
+
+
 
 export const aboutUsRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -24,6 +51,7 @@ export const aboutUsRouter = createTRPCRouter({
                   width: true,
                   public_Id: true,
                   id: true,
+                  blur_url: true,
                 },
               }
             }
@@ -37,6 +65,7 @@ export const aboutUsRouter = createTRPCRouter({
                   width: true,
                   public_Id: true,
                   id: true,
+                  blur_url: true,
                 },
               }
             }
@@ -44,43 +73,40 @@ export const aboutUsRouter = createTRPCRouter({
         },
       });
     }),
-  getCurrent: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.prisma.aboutUs.findFirstOrThrow({
-      where: {
-        inUse: true,
-      },
-      include: {
-        PrimaryImage: {
-          select: {
-            image: {
-              select: {
-                format: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                id: true,
-              },
+  getCurrent: publicProcedure
+    .output(aboutUsOutputSchema)
+    .query(async ({ ctx }) => {
+      const aboutUs = await ctx.prisma.aboutUs.findFirstOrThrow({
+        where: {
+          inUse: true,
+        },
+      })
+      const primaryImage = await ctx.prisma.image.findFirstOrThrow({
+        where: {
+          PrimaryImage: {
+            some: {
+              aboutUsId: aboutUs.id,
             }
           }
         },
-        SecondaryImage: {
-          select: {
-            image: {
-              select: {
-                format: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                id: true,
-              },
+      })
+      const secondaryImage = await ctx.prisma.image.findFirstOrThrow({
+        where: {
+          SecondaryImage: {
+            some: {
+              aboutUsId: aboutUs.id,
             }
           }
-        },
-      },
-    });
-    return exclude(data, ["createdAt"]);
-  }
-  ),
+        }
+      })
+      return {
+        ...aboutUs,
+        PrimaryImage: primaryImage,
+        SecondaryImage: secondaryImage
+      }
+
+    }
+    ),
   create: editorProcedure
     .input(z.object({
       title: z.string(),

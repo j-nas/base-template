@@ -60,35 +60,33 @@ export const serviceRouter = createTRPCRouter({
     }
     ),
   getActive: publicProcedure
-    .output(z.array(z.object({
+    .output(z.object({
       id: z.string(),
-      title: z.string(),
-      position: z.nativeEnum(Services).nullable(),
       pageName: z.string(),
-      icon: z.string(),
+      title: z.string(),
       shortDescription: z.string(),
       markdown: z.string(),
-      PrimaryImage: z.array(z.object({
+      icon: z.string(),
+      position: z.nativeEnum(Services).nullable(),
+
+      PrimaryImage: z.object({
         id: z.string(),
-        image: z.object({
-          id: z.string(),
-          height: z.number(),
-          width: z.number(),
-          public_Id: z.string(),
-          format: z.string(),
-        }),
-      })),
-      SecondaryImage: z.array(z.object({
+        height: z.number(),
+        width: z.number(),
+        public_Id: z.string(),
+        format: z.string(),
+        blur_url: z.string(),
+      }),
+
+      SecondaryImage: z.object({
         id: z.string(),
-        image: z.object({
-          id: z.string(),
-          height: z.number(),
-          width: z.number(),
-          public_Id: z.string(),
-          format: z.string(),
-        }),
-      }))
-    })))
+        height: z.number(),
+        width: z.number(),
+        public_Id: z.string(),
+        format: z.string(),
+        blur_url: z.string(),
+      })
+    }).array())
     .query(async ({ ctx }) => {
       const data = await ctx.prisma.service.findMany({
         where: {
@@ -96,20 +94,33 @@ export const serviceRouter = createTRPCRouter({
             not: null,
           },
         },
-        include: {
-          PrimaryImage: {
-            include: {
-              image: true,
-            }
-          },
-          SecondaryImage: {
-            include: {
-              image: true,
-            }
-          },
-        },
       });
-      return data
+
+      const services = data.map(async (service) => {
+        return {
+          ...service,
+          PrimaryImage: await ctx.prisma.image.findFirstOrThrow({
+            where: {
+              PrimaryImage: {
+                some: {
+                  serviceId: service.id,
+                }
+              }
+            }
+          }),
+          SecondaryImage: await ctx.prisma.image.findFirstOrThrow({
+            where: {
+              SecondaryImage: {
+                some: {
+                  serviceId: service.id,
+                }
+              }
+            }
+          })
+        }
+      })
+
+      return await Promise.all(services);
 
     }
     ),

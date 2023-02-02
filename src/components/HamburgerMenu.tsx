@@ -4,36 +4,10 @@ import Link from "next/link";
 import router from "next/router";
 import Socials from "./Socials";
 import { type BusinessInfo } from "@prisma/client";
+import { type RouterOutputs } from "../utils/api";
 
 type Props = {
-  services: {
-    title: string;
-    PrimaryImage: {
-      image: {
-        id: string;
-        public_Id: string;
-        format: string;
-        width: number;
-        height: number;
-      };
-      id: string;
-    }[];
-    SecondaryImage: {
-      image: {
-        id: string;
-        public_Id: string;
-        format: string;
-        width: number;
-        height: number;
-      };
-      id: string;
-    }[];
-    id: string;
-    pageName: string;
-    shortDescription: string;
-    markdown: string;
-    icon: string;
-  }[];
+  services: RouterOutputs["service"]["getActive"];
   business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
 };
 export default function HamburgerButton({ services, business }: Props) {
@@ -57,7 +31,7 @@ export default function HamburgerButton({ services, business }: Props) {
 
   return (
     <>
-      <label className="swap-rotate swap pl-4 lg:hidden ">
+      <label className="swap swap-rotate pl-4 lg:hidden ">
         <input type="checkbox" checked={isOpen} onChange={toggleOpen} />
 
         <svg

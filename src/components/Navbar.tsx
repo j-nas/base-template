@@ -5,37 +5,11 @@ import Logo from "./Logo";
 import DarkModeButton from "./DarkModeButton";
 import HamburgerMenu from "./HamburgerMenu";
 import { type BusinessInfo } from "@prisma/client";
+import { type RouterOutputs } from "../utils/api";
 
 type Props = {
   scrollPosition: number;
-  services: {
-    title: string;
-    PrimaryImage: {
-      image: {
-        id: string;
-        public_Id: string;
-        format: string;
-        width: number;
-        height: number;
-      };
-      id: string;
-    }[];
-    SecondaryImage: {
-      image: {
-        id: string;
-        public_Id: string;
-        format: string;
-        width: number;
-        height: number;
-      };
-      id: string;
-    }[];
-    id: string;
-    pageName: string;
-    shortDescription: string;
-    markdown: string;
-    icon: string;
-  }[];
+  services: RouterOutputs["service"]["getActive"];
   business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
 };
 
@@ -61,7 +35,7 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
         }`}
       ></div>
       <div className="navbar-start">
-        <button className="btn btn-ghost fill-white stroke-white text-xl lowercase">
+        <button className="btn-ghost btn fill-white stroke-white text-xl lowercase">
           <Logo
             className={`z-50 h-auto w-40 ${
               scrollPosition ? "fill-base-content" : ""
@@ -76,7 +50,7 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
             <Link
               href="/"
               className={`${
-                router.pathname === "/" ? "btn  btn-accent" : "btn  btn-ghost"
+                router.pathname === "/" ? "btn-accent  btn" : "btn-ghost  btn"
               } rounded-l-lg border-none `}
             >
               Home
@@ -87,8 +61,8 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
               href="/about"
               className={`${
                 router.pathname === "/about"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none`}
             >
               About
@@ -99,8 +73,8 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
               href="/contact"
               className={`${
                 router.pathname === "/contact"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               Contact
@@ -111,8 +85,8 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
               href="/services"
               className={`${
                 router.pathname.startsWith("/services")
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               Services
@@ -133,8 +107,8 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
                     href={`/services/${service.pageName}`}
                     className={`rounded-none ${
                       router.pathname === `/services/${service.pageName}`
-                        ? "btn  btn-accent"
-                        : "btn  btn-ghost"
+                        ? "btn-accent  btn"
+                        : "btn-ghost  btn"
                     }`}
                   >
                     {service.title}
@@ -148,8 +122,8 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
               href="/gallery"
               className={`${
                 router.pathname === "/gallery"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               Gallery
@@ -160,8 +134,8 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
               href="/blog"
               className={`${
                 router.pathname === "/blog"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-r-lg`}
             >
               Blog

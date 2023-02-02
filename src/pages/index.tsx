@@ -8,18 +8,10 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
-// import { Icon } from "@iconify-icon/react";
 import CldImg from "../components/CldImg";
 import Testimonial from "../components/Testimonial";
 import Navbar from "../components/Navbar";
 import Socials from "../components/Socials";
-type Img = {
-  public_Id: string;
-  height: number;
-  width: number;
-  format: string;
-  id: string;
-};
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
@@ -75,15 +67,6 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
       );
     }
   };
-
-  const mainServicePrimaryImage = validateImage(
-    mainService?.PrimaryImage[0]?.image
-  );
-  const mainServiceSecondaryImage = validateImage(
-    mainService?.SecondaryImage[0]?.image
-  );
-  const aboutPrimaryImage = validateImage(aboutUs?.PrimaryImage[0]?.image);
-  const aboutSecondaryImage = validateImage(aboutUs?.SecondaryImage[0]?.image);
 
   return (
     <>
@@ -158,22 +141,24 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <div className="col-span-10 col-start-1 row-start-1 h-full ">
                   <CldImg
                     alt="About us"
-                    format={aboutPrimaryImage.format}
+                    format={aboutUs.PrimaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={aboutPrimaryImage.public_Id}
-                    id={aboutPrimaryImage.id}
+                    public_Id={aboutUs.PrimaryImage.public_Id}
+                    id={aboutUs.PrimaryImage.id}
+                    blur={aboutUs.PrimaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-3 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
                   <CldImg
                     alt="About us"
-                    format={aboutSecondaryImage.format}
+                    format={aboutUs.SecondaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={aboutSecondaryImage.public_Id}
-                    id={aboutSecondaryImage.id}
+                    public_Id={aboutUs.SecondaryImage.public_Id}
+                    id={aboutUs.SecondaryImage.id}
+                    blur={aboutUs.SecondaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
@@ -231,22 +216,24 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <div className="col-span-10 col-start-3 row-start-1 ">
                   <CldImg
                     alt={mainService.title}
-                    format={mainServicePrimaryImage.format}
+                    format={mainService.PrimaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={mainServicePrimaryImage.public_Id}
-                    id={mainServicePrimaryImage.id}
+                    public_Id={mainService.PrimaryImage.public_Id}
+                    id={mainService.PrimaryImage.id}
+                    blur={mainService.PrimaryImage.blur_url}
                     className=" rounded-lg border-4 border-secondary  shadow-2xl md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-1 col-end-11 row-start-1 pt-24 md:pt-48">
                   <CldImg
                     alt={mainService.title}
-                    format={mainServiceSecondaryImage.format}
+                    format={mainService.SecondaryImage.format}
                     height={600}
+                    blur={mainService.SecondaryImage.blur_url}
                     width={800}
-                    public_Id={mainServiceSecondaryImage.public_Id}
-                    id={mainServiceSecondaryImage.id}
+                    public_Id={mainService.SecondaryImage.public_Id}
+                    id={mainService.SecondaryImage.id}
                     className=" rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
@@ -293,7 +280,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         {/* Bottom Hero Section */}
         <section className="mx-0 mt-32 md:mx-14 ">
           <div
-            className="hero min-h-[80vh] "
+            className="hero relative min-h-[80vh] "
             style={{
               backgroundImage: `url(${bottomHeroImageUrl})`,
             }}
@@ -450,18 +437,4 @@ export async function getStaticProps() {
       bottomHeroImageUrl,
     },
   };
-}
-
-function validateImage(image: Img | undefined): Img {
-  if (image) {
-    return image;
-  } else {
-    return {
-      public_Id: "placeholder",
-      height: 0,
-      width: 0,
-      format: "png",
-      id: "placeholder",
-    };
-  }
 }
