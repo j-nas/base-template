@@ -2,8 +2,9 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Logo from "./Logo";
+import dynamic from "next/dynamic";
 import DarkModeButton from "./DarkModeButton";
-import HamburgerMenu from "./HamburgerMenu";
+// import HamburgerMenu from "./HamburgerMenu";
 import { type BusinessInfo } from "@prisma/client";
 import { type RouterOutputs } from "../utils/api";
 
@@ -12,6 +13,20 @@ type Props = {
   services: RouterOutputs["service"]["getActive"];
   business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
 };
+
+const DynamicHamburgerMenu = dynamic(() => import("./HamburgerMenu"), {
+  loading: () => (
+    <svg
+      className="swap-off fill-current"
+      xmlns="http://www.w3.org/2000/svg"
+      width="32"
+      height="32"
+      viewBox="0 0 512 512"
+    >
+      <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
+    </svg>
+  ),
+});
 
 export default function Navbar({ scrollPosition, services, business }: Props) {
   const { theme, setTheme } = useTheme();
@@ -146,7 +161,7 @@ export default function Navbar({ scrollPosition, services, business }: Props) {
           </li>
         </ul>
         <DarkModeButton theme={theme} toggleTheme={toggleTheme} />
-        <HamburgerMenu services={services} business={business} />
+        <DynamicHamburgerMenu services={services} business={business} />
       </div>
     </div>
   );

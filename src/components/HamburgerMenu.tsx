@@ -2,9 +2,13 @@ import { createPortal } from "react-dom";
 import { useState } from "react";
 import Link from "next/link";
 import router from "next/router";
-import Socials from "./Socials";
+import dynamic from "next/dynamic";
 import { type BusinessInfo } from "@prisma/client";
 import { type RouterOutputs } from "../utils/api";
+
+const DynamicSocials = dynamic(() => import("./Socials"), {
+  loading: () => <p>Loading...</p>,
+});
 
 type Props = {
   services: RouterOutputs["service"]["getActive"];
@@ -31,7 +35,12 @@ export default function HamburgerButton({ services, business }: Props) {
 
   return (
     <>
-      <label aria-label="nav menu" className="swap-rotate swap pl-4 lg:hidden ">
+      <label
+        aria-label="nav menu"
+        className={`swap-rotate swap disabled pl-4 lg:hidden ${
+          isOpen ? "pointer-events-none" : ""
+        }`}
+      >
         <input type="checkbox" checked={isOpen} onChange={toggleOpen} />
 
         <svg
@@ -149,7 +158,7 @@ export default function HamburgerButton({ services, business }: Props) {
                 ))}
               </ul>
               <div className="flex h-full place-items-end p-4 ">
-                <Socials {...business} />
+                <DynamicSocials {...business} />
               </div>
             </div>
           </div>,
