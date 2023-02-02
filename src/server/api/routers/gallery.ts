@@ -1,34 +1,46 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
-import { GalleryPosition } from "@prisma/client";
 
 export const galleryRouter = createTRPCRouter({
-  findFirst: publicProcedure
+  getFrontPageGallery: publicProcedure
     .output(z.object({
       id: z.string(),
-      name: z.string(),
-      position: z.nativeEnum(GalleryPosition).nullable(),
-      ImageForGallery: z.array(z.object({
-        image: z.object({
-          id: z.string(),
-          format: z.string(),
-          height: z.number(),
-          width: z.number(),
-          public_Id: z.string(),
-        }),
-      })),
-    }))
-    .query(({ ctx }) => {
-      return ctx.prisma.gallery.findFirstOrThrow({
-        include: {
+      format: z.string(),
+      height: z.number(),
+      width: z.number(),
+      public_Id: z.string(),
+      blur_url: z.string(),
+      altText: z.string(),
+    }).array())
+    .query(async ({ ctx }) => {
+      const images = await ctx.prisma.image.findMany({
+        where: {
           ImageForGallery: {
-            include: {
-              image: true,
-            },
+            some: {
+              gallery: {
+                position: "FRONT"
+              }
+            }
           }
         },
       });
 
+
+
+      const img = images.map(async (image) => {
+        return {
+          ...image,
+          ...await ctx.prisma.imageForGallery.findFirstOrThrow({
+            where: {
+              imageId: image.id,
+            },
+            select: {
+              altText: true,
+            },
+          }),
+        };
+      });
+      return await Promise.all(img);
     }
     ),
 });

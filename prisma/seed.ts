@@ -35,6 +35,7 @@ async function main() {
           altText: faker.lorem.sentence(3),
         })),
       },
+      position: 'FRONT',
     }
   })
   console.log('Gallery created')
@@ -73,9 +74,11 @@ async function main() {
       instagramUrl: 'https://instagram.com',
       twitterUrl: 'https://twitter.com',
       whatsappUrl: 'https://whatsapp.com',
-      ///////////////////////////////////////////////////////////////
-      // Uncomment the following lines to add more social media links
-      ///////////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////////////
+      // Uncomment the following lines to add more social media links.//
+      // Social media links are optional, and will only be rendered   //
+      // if they are present.                                         //
+      //////////////////////////////////////////////////////////////////
       // youtubeUrl: 'https://youtube.com',
       // linkedInUrl: 'https://linkedin.com',
       // pinterestUrl: 'https://pinterest.com',
