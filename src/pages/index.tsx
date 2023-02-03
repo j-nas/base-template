@@ -1,15 +1,14 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import Logo from "../components/Logo";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
 import CldImg from "../components/CldImg";
+import { HeroBanner } from "../components/HeroBanner";
 
 const DynamicGallery = dynamic(() => import("../components/FrontGallery"), {
   loading: () => <p>Loading...</p>,
@@ -19,7 +18,7 @@ const DynamicTestimonial = dynamic(() => import("../components/Testimonial"), {
   loading: () => <p>Loading...</p>,
 });
 
-const DynamicSocials = dynamic(() => import("../components/Socials"), {
+const DynamicFooter = dynamic(() => import("../components/Footer"), {
   loading: () => <p>Loading...</p>,
 });
 const DynamicNavbar = dynamic(() => import("../components/Navbar"), {
@@ -56,7 +55,6 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
     frontHeroImageUrl,
     aboutUs,
     bottomHero,
-    bottomHeroImageUrl,
     services,
     testimonials,
     mainService,
@@ -269,120 +267,12 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <button className="btn-primary btn">More reviews</button>
         </section>
 
-        {/* Bottom Hero Section */}
-        <section className="mx-0 mt-32 md:mx-14 ">
-          <div
-            className="hero relative min-h-[80vh] "
-            style={{
-              backgroundImage: `url(${bottomHeroImageUrl})`,
-            }}
-          >
-            <div className="hero-overlay bg-black bg-opacity-50"></div>
-            <div className="hero-content text-center  ">
-              <div className="max-w-md text-white">
-                <span className="text-medium uppercase text-accent">
-                  {business?.title}
-                </span>
-                <h2 className="mb-5 text-5xl font-bold  md:text-7xl">
-                  {bottomHero?.heading}
-                </h2>
-                <p className="inline-flix mb-5 flex text-xl">
-                  {bottomHero?.ctaText}
-                </p>
-                <button className="btn-primary btn rounded-none">
-                  Get Started
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Footer */}
-        <>
-          <footer className="footer bg-base-200 p-10 text-base-content ">
-            <nav>
-              <span className="footer-title">Company</span>
-              <Link href="/" as="/#top">
-                Home
-              </Link>
-              <Link href="/about/" as="/about/#top" className="link-hover link">
-                About us
-              </Link>
-              <Link
-                href="/services/"
-                as="/services/#top"
-                className="link-hover link"
-              >
-                Services
-              </Link>
-              <Link
-                href="/contact/"
-                as="/contact/#top"
-                className="link-hover link"
-              >
-                Contact
-              </Link>
-
-              <Link
-                href="/gallery/"
-                as="/gallery/#top"
-                className="link-hover link"
-              >
-                Gallery
-              </Link>
-            </nav>
-            <div>
-              <span className="footer-title text-base-content">Services</span>
-              {services?.map((service) => (
-                <Link
-                  key={service.id}
-                  href={`/services/${service.pageName}`}
-                  className="link-hover link"
-                >
-                  {service.title}
-                </Link>
-              ))}
-            </div>
-            <div className="prose">
-              <h3>About us</h3>
-              <p className="">{aboutUs?.summary.slice(0, 300)}</p>
-            </div>
-            <div>
-              <div className="flex flex-col pb-2">
-                <span className="">{business?.address}</span>
-                <span>
-                  {business?.city}
-                  {", "}
-                  {business?.province}
-                </span>
-                <span>{business?.postalCode}</span>
-                <span className="">
-                  <Link className="link" href={`tel:${business.telephone}`}>
-                    {business.telephone}
-                  </Link>
-                </span>
-              </div>
-            </div>
-          </footer>
-
-          <footer className="footer border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
-            <div className=" flex grid-flow-col flex-col items-baseline ">
-              <Logo className="z-50 h-auto w-[160px] fill-base-content" />
-              <p className="mx-auto">Copyright © {new Date().getFullYear()}</p>
-            </div>
-            <div className="pr-4 md:place-self-center md:justify-self-end">
-              <DynamicSocials {...business} />
-            </div>
-          </footer>
-          <footer className="footer flex w-full justify-center border-t border-base-300 bg-base-200 py-2 px-2  text-center text-base-content ">
-            <p className="inline-block w-1/2 text-xs">
-              Designed and hosted by{" "}
-              <a className="link" href="https://www.shorecel.com">
-                Shorecel Web Services
-              </a>
-            </p>
-          </footer>
-        </>
+        <HeroBanner businessName={business?.title} hero={bottomHero} />
+        <DynamicFooter
+          aboutSummary={aboutUs.summary}
+          business={business}
+          services={services}
+        />
       </main>
     </>
   );
@@ -398,20 +288,16 @@ export async function getStaticProps() {
 
   const business = await ssg.businessInfo.getActive.fetch();
   const services = await ssg.service.getActive.fetch();
-  const frontHero = await ssg.hero.getFront.fetch();
-  const bottomHero = await ssg.hero.getBottom.fetch();
+  const frontHero = await ssg.hero.getByPosition.fetch({ position: "FRONT" });
+  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
   const testimonials = await ssg.testimonial.getFirstTwoHighlighted.fetch();
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
   aboutUs.markdown = truncateMarkdown(aboutUs.markdown, 700);
   const gallery = await ssg.gallery.getFrontPageGallery.fetch();
 
   const frontHeroImageUrl = cloudinaryUrlGenerator(
-    frontHero?.PrimaryImage[0]?.image?.public_Id,
-    frontHero?.PrimaryImage[0]?.image?.format
-  );
-  const bottomHeroImageUrl = cloudinaryUrlGenerator(
-    bottomHero?.PrimaryImage[0]?.image?.public_Id,
-    bottomHero?.PrimaryImage[0]?.image?.format
+    frontHero.PrimaryImage.public_Id,
+    frontHero.PrimaryImage.format
   );
 
   const mainService =
@@ -437,7 +323,6 @@ export async function getStaticProps() {
       testimonials,
       aboutUs,
       frontHeroImageUrl,
-      bottomHeroImageUrl,
       mainService,
       pageTitle,
       gallery,

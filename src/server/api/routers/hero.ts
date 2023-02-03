@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
-import { exclude } from "../../../utils/exclude";
+import { HeroPosition } from "@prisma/client";
 
 
 export const heroRouter = createTRPCRouter({
@@ -8,82 +8,44 @@ export const heroRouter = createTRPCRouter({
     return ctx.prisma.hero.findMany();
   }
   ),
-  getTop: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.prisma.hero.findUniqueOrThrow({
-      where: {
-        position: "TOP",
-      },
-      include: {
-        PrimaryImage: {
-          include: {
-            image: {
-              select: {
-                id: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                format: true,
-              }
+  getByPosition: publicProcedure
+    .input(z.object({ position: z.nativeEnum(HeroPosition) }))
+    .output(z.object({
+      id: z.string(),
+      heading: z.string(),
+      ctaText: z.string(),
+      position: z.nativeEnum(HeroPosition).nullable(),
+      PrimaryImage: z.object({
+        id: z.string(),
+        height: z.number(),
+        width: z.number(),
+        public_Id: z.string(),
+        format: z.string(),
+        blur_url: z.string(),
+      })
+    }))
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.hero.findUniqueOrThrow({
+        where: {
+          position: input.position,
+        },
+
+      });
+
+      const image = await ctx.prisma.image.findFirstOrThrow({
+        where: {
+          PrimaryImage: {
+            some: {
+              heroId: data.id,
             }
           }
-        }
-      },
-    });
-    return exclude(data, ["createdAt"]);
+        },
+      });
 
-  }
-  ),
-  getBottom: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.prisma.hero.findUniqueOrThrow({
-      where: {
-        position: "BOTTOM",
-      },
-      include: {
-        PrimaryImage: {
-          include: {
-            image: {
-              select: {
-                id: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                format: true,
-              }
-            }
-          }
-        }
-      },
-    });
-    return exclude(data, ["createdAt"]);
+      return { ...data, PrimaryImage: image }
+    }
+    ),
 
-
-
-  }
-  ),
-  getFront: publicProcedure.query(async ({ ctx }) => {
-    const data = await ctx.prisma.hero.findUniqueOrThrow({
-      where: {
-        position: "FRONT",
-      },
-      include: {
-        PrimaryImage: {
-          include: {
-            image: {
-              select: {
-                id: true,
-                height: true,
-                width: true,
-                public_Id: true,
-                format: true,
-              }
-            }
-          }
-        }
-      },
-    });
-    return exclude(data, ["createdAt"]);
-  }
-  ),
   create: editorProcedure
     .input(z.object({
       heading: z.string(),
