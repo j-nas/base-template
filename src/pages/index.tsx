@@ -25,6 +25,9 @@ const DynamicSocials = dynamic(() => import("../components/Socials"), {
 const DynamicNavbar = dynamic(() => import("../components/Navbar"), {
   loading: () => null,
 });
+const InlineMarkdown = dynamic(() => import("../components/InlineMarkdown"), {
+  loading: () => <p>Loading...</p>,
+});
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
@@ -126,7 +129,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* About us summary */}
-        <section className="container mx-auto mt-32 grid w-11/12 gap-12 lg:grid-cols-2">
+        <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2">
           {/* image with inset image */}
           <div className="relative  mr-2 grid h-full grid-cols-12 ">
             {aboutUs && (
@@ -162,41 +165,32 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <div className="prose flex flex-col justify-center">
             <span className="font-medium uppercase text-accent">About Us</span>
             <h2 className="mt-0 text-4xl font-bold">About {business?.title}</h2>
-            {aboutUs?.markdown
-              .split("\n")
-              .slice(0, 2)
-              .map((paragraph) => (
-                <p key={paragraph} className="mb-4 text-lg">
-                  {paragraph}
-                </p>
-              ))}
-            <blockquote className="mx-auto rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
+            <InlineMarkdown className="text-lg" content={aboutUs.markdown} />
+            <blockquote className=" rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
               <p className="mb-4 text-lg">{business?.ownerQuote}</p>
-              <span className="font-medium uppercase text-accent">
-                {business?.ownerName}
-              </span>
-              <span className={`text-base`}> - {business?.ownerTitle}</span>
+              <div className="grid w-1/2">
+                <span className="font-medium uppercase text-accent">
+                  {business?.ownerName}
+                </span>
+                <span className={`text-base`}> - {business?.ownerTitle}</span>
+              </div>
             </blockquote>
             <button className="btn-primary btn w-fit">More about us</button>
           </div>
         </section>
 
         {/* Middle Hero Section */}
-        <section className=" mx-auto mt-32 grid w-11/12 place-items-stretch lg:grid-cols-2 ">
+        <section className=" mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2 ">
           {/* text */}
           <div className="prose order-last flex flex-col justify-center lg:order-first ">
             <span className="mt-12 font-medium uppercase text-accent">
               {mainService?.shortDescription}
             </span>
             <h2 className="mt-0 text-4xl font-bold">{mainService?.title}</h2>
-            {mainService?.markdown
-              .split("\n")
-              .slice(0, 2)
-              .map((paragraph) => (
-                <p key={paragraph} className="mb-4 text-lg">
-                  {paragraph}
-                </p>
-              ))}
+            <InlineMarkdown
+              className="text-lg"
+              content={mainService?.markdown}
+            />
 
             <button className="btn-primary btn w-fit">
               More about {mainService?.title}
@@ -236,7 +230,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* short photo gallery */}
-        <section className="container my-2 mt-32 flex flex-col items-center text-center">
+        <section className="container mx-auto mb-2 mt-32 flex flex-col items-center text-center">
           <span className="font-medium uppercase text-accent">
             Our Portfolio{" "}
           </span>
@@ -247,34 +241,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             }
             , , and more...
           </h2>
-          {/* <DynamicGallery
-            layout="masonry"
-            photos={gallery.map((photo) => {
-              return {
-                src: `https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${photo.public_Id}.${photo.format}`,
-                width: photo.width,
-                height: photo.height,
-                alt: photo.altText,
-                key: photo.public_Id,
-              };
-            })}
-            renderPhoto={({ photo }) => (
-              <div className="relative block h-full w-full">
-                <Image
-                  fill
-                  src={photo.src}
-                  alt={photo.alt || ""}
-                  className=""
-                  placeholder="blur"
-                  blurDataURL={
-                    gallery.find((image) => image.id === photo.key)?.blur_url ||
-                    ""
-                  }
-                />
-              </div>
-            )}
 
-          /> */}
           <DynamicGallery gallery={gallery} />
           <button className="btn-primary btn mt-8">View full gallery </button>
         </section>
@@ -435,6 +402,7 @@ export async function getStaticProps() {
   const bottomHero = await ssg.hero.getBottom.fetch();
   const testimonials = await ssg.testimonial.getFirstTwoHighlighted.fetch();
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
+  aboutUs.markdown = truncateMarkdown(aboutUs.markdown, 700);
   const gallery = await ssg.gallery.getFrontPageGallery.fetch();
 
   const frontHeroImageUrl = cloudinaryUrlGenerator(
@@ -446,10 +414,10 @@ export async function getStaticProps() {
     bottomHero?.PrimaryImage[0]?.image?.format
   );
 
-  const mainService = services.find(
-    (service) => service.position === "SERVICE1"
-  );
-
+  const mainService =
+    services.find((service) => service.position === "SERVICE1") ?? null;
+  if (mainService)
+    mainService.markdown = truncateMarkdown(mainService.markdown, 700);
   const pageTitle = !mainService
     ? "Home"
     : business.title +
@@ -475,4 +443,12 @@ export async function getStaticProps() {
       gallery,
     },
   };
+}
+
+function truncateMarkdown(markdown: string, length: number) {
+  if (markdown.length > length) {
+    return markdown.slice(0, length) + "...";
+  } else {
+    return markdown;
+  }
 }
