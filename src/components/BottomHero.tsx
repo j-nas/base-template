@@ -11,23 +11,12 @@ export const HeroBanner = ({
     PrimaryImage: { blur_url, format, public_Id, id },
     heading,
     ctaText,
-    position,
   },
   businessName,
 }: Props) => {
-  let heroHeight = "";
-  if (position === "BOTTOM") {
-    heroHeight = "80vh";
-  }
-  if (position === "TOP") {
-    heroHeight = "60vh";
-  }
-
   return (
-    <section
-      className={` mx-0 mt-32  ${position === "BOTTOM" ? "md:mx-14" : ""} `}
-    >
-      <div className={`clip-path hero  `}>
+    <section className={`mx-0 mt-32 md:mx-14`}>
+      <div className={`hero`}>
         <CldImg
           alt="hero image"
           blur={blur_url}
@@ -36,7 +25,7 @@ export const HeroBanner = ({
           public_Id={public_Id}
           width={2000}
           id={id}
-          className={`h-[${heroHeight}] object-cover`}
+          className={`h-[80vh] object-cover`}
         />
         <div className="hero-overlay   z-10 bg-black bg-opacity-60 "></div>
         <div className="hero-content z-20 text-center text-white ">
@@ -55,3 +44,5 @@ export const HeroBanner = ({
     </section>
   );
 };
+
+export default HeroBanner;

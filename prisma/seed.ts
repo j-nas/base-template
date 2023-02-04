@@ -121,6 +121,20 @@ async function main() {
   })
   console.log('Bottom Hero created')
 
+  const topHero = await prisma.hero.create({
+    data: {
+      heading: faker.company.bs(),
+      ctaText: faker.lorem.sentence(12),
+      PrimaryImage: {
+        create: {
+          imageId: await validateImage('bottomHero')
+        },
+      },
+      position: 'TOP'
+    },
+  })
+  console.log('Top Hero created')
+
   const service1 = await prisma.service.create({
     data: {
       title: faker.commerce.productName(),
@@ -303,10 +317,12 @@ async function main() {
     testimonial2,
     frontHero,
     bottomHero,
+    topHero,
     business,
     admin,
     client,
     gallery,
+
   )
   async function validateImage(public_id: string) {
 

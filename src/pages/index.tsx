@@ -8,7 +8,7 @@ import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
 import CldImg from "../components/CldImg";
-import { HeroBanner } from "../components/HeroBanner";
+import HeroBanner from "../components/BottomHero";
 
 const DynamicGallery = dynamic(() => import("../components/FrontGallery"), {
   loading: () => <p>Loading...</p>,
@@ -79,7 +79,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         {/* Hero Section */}
         <section className="">
           <div
-            className="clip-path hero relative min-h-[130vh]  lg:bg-fixed"
+            className="hero relative min-h-[130vh]  lg:bg-fixed"
             style={{
               backgroundImage: `url(${frontHeroImageUrl})`,
             }}
