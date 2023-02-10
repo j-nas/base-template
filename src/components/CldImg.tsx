@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { env } from "../env/client.mjs";
 
 type Props = {
   public_Id: string;
@@ -23,7 +24,7 @@ export const CldImg = ({
 }: Props) => {
   return (
     <Image
-      src={`https://res.cloudinary.com/dkascnwj7/image/upload/q_auto:eco,f_auto/v1674866703/base-template/${public_Id}.${format}`}
+      src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/q_auto:eco,f_auto/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}.${format}`}
       alt={alt}
       height={height}
       width={width}
