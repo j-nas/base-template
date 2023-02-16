@@ -1,38 +1,31 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
-import TopHero from "../components/TopHero";
 
-const CldImg = dynamic(() => import("../components/CldImg"));
-const Footer = dynamic(() => import("../components/Footer"));
-const HeroBanner = dynamic(() => import("../components/BottomHero"));
-const Navbar = dynamic(() => import("../components/Navbar"));
-const Markdown = dynamic(() => import("../components/Markdown"));
+const TopHero = dynamic(() => import("../components/TopHero"), {
+  loading: () => <p>Loading...</p>,
+});
+const CldImg = dynamic(() => import("../components/CldImg"), {
+  loading: () => <p>Loading...</p>,
+});
+const Footer = dynamic(() => import("../components/Footer"), {
+  loading: () => <p>Loading...</p>,
+});
+const HeroBanner = dynamic(() => import("../components/BottomHero"), {
+  loading: () => <p>Loading...</p>,
+});
+const Navbar = dynamic(() => import("../components/Navbar"), {
+  loading: () => <p>Loading...</p>,
+});
+const Markdown = dynamic(() => import("../components/Markdown"), {
+  loading: () => <p>Loading...</p>,
+});
 export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
 ) => {
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  useEffect(() => {
-    window.addEventListener(
-      "scroll",
-      () => {
-        setScrollPosition(window.scrollY);
-      },
-      { passive: true }
-    );
-
-    return () => {
-      window.removeEventListener("scroll", () => {
-        setScrollPosition(window.scrollY);
-      });
-    };
-  }, []);
-
   const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
   return (
     <>
@@ -42,11 +35,7 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mx-auto h-full">
-        <Navbar
-          scrollPosition={scrollPosition}
-          business={business}
-          services={services}
-        />
+        <Navbar business={business} services={services} />
         <TopHero pageTitle="About Us" hero={topHero} />
 
         <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2">
@@ -84,7 +73,7 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           {/* text */}
           <div className="prose flex flex-col justify-center">
             <span className="font-medium uppercase text-accent">About Us</span>
-            <h2 className="mt-0 text-4xl font-bold">About {business?.title}</h2>
+            <h2 className="mt-0 font-bold text-4xl">About {business?.title}</h2>
             <Markdown className="text-lg" content={aboutUs.markdown} />
             <blockquote className=" rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
               <p className="mb-4 text-lg">{business?.ownerQuote}</p>

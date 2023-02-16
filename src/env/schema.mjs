@@ -23,6 +23,13 @@ export const serverSchema = z.object({
   DISCORD_CLIENT_SECRET: z.string(),
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
+
+  EMAIL_HOST: z.string(),
+  EMAIL_PASS: z.string(),
+  EMAIL_PORT: z.string(),
+  EMAIL_USER: z.string(),
+  EMAIL_FROM: z.string(),
+  EMAIL_TO: z.string(),
 });
 
 /**
@@ -39,8 +46,13 @@ export const serverEnv = {
   DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+  EMAIL_HOST: process.env.EMAIL_HOST,
+  EMAIL_PASS: process.env.EMAIL_PASS,
+  EMAIL_PORT: process.env.EMAIL_PORT,
+  EMAIL_USER: process.env.EMAIL_USER,
+  EMAIL_FROM: process.env.EMAIL_FROM,
+  EMAIL_TO: process.env.EMAIL_TO,
 };
-
 /**
  * Specify your client-side environment variables schema here.
  * This way you can ensure the app isn't built with invalid env vars.

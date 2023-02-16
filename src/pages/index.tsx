@@ -2,15 +2,16 @@ import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
-import CldImg from "../components/CldImg";
-import HeroBanner from "../components/BottomHero";
 
 const DynamicGallery = dynamic(() => import("../components/FrontGallery"), {
+  loading: () => <p>Loading...</p>,
+});
+
+const CldImg = dynamic(() => import("../components/CldImg"), {
   loading: () => <p>Loading...</p>,
 });
 
@@ -28,27 +29,13 @@ const InlineMarkdown = dynamic(() => import("../components/InlineMarkdown"), {
   loading: () => <p>Loading...</p>,
 });
 
+const HeroBanner = dynamic(() => import("../components/BottomHero"), {
+  loading: () => <p>Loading...</p>,
+});
+
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
 ) => {
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  useEffect(() => {
-    window.addEventListener(
-      "scroll",
-      () => {
-        setScrollPosition(window.scrollY);
-      },
-      { passive: true }
-    );
-
-    return () => {
-      window.removeEventListener("scroll", () => {
-        setScrollPosition(window.scrollY);
-      });
-    };
-  }, []);
-
   const {
     business,
     frontHero,
@@ -70,11 +57,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mx-auto h-full">
-        <DynamicNavbar
-          scrollPosition={scrollPosition}
-          business={business}
-          services={services}
-        />
+        <DynamicNavbar business={business} services={services} />
 
         {/* Hero Section */}
         <section className="">

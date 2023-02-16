@@ -7,6 +7,7 @@ import { heroRouter } from "./routers/hero";
 import { serviceRouter } from "./routers/service";
 import { testimonialRouter } from "./routers/testimonial";
 import { galleryRouter } from "./routers/gallery";
+import { contactFormRouter } from "./routers/contactForm";
 
 /**
  * This is the primary router for your server.
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   service: serviceRouter,
   testimonial: testimonialRouter,
   gallery: galleryRouter,
+  contactForm: contactFormRouter,
   // add more routers here
 });
 

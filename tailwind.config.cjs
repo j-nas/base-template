@@ -9,5 +9,6 @@ module.exports = {
     require("daisyui"),
     require("@tailwindcss/typography"),
     require("tailwind-scrollbar")({ nocompatible: true }),
+    require("tailwindcss-fluid-type"),
   ],
 };

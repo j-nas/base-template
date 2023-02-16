@@ -1,5 +1,6 @@
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Logo from "./Logo";
 import dynamic from "next/dynamic";
@@ -9,7 +10,6 @@ import { type BusinessInfo } from "@prisma/client";
 import { type RouterOutputs } from "../utils/api";
 
 type Props = {
-  scrollPosition: number;
   services: RouterOutputs["service"]["getActive"];
   business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
 };
@@ -28,10 +28,26 @@ const DynamicHamburgerMenu = dynamic(() => import("./HamburgerMenu"), {
   ),
 });
 
-export default function Navbar({ scrollPosition, services, business }: Props) {
+export default function Navbar({ services, business }: Props) {
   const { theme, setTheme } = useTheme();
-
+  const [scrollPosition, setScrollPosition] = useState(0);
   const router = useRouter();
+
+  useEffect(() => {
+    window.addEventListener(
+      "scroll",
+      () => {
+        setScrollPosition(window.scrollY);
+      },
+      { passive: true }
+    );
+
+    return () => {
+      window.removeEventListener("scroll", () => {
+        setScrollPosition(window.scrollY);
+      });
+    };
+  }, []);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
