@@ -79,6 +79,7 @@ export const Contact: NextPage<
             <form
               className="form-control m-4 flex flex-col  rounded-lg px-4 "
               onSubmit={handleSubmit(onSubmit)}
+              data-netlify="true"
             >
               <div className="input-group-lg my-4 flex flex-wrap  justify-between gap-4">
                 <InputWrapper
@@ -126,9 +127,9 @@ export const Contact: NextPage<
             </form>
           </div>
 
-          <div className="lg-auto relative mx-auto mt-8 h-full max-w-xl place-self-stretch overflow-hidden rounded-lg">
+          <div className="lg-auto relative mx-auto mt-8 h-fit max-w-xl place-self-stretch overflow-hidden rounded-lg">
             <div className="peer absolute top-0 left-0 z-20 h-full w-full bg-base-300/60"></div>
-            <div className="peer absolute bottom-0 left-0 z-30 ml-4 mb-4 flex  flex-col  ">
+            <div className="peer absolute bottom-0 left-0 z-30 ml-4 mb-4 flex h-fit  flex-col  ">
               <span className="font-bold">Email</span>
               <Link
                 className="group self-start"
