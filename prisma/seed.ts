@@ -21,8 +21,17 @@ async function main() {
     })),
   })
   console.log('Images created')
+
   const nineGalleryImages = await prisma.image.findMany({
+    where: {
+      public_Id: {
+        not: {
+          startsWith: 'avatar'
+        }
+      }
+    },
     take: 9,
+
   })
   console.log('nineGalleryImages created')
 
@@ -138,7 +147,7 @@ async function main() {
   const service1 = await prisma.service.create({
     data: {
       title: faker.commerce.productName(),
-      pageName: faker.commerce.department(),
+      pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
       icon: "mdi:head-lightbulb-outline",
@@ -159,8 +168,8 @@ async function main() {
 
   const service2 = await prisma.service.create({
     data: {
-      title: faker.commerce.productName(),
-      pageName: faker.commerce.department(),
+      title: faker.commerce.productName(), pageName: faker.helpers.unique(faker.commerce.department),
+
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
       icon: 'mdi:account-hard-hat-outline',
@@ -189,7 +198,7 @@ async function main() {
   const service3 = await prisma.service.create({
     data: {
       title: faker.commerce.productName(),
-      pageName: faker.commerce.department(),
+      pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
       icon: 'mdi:smoke-detector-variant',
@@ -212,7 +221,7 @@ async function main() {
   const service4 = await prisma.service.create({
     data: {
       title: faker.commerce.productName(),
-      pageName: faker.commerce.department(),
+      pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(4),
       icon: 'mdi:smoke-detector-variant',
@@ -235,7 +244,7 @@ async function main() {
   const service5 = await prisma.service.create({
     data: {
       title: faker.commerce.productName(),
-      pageName: faker.commerce.department(),
+      pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(5),
       icon: 'mdi:smoke-detector-variant',

@@ -9,7 +9,7 @@ export default async function getBase64ImageUrl(
 ) {
   let url = ""
   const response = await fetch(
-    `https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/f_jpg,w_8,q_70/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}.${format}`
+    `https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/f_jpg,w_8,q_70/${public_Id}.${format}`
   )
   const buffer = await response.arrayBuffer()
 

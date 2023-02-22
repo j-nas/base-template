@@ -19,9 +19,8 @@ export type CloudinaryResource = {
 export const getResources = async () => {
   const response = await axios.get(
     `https://${env.CLOUDINARY_API_KEY}:${env.CLOUDINARY_API_SECRET}@api.cloudinary.com/v1_1/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/resources/search`,
-    { data: { expression: `folder:${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}` } }
+    { data: { expression: `folder:${"base-template"}` } }
   )
-
 
   return response.data as CloudinaryResource
 
