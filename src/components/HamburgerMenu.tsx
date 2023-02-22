@@ -32,12 +32,11 @@ export default function HamburgerButton({ services, business }: Props) {
       console.log(isOpen, isMounted);
     }, 10);
   }
-
   return (
     <>
       <label
         aria-label="nav menu"
-        className={`swap-rotate swap disabled pl-4 lg:hidden ${
+        className={`swap disabled swap-rotate pl-4 lg:hidden ${
           isOpen ? "pointer-events-none" : ""
         }`}
       >
@@ -88,7 +87,7 @@ export default function HamburgerButton({ services, business }: Props) {
                   <Link
                     href="/"
                     className={`${
-                      router.pathname === "/" ? "btn-accent" : ""
+                      router.asPath === "/" ? "btn-accent" : ""
                     } btn rounded-none `}
                   >
                     Home
@@ -98,7 +97,7 @@ export default function HamburgerButton({ services, business }: Props) {
                   <Link
                     href="/about"
                     className={`${
-                      router.pathname === "/about" ? "btn-accent" : "btn-ghost"
+                      router.asPath === "/about" ? "btn-accent" : "btn-ghost"
                     } btn rounded-none`}
                   >
                     About
@@ -108,9 +107,7 @@ export default function HamburgerButton({ services, business }: Props) {
                   <Link
                     href="/contact"
                     className={`${
-                      router.pathname === "/contact"
-                        ? "btn-accent"
-                        : "btn-ghost"
+                      router.asPath === "/contact" ? "btn-accent" : "btn-ghost"
                     } btn rounded-none `}
                   >
                     Contact
@@ -121,9 +118,7 @@ export default function HamburgerButton({ services, business }: Props) {
                   <Link
                     href="/gallery"
                     className={`${
-                      router.pathname === "/gallery"
-                        ? "btn-accent"
-                        : "btn-ghost"
+                      router.asPath === "/gallery" ? "btn-accent" : "btn-ghost"
                     } btn rounded-none `}
                   >
                     Gallery
@@ -133,7 +128,7 @@ export default function HamburgerButton({ services, business }: Props) {
                   <Link
                     href="/blog"
                     className={`${
-                      router.pathname === "/blog" ? "btn-accent" : "btn-ghost"
+                      router.asPath === "/blog" ? "btn-accent" : "btn-ghost"
                     } btn rounded-none`}
                   >
                     Blog
@@ -147,7 +142,7 @@ export default function HamburgerButton({ services, business }: Props) {
                     <Link
                       href={`/services/${service.pageName}`}
                       className={`btn rounded-none ${
-                        router.pathname === `/services/${service.pageName}`
+                        router.asPath === `/services/${service.pageName}`
                           ? "btn-accent"
                           : "btn-ghost"
                       }`}

@@ -68,7 +68,7 @@ export default function Navbar({ services, business }: Props) {
       <div className="navbar-start">
         <button
           aria-label="home button logo"
-          className="btn-ghost btn fill-white stroke-white text-xl lowercase"
+          className="btn-ghost btn fill-white stroke-white lowercase text-xl"
         >
           <Logo
             className={`z-50 h-auto w-40 ${
@@ -134,15 +134,15 @@ export default function Navbar({ services, business }: Props) {
                 <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
               </svg>
             </Link>
-            <ul className="bg-base-100 p-2">
+            <ul className="bg-base-300 p-2">
               {services.map((service) => (
                 <li key={service.id}>
                   <Link
                     href={`/services/${service.pageName}`}
                     className={`rounded-none ${
-                      router.pathname === `/services/${service.pageName}`
+                      router.asPath.includes(service.pageName)
                         ? "btn-accent  btn"
-                        : "btn-ghost  btn"
+                        : "btn-ghost btn text-base-content"
                     }`}
                   >
                     {service.title}
