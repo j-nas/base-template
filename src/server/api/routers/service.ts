@@ -1,6 +1,35 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 import { Services } from "@prisma/client";
+import { exclude } from "../../../utils/exclude";
+
+const serviceSchema = z.object({
+  id: z.string(),
+  pageName: z.string(),
+  title: z.string(),
+  shortDescription: z.string(),
+  markdown: z.string(),
+  icon: z.string(),
+  position: z.nativeEnum(Services).nullable(),
+
+  PrimaryImage: z.object({
+    id: z.string(),
+    height: z.number(),
+    width: z.number(),
+    public_Id: z.string(),
+    format: z.string(),
+    blur_url: z.string(),
+  }),
+
+  SecondaryImage: z.object({
+    id: z.string(),
+    height: z.number(),
+    width: z.number(),
+    public_Id: z.string(),
+    format: z.string(),
+    blur_url: z.string(),
+  })
+})
 
 export const serviceRouter = createTRPCRouter({
 
@@ -21,72 +50,42 @@ export const serviceRouter = createTRPCRouter({
     });
   }
   ),
-  get: publicProcedure
-    .input(z.object({ id: z.string() }))
+  getByPageName: publicProcedure
+    .input(z.object({ pageName: z.string() }))
+    .output(serviceSchema)
     .query(async ({ ctx, input }) => {
-      return ctx.prisma.service.findUnique({
+      const data = await ctx.prisma.service.findUniqueOrThrow({
         where: {
-          id: input.id,
+          pageName: input.pageName,
         },
-        include: {
+
+
+      });
+      const primaryImage = await ctx.prisma.image.findFirstOrThrow({
+        where: {
           PrimaryImage: {
-            select: {
-              image: {
-                select: {
-                  format: true,
-                  height: true,
-                  width: true,
-                  public_Id: true,
-                  id: true,
-                },
-              }
-            },
-          },
-          SecondaryImage: {
-            select: {
-              image: {
-                select: {
-                  format: true,
-                  height: true,
-                  width: true,
-                  public_Id: true,
-                  id: true,
-                },
-              }
-            },
-          },
+            some: {
+              serviceId: data.id,
+            }
+          }
         },
       });
+      const secondaryImage = await ctx.prisma.image.findFirstOrThrow({
+        where: {
+          SecondaryImage: {
+            some: {
+              serviceId: data.id,
+            }
+          }
+        },
+      });
+
+      return { ...data, PrimaryImage: primaryImage, SecondaryImage: secondaryImage }
+
     }
     ),
   getActive: publicProcedure
-    .output(z.object({
-      id: z.string(),
-      pageName: z.string(),
-      title: z.string(),
-      shortDescription: z.string(),
-      markdown: z.string(),
-      icon: z.string(),
-      position: z.nativeEnum(Services).nullable(),
-
-      PrimaryImage: z.object({
-        id: z.string(),
-        height: z.number(),
-        width: z.number(),
-        public_Id: z.string(),
-        format: z.string(),
-        blur_url: z.string(),
-      }),
-
-      SecondaryImage: z.object({
-        id: z.string(),
-        height: z.number(),
-        width: z.number(),
-        public_Id: z.string(),
-        format: z.string(),
-        blur_url: z.string(),
-      })
-    }).array())
+    .output(serviceSchema.array())
     .query(async ({ ctx }) => {
       const data = await ctx.prisma.service.findMany({
         where: {
@@ -151,6 +150,7 @@ export const serviceRouter = createTRPCRouter({
     }
 
     ),
+
   removePosition: editorProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
