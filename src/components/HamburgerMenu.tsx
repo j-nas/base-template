@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import router from "next/router";
 import dynamic from "next/dynamic";
@@ -17,6 +17,20 @@ type Props = {
 export default function HamburgerButton({ services, business }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const window = document.querySelector("html");
+    if (!window) return;
+    if (isOpen) {
+      window.style.overflow = "hidden";
+    } else {
+      window.style.overflow = "auto";
+    }
+    return () => {
+      window.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   function toggleOpen() {
     if (isMounted) {
       setIsMounted(!isMounted);
@@ -87,7 +101,7 @@ export default function HamburgerButton({ services, business }: Props) {
                   <Link
                     href="/"
                     className={`${
-                      router.asPath === "/" ? "btn-accent" : ""
+                      router.asPath === "/" ? "btn-accent" : "btn-ghost"
                     } btn rounded-none `}
                   >
                     Home
