@@ -1,6 +1,24 @@
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure, editorProcedure } from '../trpc';
 
+const testimonialSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  quote: z.string(),
+  title: z.string(),
+  highlighted: z.boolean(),
+  AvatarImage: z.array(z.object({
+    id: z.string(),
+    image: z.object({
+      id: z.string(),
+      height: z.number(),
+      width: z.number(),
+      public_Id: z.string(),
+      format: z.string(),
+    }),
+  })).optional(),
+});
+
 export const testimonialRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.testimonial.findMany({

@@ -20,10 +20,12 @@ export default function InputWrapper({
         <span className={`label-text ${error && "text-error"}`}>{label}</span>
       </label>
       <div
-        className={`${
-          error ? "tooltip tooltip-open tooltip-top tooltip-error w-full" : ""
+        className={`tooltip ${
+          error
+            ? " tooltip-open tooltip-top tooltip-error w-full"
+            : "w-full bg-transparent "
         }`}
-        data-tip={error}
+        data-tip={error ? error : label}
       >
         {children}
       </div>
