@@ -36,7 +36,10 @@ export const Services: NextPage<
 
         <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 ">
           {services.map((service) => (
-            <div key={service.id} className="card md:card-side">
+            <div
+              key={service.id}
+              className="card bg-base-300 shadow-2xl md:card-side"
+            >
               <figure className="w-full md:max-w-xs">
                 <CldImage
                   alt={service.shortDescription}

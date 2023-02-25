@@ -140,6 +140,18 @@ export default function HamburgerButton({ services, business }: Props) {
                 </li>
                 <li>
                   <Link
+                    href="/testimonials"
+                    className={`${
+                      router.asPath === "/testimonials"
+                        ? "btn-accent"
+                        : "btn-ghost"
+                    } btn rounded-none `}
+                  >
+                    Testimonials
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     href="/blog"
                     className={`${
                       router.asPath === "/blog" ? "btn-accent" : "btn-ghost"

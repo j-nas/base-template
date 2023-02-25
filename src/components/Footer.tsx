@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function Footer({ business, services, aboutSummary }: Props) {
-  console.table(business);
   return (
     <>
       <footer className="footer bg-base-200 p-10 text-base-content ">
@@ -29,6 +28,12 @@ export default function Footer({ business, services, aboutSummary }: Props) {
 
           <Link href="/gallery" className="link-hover link">
             Gallery
+          </Link>
+          <Link href="/testimonial" className="link-hover link">
+            Testimonial
+          </Link>
+          <Link href="/blog" className="link-hover link">
+            Blog
           </Link>
         </nav>
         <nav>

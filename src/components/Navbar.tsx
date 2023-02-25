@@ -165,6 +165,18 @@ export default function Navbar({ services, business }: Props) {
           </li>
           <li>
             <Link
+              href="/testimonials"
+              className={`${
+                router.pathname === "/testimonials"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
+              } rounded-none `}
+            >
+              testimonials
+            </Link>
+          </li>
+          <li>
+            <Link
               href="/blog"
               className={`${
                 router.pathname === "/blog"
