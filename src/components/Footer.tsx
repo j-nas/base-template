@@ -10,33 +10,28 @@ type Props = {
 };
 
 export default function Footer({ business, services, aboutSummary }: Props) {
+  console.table(business);
   return (
     <>
       <footer className="footer bg-base-200 p-10 text-base-content ">
         <nav>
           <span className="footer-title">Company</span>
-          <Link href="/" as="/#top">
-            Home
-          </Link>
-          <Link href="/about/" as="/about/#top" className="link-hover link">
+          <Link href="/">Home</Link>
+          <Link href="/about" className="link-hover link">
             About us
           </Link>
-          <Link
-            href="/services/"
-            as="/services/#top"
-            className="link-hover link"
-          >
+          <Link href="/services" className="link-hover link">
             Services
           </Link>
-          <Link href="/contact/" as="/contact/#top" className="link-hover link">
+          <Link href="/contact" className="link-hover link">
             Contact
           </Link>
 
-          <Link href="/gallery/" as="/gallery/#top" className="link-hover link">
+          <Link href="/gallery" className="link-hover link">
             Gallery
           </Link>
         </nav>
-        <div>
+        <nav>
           <span className="footer-title text-base-content">Services</span>
           {services?.map((service) => (
             <Link
@@ -47,13 +42,14 @@ export default function Footer({ business, services, aboutSummary }: Props) {
               {service.title}
             </Link>
           ))}
-        </div>
+        </nav>
+        {/* </div> */}
         <div className="prose">
           <h3>About us</h3>
           <p className="">{aboutSummary.slice(0, 300)}</p>
         </div>
-        <div>
-          <div className="flex flex-col pb-2">
+        <div className="divide-y-2">
+          <div className="flex flex-col ">
             <span className="">{business?.address}</span>
             <span>
               {business?.city}
@@ -66,6 +62,10 @@ export default function Footer({ business, services, aboutSummary }: Props) {
                 {business.telephone}
               </Link>
             </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="">{business.hours}</span>
+            <span className="">{business?.holidays}</span>
           </div>
         </div>
       </footer>

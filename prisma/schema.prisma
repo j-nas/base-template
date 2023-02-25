@@ -82,6 +82,8 @@ model BusinessInfo {
     ownerName    String
     ownerTitle   String
     ownerQuote   String
+    hours        String
+    holidays     String
     avatarImage  AvatarImage[]
     businessLogo BusinessLogo[]
     facebookUrl  String?

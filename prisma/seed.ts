@@ -49,6 +49,30 @@ async function main() {
   })
   console.log('Gallery created')
 
+  const fullGalleryImages = await prisma.image.findMany({
+    where: {
+      public_Id: {
+        not: {
+          startsWith: 'avatar'
+        }
+      }
+    },
+  })
+
+  const fullGallery = await prisma.gallery.create({
+    data: {
+      name: 'Gallery',
+      ImageForGallery: {
+        create: fullGalleryImages.map((image) => ({
+          imageId: image.id,
+          altText: faker.lorem.sentence(3),
+        })),
+      },
+      position: 'MAIN',
+    }
+  })
+  console.log('Full Gallery created')
+
 
 
 
@@ -79,6 +103,8 @@ async function main() {
       ownerTitle: faker.name.jobTitle(),
       ownerQuote: faker.company.catchPhrase(),
       isActive: true,
+      hours: 'Mon - Fri: 9am - 5pm',
+      holidays: 'Closed on all holidays',
       facebookUrl: 'https://facebook.com',
       instagramUrl: 'https://instagram.com',
       twitterUrl: 'https://twitter.com',
@@ -315,6 +341,25 @@ async function main() {
     },
   })
   console.log('Testimonial 2 created')
+
+  const moreTestimonials = () => {
+    const data = []
+    for (let i = 0; i < 10; i++) {
+      data.push({
+        name: faker.name.firstName() + ' ' + faker.name.lastName(),
+        title: faker.name.jobTitle() + ' of ' + faker.company.name(),
+        quote: faker.company.bs(),
+        highlighted: false,
+      })
+
+    }
+    return prisma.testimonial.createMany({
+      data,
+      skipDuplicates: true,
+    })
+  }
+  const moreTestimonialsCreated = await moreTestimonials()
+  console.log('More Testimonials created')
   console.log(
     aboutUs,
     service1,
@@ -324,6 +369,7 @@ async function main() {
     service5,
     testimonial1,
     testimonial2,
+    moreTestimonialsCreated,
     frontHero,
     bottomHero,
     topHero,
