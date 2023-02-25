@@ -16,7 +16,9 @@ import { z } from "zod";
 const TopHero = dynamic(() => import("../components/TopHero"));
 const InputWrapper = dynamic(() => import("../components/InputWrapper"));
 const Link = dynamic(() => import("next/link"));
-const CldImg = dynamic(() => import("../components/CldImg"));
+const CldImg = dynamic(() =>
+  import("next-cloudinary").then((mod) => mod.CldImage)
+);
 const Footer = dynamic(() => import("../components/Footer"));
 const Navbar = dynamic(() => import("../components/Navbar"));
 
@@ -109,7 +111,7 @@ export const Contact: NextPage<
               </div>
               <InputWrapper
                 htmlFor="message"
-                label="Name"
+                label="Message"
                 error={errors.message?.message}
               >
                 <textarea
@@ -126,41 +128,43 @@ export const Contact: NextPage<
               )}
             </form>
           </div>
-
-          <div className="lg-auto relative mx-auto mt-8 h-fit max-w-xl place-self-stretch overflow-hidden rounded-lg">
-            <div className="peer absolute top-0 left-0 z-20 h-full w-full bg-base-300/60"></div>
-            <div className="peer absolute bottom-0 left-0 z-30 ml-4 mb-4 flex h-fit  flex-col  ">
-              <span className="font-bold">Email</span>
-              <Link
-                className="group self-start"
-                href={`mailto:${business.email}`}
-              >
-                {business.email}
-                <span className="block h-0.5 max-w-0 bg-white transition-all duration-500 group-hover:max-w-full"></span>
-              </Link>
-              <span className="font-bold">Phone</span>
-              <Link
-                className="group self-start"
-                href={`tel:${business.telephone}`}
-              >
-                {business.telephone}
-                <span className=" block h-0.5 max-w-0 bg-white transition-all duration-500 group-hover:max-w-full"></span>
-              </Link>
-              <span className="font-bold">Address</span>
-              <span> {business.address}</span>
-              <span> {business.city + ", " + business.province}</span>
-              <span> {business.postalCode}</span>
+          <div className="mx-auto">
+            <div className="lg-auto relative mx-auto mt-8 h-max  max-w-xl place-self-stretch overflow-hidden rounded-lg">
+              <div className="peer absolute top-0 left-0 z-20 h-full w-full bg-base-300/60"></div>
+              <div className="peer absolute bottom-0 left-0 z-30 ml-4 mb-4 flex h-fit  flex-col  ">
+                <span className="font-bold">Email</span>
+                <Link
+                  className="group self-start"
+                  href={`mailto:${business.email}`}
+                >
+                  {business.email}
+                  <span className="block h-0.5 max-w-0 bg-base-content transition-all duration-500 group-hover:max-w-full"></span>
+                </Link>
+                <span className="font-bold">Phone</span>
+                <Link
+                  className="group self-start"
+                  href={`tel:${business.telephone}`}
+                >
+                  {business.telephone}
+                  <span className=" block h-0.5 max-w-0 bg-base-content transition-all duration-500 group-hover:max-w-full"></span>
+                </Link>
+                <span className="font-bold">Address</span>
+                <span> {business.address}</span>
+                <span> {business.city + ", " + business.province}</span>
+                <span> {business.postalCode}</span>
+              </div>
+              <CldImg
+                alt="hero image"
+                blurDataURL={blur_url}
+                format={format}
+                height={1200}
+                src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}`}
+                width={1200}
+                crop="fill"
+                id={id}
+                className={`z-10  object-none object-top transition-all duration-300 ease-in-out peer-hover:scale-125 hover:scale-125`}
+              />
             </div>
-            <CldImg
-              alt="hero image"
-              blur={blur_url}
-              format={format}
-              height={height}
-              public_Id={public_Id}
-              width={width}
-              id={id}
-              className={`z-10  object-none object-top transition-all duration-300 ease-in-out peer-hover:scale-125 hover:scale-125`}
-            />
           </div>
         </section>
 
@@ -185,7 +189,7 @@ export async function getStaticProps() {
   const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
   const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-
+  console.log(business);
   const mainService =
     services.find((service) => service.position === "SERVICE1") ?? null;
   const pageTitle = !mainService
