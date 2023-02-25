@@ -43,4 +43,42 @@ export const galleryRouter = createTRPCRouter({
       return await Promise.all(img);
     }
     ),
+  getMainGallery: publicProcedure
+    .output(z.object({
+      id: z.string(),
+      format: z.string(),
+      height: z.number(),
+      width: z.number(),
+      public_Id: z.string(),
+      blur_url: z.string(),
+      altText: z.string(),
+      index: z.number(),
+    }).array())
+    .query(async ({ ctx }) => {
+      const images = await ctx.prisma.image.findMany({
+        where: {
+          ImageForGallery: {
+            some: {
+              gallery: {
+                position: "MAIN"
+              }
+            }
+          }
+        },
+      });
+      return await Promise.all(images.map(async (image, index) => {
+        return {
+          ...image,
+          ...await ctx.prisma.imageForGallery.findFirstOrThrow({
+            where: {
+              imageId: image.id,
+            },
+            select: {
+              altText: true,
+            },
+          }),
+          index,
+        }
+      }));
+    }),
 });
