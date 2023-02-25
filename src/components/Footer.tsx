@@ -48,7 +48,7 @@ export default function Footer({ business, services, aboutSummary }: Props) {
           <h3>About us</h3>
           <p className="">{aboutSummary.slice(0, 300)}</p>
         </div>
-        <div className="divide-y-2">
+        <div className="">
           <div className="flex flex-col ">
             <span className="">{business?.address}</span>
             <span>

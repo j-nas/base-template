@@ -20,18 +20,20 @@ const testimonialSchema = z.object({
 });
 
 export const testimonialRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.testimonial.findMany({
-      include: {
-        AvatarImage: {
-          include: {
-            image: true,
+  getAll: publicProcedure
+    .output(z.array(testimonialSchema))
+    .query(({ ctx }) => {
+      return ctx.prisma.testimonial.findMany({
+        include: {
+          AvatarImage: {
+            include: {
+              image: true,
+            }
           }
-        }
-      },
-    });
-  }
-  ),
+        },
+      });
+    }
+    ),
   create: editorProcedure
     .input(z.object({
       name: z.string(),

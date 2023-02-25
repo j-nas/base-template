@@ -20,13 +20,21 @@ const HeroBanner = dynamic(() => import("../components/BottomHero"), {
 const Navbar = dynamic(() => import("../components/Navbar"), {
   loading: () => <p>Loading...</p>,
 });
-const Markdown = dynamic(() => import("../components/Markdown"), {
+const Testimonial = dynamic(() => import("../components/Testimonial"), {
   loading: () => <p>Loading...</p>,
 });
 export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
 ) => {
-  const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
+  const {
+    business,
+    testimonials,
+    topHero,
+    services,
+    bottomHero,
+    aboutUs,
+    pageTitle,
+  } = props;
   return (
     <>
       <Head>
@@ -36,9 +44,25 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
       </Head>
       <main className="mx-auto h-full">
         <Navbar business={business} services={services} />
-        <TopHero pageTitle="About Us" hero={topHero} />
+        <TopHero pageTitle="Testimonials" hero={topHero} />
 
-        <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2"></section>
+        <section className="mx-2 mt-32 flex flex-col items-center text-center">
+          <span className="font-medium uppercase text-accent">
+            Our Reviews{" "}
+          </span>
+          <h2 className="mt-2 font-bold text-5xl">What our clients say</h2>
+          <p className="mx-2 mt-2 max-w-xl">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Hic qui
+            iure illo! Expedita consequuntur obcaecati omnis ipsum quis
+            deleniti? Temporibus!
+          </p>
+          {/* div with 2 cards in a grid */}
+          <div className="mt-12 mb-6 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24">
+            {testimonials?.map((testimonial) => (
+              <Testimonial testimonial={testimonial} key={testimonial.id} />
+            ))}
+          </div>
+        </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
         <Footer
           aboutSummary={aboutUs.summary}
@@ -82,6 +106,7 @@ export async function getStaticProps() {
       topHero,
       aboutUs,
       pageTitle,
+      testimonials,
     },
   };
 }
