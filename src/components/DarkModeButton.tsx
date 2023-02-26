@@ -6,7 +6,7 @@ type Props = {
 export default function DarkModeButton({ theme, toggleTheme }: Props) {
   return (
     <>
-      <label aria-label="theme switch" className="swap-rotate swap">
+      <label aria-label="theme switch" className="swap swap-rotate pl-2">
         {/* <!-- this hidden checkbox controls the state --> */}
         <input
           type="checkbox"
