@@ -73,7 +73,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <h1 className="mb-5 -mt-32 font-semibold uppercase text-primary">
                   {business?.title}
                 </h1>
-                <h2 className="mb-5 text-5xl font-bold md:text-7xl">
+                <h2 className="mb-5 font-bold text-5xl md:text-7xl">
                   {frontHero?.heading}
                 </h2>
                 <p className="mb-5 text-xl">{frontHero?.ctaText}</p>
@@ -99,7 +99,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                       alt="icon"
                     />
                   </div>
-                  <h2 className=" text-center text-xl font-medium">
+                  <h2 className=" text-center font-medium text-xl">
                     {service.title}
                   </h2>
                   <p className="text-center">{service.shortDescription}</p>
@@ -145,7 +145,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           {/* text */}
           <div className="prose flex flex-col justify-center">
             <span className="font-medium uppercase text-accent">About Us</span>
-            <h2 className="mt-0 text-4xl font-bold">About {business?.title}</h2>
+            <h2 className="mt-0 font-bold text-4xl">About {business?.title}</h2>
             <InlineMarkdown className="text-lg" content={aboutUs.markdown} />
             <blockquote className=" rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
               <p className="mb-4 text-lg">{business?.ownerQuote}</p>
@@ -167,7 +167,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             <span className="mt-12 font-medium uppercase text-accent">
               {mainService?.shortDescription}
             </span>
-            <h2 className="mt-0 text-4xl font-bold">{mainService?.title}</h2>
+            <h2 className="mt-0 font-bold text-4xl">{mainService?.title}</h2>
             <InlineMarkdown
               className="text-lg"
               content={mainService?.markdown}
@@ -215,7 +215,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <span className="font-medium uppercase text-accent">
             Our Portfolio{" "}
           </span>
-          <h2 className="mx-1 mt-2 mb-6 break-words text-3xl font-bold md:text-5xl">
+          <h2 className="mx-1 mt-2 mb-6 break-words font-bold text-3xl md:text-5xl">
             {
               services?.find((service) => service.position === "SERVICE1")
                 ?.title
@@ -232,7 +232,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <span className="font-medium uppercase text-accent">
             Our Reviews{" "}
           </span>
-          <h2 className="mt-2 text-5xl font-bold">What our clients say</h2>
+          <h2 className="mt-2 font-bold text-5xl">What our clients say</h2>
           <p className="mx-2 mt-2 max-w-xl">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Hic qui
             iure illo! Expedita consequuntur obcaecati omnis ipsum quis
@@ -241,10 +241,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           {/* div with 2 cards in a grid */}
           <div className="mt-12 mb-6 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24">
             {testimonials?.slice(0, 2).map((testimonial) => (
-              <DynamicTestimonial
-                testimonial={testimonial}
-                key={testimonial.id}
-              />
+              <DynamicTestimonial {...testimonial} key={testimonial.id} />
             ))}
           </div>
           <button className="btn-primary btn">More reviews</button>

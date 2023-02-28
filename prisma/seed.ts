@@ -428,7 +428,8 @@ async function main() {
   const testimonial1 = await prisma.testimonial.create({
     data: {
       name: faker.name.firstName('female') + ' ' + faker.name.lastName(),
-      title: faker.name.jobTitle() + ' of ' + faker.company.name(),
+      title: faker.name.jobTitle(),
+      company: faker.company.name(),
       quote: faker.company.bs(),
       highlighted: true,
       AvatarImage: {
@@ -442,7 +443,8 @@ async function main() {
   const testimonial2 = await prisma.testimonial.create({
     data: {
       name: faker.name.firstName('male') + ' ' + faker.name.lastName(),
-      title: faker.name.jobTitle() + ' of ' + faker.company.name(),
+      title: faker.name.jobTitle(),
+      company: faker.company.name(),
       quote: faker.company.bs(),
       highlighted: true,
       AvatarImage: {
@@ -459,7 +461,8 @@ async function main() {
     for (let i = 0; i < 10; i++) {
       data.push({
         name: faker.name.firstName() + ' ' + faker.name.lastName(),
-        title: faker.name.jobTitle() + ' of ' + faker.company.name(),
+        title: faker.name.jobTitle(),
+        company: faker.company.name(),
         quote: faker.company.bs(),
         highlighted: false,
       })
@@ -508,7 +511,7 @@ async function main() {
 
         PrimaryImage: {
           create: {
-            imageId: await validateImage('commercialpri')
+            imageId: await validateImage('commercial-primary')
           }
         },
 

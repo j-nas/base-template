@@ -6,57 +6,75 @@ const testimonialSchema = z.object({
   name: z.string(),
   quote: z.string(),
   title: z.string(),
+  company: z.string(),
   highlighted: z.boolean(),
-  AvatarImage: z.array(z.object({
+
+  image: z.object({
     id: z.string(),
-    image: z.object({
-      id: z.string(),
-      height: z.number(),
-      width: z.number(),
-      public_Id: z.string(),
-      format: z.string(),
-    }),
-  })).optional(),
+    height: z.number(),
+    width: z.number(),
+    public_Id: z.string(),
+    format: z.string(),
+  }).nullable(),
 });
+
+
 
 export const testimonialRouter = createTRPCRouter({
   getAll: publicProcedure
     .output(z.array(testimonialSchema))
-    .query(({ ctx }) => {
-      return ctx.prisma.testimonial.findMany({
+    .query(async ({ ctx }) => {
+      const data = await ctx.prisma.testimonial.findMany({
         include: {
           AvatarImage: {
-            include: {
+            select: {
               image: true,
             }
           }
         },
       });
+
+      return data.map((item) => {
+        return {
+          ...item,
+          image: item.AvatarImage?.image || null,
+        }
+      }
+      )
+
     }
     ),
-  create: editorProcedure
+  getOne: publicProcedure
     .input(z.object({
-      name: z.string(),
-      quote: z.string(),
-      avatarImage: z.string(),
-      title: z.string(),
+      id: z.string(),
     }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.testimonial.create({
-        data: {
-          name: input.name,
-          quote: input.quote,
+    .output(testimonialSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.testimonial.findUniqueOrThrow({
+        where: {
+          id: input.id,
+        },
+        include: {
           AvatarImage: {
-            create: {
-              imageId: input.avatarImage
+            select: {
+              image: true,
             }
           }
-          ,
-          title: input.title,
         },
       });
+
+      return {
+        ...data,
+        image: data?.AvatarImage?.image || null,
+      }
     }
     ),
+
+
+
+
+
+
   edit: editorProcedure
     .input(z.object({
       id: z.string(),
@@ -121,23 +139,7 @@ export const testimonialRouter = createTRPCRouter({
     }
     ),
   getFirstTwoHighlighted: publicProcedure
-    .output(z.array(z.object({
-      id: z.string(),
-      name: z.string(),
-      quote: z.string(),
-      title: z.string(),
-      highlighted: z.boolean(),
-      AvatarImage: z.array(z.object({
-        id: z.string(),
-        image: z.object({
-          id: z.string(),
-          height: z.number(),
-          width: z.number(),
-          public_Id: z.string(),
-          format: z.string(),
-        }),
-      })).optional(),
-    })))
+    .output(z.array(testimonialSchema))
     .query(async ({ ctx }) => {
       const data = await ctx.prisma.testimonial.findMany({
         where: {
@@ -145,7 +147,7 @@ export const testimonialRouter = createTRPCRouter({
         },
         include: {
           AvatarImage: {
-            include: {
+            select: {
               image: true,
             }
           }
@@ -153,7 +155,13 @@ export const testimonialRouter = createTRPCRouter({
         take: 2,
       });
 
-      return data
+      return data.map((item) => {
+        return {
+          ...item,
+          image: item.AvatarImage?.image || null,
+        }
+      }
+      )
     }
     ),
 

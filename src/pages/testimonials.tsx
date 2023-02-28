@@ -57,9 +57,9 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             deleniti? Temporibus!
           </p>
           {/* div with 2 cards in a grid */}
-          <div className="mt-12 mb-6 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24">
+          <div className="mt-12 mb-6 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24 xl:grid-cols-3">
             {testimonials?.map((testimonial) => (
-              <Testimonial testimonial={testimonial} key={testimonial.id} />
+              <Testimonial {...testimonial} key={testimonial.id} />
             ))}
           </div>
         </section>
