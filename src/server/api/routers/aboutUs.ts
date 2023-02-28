@@ -7,7 +7,7 @@ const aboutUsOutputSchema = z.object({
   summary: z.string(),
   markdown: z.string(),
   inUse: z.boolean(),
-  PrimaryImage: z.object({
+  primaryImage: z.object({
     format: z.string(),
     height: z.number(),
     width: z.number(),
@@ -15,7 +15,7 @@ const aboutUsOutputSchema = z.object({
     id: z.string(),
     blur_url: z.string(),
   }),
-  SecondaryImage: z.object({
+  secondaryImage: z.object({
     format: z.string(),
     height: z.number(),
     width: z.number(),
@@ -42,7 +42,7 @@ export const aboutUsRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
-          PrimaryImage: {
+          primaryImage: {
             select: {
               image: {
                 select: {
@@ -56,7 +56,7 @@ export const aboutUsRouter = createTRPCRouter({
               }
             }
           },
-          SecondaryImage: {
+          secondaryImage: {
             select: {
               image: {
                 select: {
@@ -83,7 +83,7 @@ export const aboutUsRouter = createTRPCRouter({
       })
       const primaryImage = await ctx.prisma.image.findFirstOrThrow({
         where: {
-          PrimaryImage: {
+          primaryImage: {
             some: {
               aboutUsId: aboutUs.id,
             }
@@ -92,7 +92,7 @@ export const aboutUsRouter = createTRPCRouter({
       })
       const secondaryImage = await ctx.prisma.image.findFirstOrThrow({
         where: {
-          SecondaryImage: {
+          secondaryImage: {
             some: {
               aboutUsId: aboutUs.id,
             }
@@ -101,8 +101,8 @@ export const aboutUsRouter = createTRPCRouter({
       })
       return {
         ...aboutUs,
-        PrimaryImage: primaryImage,
-        SecondaryImage: secondaryImage
+        primaryImage: primaryImage,
+        secondaryImage: secondaryImage
       }
 
     }
@@ -123,12 +123,12 @@ export const aboutUsRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          PrimaryImage: {
+          primaryImage: {
             create: {
               imageId: input.primaryImage
             }
           },
-          SecondaryImage: {
+          secondaryImage: {
             create: {
               imageId: input.secondaryImage
             }
@@ -155,12 +155,12 @@ export const aboutUsRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          PrimaryImage: {
+          primaryImage: {
             create: {
               imageId: input.primaryImage
             }
           },
-          SecondaryImage: {
+          secondaryImage: {
             create: {
               imageId: input.secondaryImage
             }

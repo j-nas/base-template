@@ -12,7 +12,7 @@ const serviceSchema = z.object({
   icon: z.string(),
   position: z.nativeEnum(Services).nullable(),
 
-  PrimaryImage: z.object({
+  primaryImage: z.object({
     id: z.string(),
     height: z.number(),
     width: z.number(),
@@ -21,7 +21,7 @@ const serviceSchema = z.object({
     blur_url: z.string(),
   }),
 
-  SecondaryImage: z.object({
+  secondaryImage: z.object({
     id: z.string(),
     height: z.number(),
     width: z.number(),
@@ -36,12 +36,12 @@ export const serviceRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.service.findMany({
       include: {
-        PrimaryImage: {
+        primaryImage: {
           select: {
             image: true,
           }
         },
-        SecondaryImage: {
+        secondaryImage: {
           select: {
             image: true,
           }
@@ -63,7 +63,7 @@ export const serviceRouter = createTRPCRouter({
       });
       const primaryImage = await ctx.prisma.image.findFirstOrThrow({
         where: {
-          PrimaryImage: {
+          primaryImage: {
             some: {
               serviceId: data.id,
             }
@@ -72,7 +72,7 @@ export const serviceRouter = createTRPCRouter({
       });
       const secondaryImage = await ctx.prisma.image.findFirstOrThrow({
         where: {
-          SecondaryImage: {
+          secondaryImage: {
             some: {
               serviceId: data.id,
             }
@@ -80,7 +80,7 @@ export const serviceRouter = createTRPCRouter({
         },
       });
 
-      return { ...data, PrimaryImage: primaryImage, SecondaryImage: secondaryImage }
+      return { ...data, primaryImage: primaryImage, secondaryImage: secondaryImage }
 
     }
     ),
@@ -98,18 +98,18 @@ export const serviceRouter = createTRPCRouter({
       const services = data.map(async (service) => {
         return {
           ...service,
-          PrimaryImage: await ctx.prisma.image.findFirstOrThrow({
+          primaryImage: await ctx.prisma.image.findFirstOrThrow({
             where: {
-              PrimaryImage: {
+              primaryImage: {
                 some: {
                   serviceId: service.id,
                 }
               }
             }
           }),
-          SecondaryImage: await ctx.prisma.image.findFirstOrThrow({
+          secondaryImage: await ctx.prisma.image.findFirstOrThrow({
             where: {
-              SecondaryImage: {
+              secondaryImage: {
                 some: {
                   serviceId: service.id,
                 }
@@ -131,7 +131,7 @@ export const serviceRouter = createTRPCRouter({
           position: input.position,
         },
         include: {
-          PrimaryImage: {
+          primaryImage: {
             select: {
               image: true,
 
@@ -139,7 +139,7 @@ export const serviceRouter = createTRPCRouter({
             take: 1,
 
           },
-          SecondaryImage: {
+          secondaryImage: {
             select: {
               image: true,
             },
@@ -181,12 +181,12 @@ export const serviceRouter = createTRPCRouter({
           shortDescription: input.shortDescription,
           icon: input.icon,
           pageName: input.title.toLowerCase().replace(/ /g, "-"),
-          PrimaryImage: {
+          primaryImage: {
             create: {
               imageId: input.primaryImage
             }
           },
-          SecondaryImage: {
+          secondaryImage: {
             create: {
               imageId: input.secondaryImage
             }
@@ -215,12 +215,12 @@ export const serviceRouter = createTRPCRouter({
           markdown: input.markdown,
           shortDescription: input.shortDescription,
           icon: input.icon,
-          PrimaryImage: {
+          primaryImage: {
             create: {
               imageId: input.primaryImage
             }
           },
-          SecondaryImage: {
+          secondaryImage: {
             create: {
               imageId: input.secondaryImage
             }

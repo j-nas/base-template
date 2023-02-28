@@ -8,7 +8,7 @@ type Props = {
 
 export default function TopHero({
   hero: {
-    PrimaryImage: { blur_url, format, id, height, public_Id, width },
+    primaryImage: { blur_url, format, id, height, public_Id, width },
   },
   pageTitle,
 }: Props) {
@@ -28,7 +28,7 @@ export default function TopHero({
         <div className="hero-overlay relative z-10 bg-black bg-opacity-60 "></div>
         <div className="hero-content z-20 text-center text-white ">
           <div className="max-w-md">
-            <h1 className="mb-5 text-5xl font-bold md:text-7xl">{pageTitle}</h1>
+            <h1 className="mb-5 font-bold text-5xl md:text-7xl">{pageTitle}</h1>
           </div>
         </div>
       </div>

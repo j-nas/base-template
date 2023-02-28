@@ -63,24 +63,24 @@ export const ServicePage = (
                 <div className="col-span-10 col-start-1 row-start-1 h-full ">
                   <CldImg
                     alt={service.title}
-                    format={service.PrimaryImage.format}
+                    format={service.primaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={service.PrimaryImage.public_Id}
-                    id={service.PrimaryImage.id}
-                    blur={service.PrimaryImage.blur_url}
+                    public_Id={service.primaryImage.public_Id}
+                    id={service.primaryImage.id}
+                    blur={service.primaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-3 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
                   <CldImg
                     alt="About us"
-                    format={service.SecondaryImage.format}
+                    format={service.secondaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={service.SecondaryImage.public_Id}
-                    id={service.SecondaryImage.id}
-                    blur={service.SecondaryImage.blur_url}
+                    public_Id={service.secondaryImage.public_Id}
+                    id={service.secondaryImage.id}
+                    blur={service.secondaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>

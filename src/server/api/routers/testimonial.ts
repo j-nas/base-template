@@ -26,7 +26,7 @@ export const testimonialRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const data = await ctx.prisma.testimonial.findMany({
         include: {
-          AvatarImage: {
+          avatarImage: {
             select: {
               image: true,
             }
@@ -37,7 +37,7 @@ export const testimonialRouter = createTRPCRouter({
       return data.map((item) => {
         return {
           ...item,
-          image: item.AvatarImage?.image || null,
+          image: item.avatarImage?.image || null,
         }
       }
       )
@@ -55,7 +55,7 @@ export const testimonialRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
-          AvatarImage: {
+          avatarImage: {
             select: {
               image: true,
             }
@@ -65,7 +65,7 @@ export const testimonialRouter = createTRPCRouter({
 
       return {
         ...data,
-        image: data?.AvatarImage?.image || null,
+        image: data?.avatarImage?.image || null,
       }
     }
     ),
@@ -91,7 +91,7 @@ export const testimonialRouter = createTRPCRouter({
         data: {
           name: input.name,
           quote: input.quote,
-          AvatarImage: {
+          avatarImage: {
             create: {
               imageId: input.avatarImage
             }
@@ -146,7 +146,7 @@ export const testimonialRouter = createTRPCRouter({
           highlighted: true,
         },
         include: {
-          AvatarImage: {
+          avatarImage: {
             select: {
               image: true,
             }
@@ -158,7 +158,7 @@ export const testimonialRouter = createTRPCRouter({
       return data.map((item) => {
         return {
           ...item,
-          image: item.AvatarImage?.image || null,
+          image: item.avatarImage?.image || null,
         }
       }
       )

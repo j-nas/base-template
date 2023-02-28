@@ -15,7 +15,7 @@ export const heroRouter = createTRPCRouter({
       heading: z.string(),
       ctaText: z.string(),
       position: z.nativeEnum(HeroPosition).nullable(),
-      PrimaryImage: z.object({
+      primaryImage: z.object({
         id: z.string(),
         height: z.number(),
         width: z.number(),
@@ -34,7 +34,7 @@ export const heroRouter = createTRPCRouter({
 
       const image = await ctx.prisma.image.findFirstOrThrow({
         where: {
-          PrimaryImage: {
+          primaryImage: {
             some: {
               heroId: data.id,
             }
@@ -42,7 +42,7 @@ export const heroRouter = createTRPCRouter({
         },
       });
 
-      return { ...data, PrimaryImage: image }
+      return { ...data, primaryImage: image }
     }
     ),
 
@@ -58,7 +58,7 @@ export const heroRouter = createTRPCRouter({
         data: {
           heading: input.heading,
           ctaText: input.ctaText,
-          PrimaryImage: {
+          primaryImage: {
             connect: {
               id: input.primaryImage,
             },
@@ -82,7 +82,7 @@ export const heroRouter = createTRPCRouter({
         data: {
           heading: input.heading,
           ctaText: input.ctaText,
-          PrimaryImage: {
+          primaryImage: {
             connect: {
               id: input.primaryImage,
             },

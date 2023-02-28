@@ -33,7 +33,7 @@ export const blogRouter = createTRPCRouter({
           summary: input.summary,
           markdown: input.markdown,
           userId: ctx.session.user.id,
-          PrimaryImage: {
+          primaryImage: {
             create: {
               imageId: input.imageUrl
             }
@@ -58,7 +58,7 @@ export const blogRouter = createTRPCRouter({
           title: input.title,
           summary: input.summary,
           markdown: input.markdown,
-          PrimaryImage: {
+          primaryImage: {
             create: {
               imageId: input.primaryImage
             }

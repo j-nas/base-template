@@ -150,7 +150,7 @@ async function main() {
   const gallery = await prisma.gallery.create({
     data: {
       name: 'Gallery',
-      ImageForGallery: {
+      imageForGallery: {
         create: nineGalleryImages.map((image) => ({
           imageId: image.id,
           altText: faker.lorem.sentence(3),
@@ -174,7 +174,7 @@ async function main() {
   const fullGallery = await prisma.gallery.create({
     data: {
       name: 'Gallery',
-      ImageForGallery: {
+      imageForGallery: {
         create: fullGalleryImages.map((image) => ({
           imageId: image.id,
           altText: faker.lorem.sentence(3),
@@ -240,7 +240,7 @@ async function main() {
     data: {
       heading: faker.company.bs(),
       ctaText: faker.lorem.sentence(12),
-      PrimaryImage: {
+      primaryImage: {
         create: {
           image: {
             connect: {
@@ -258,7 +258,7 @@ async function main() {
     data: {
       heading: faker.company.bs(),
       ctaText: faker.lorem.sentence(12),
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('bottomHero')
         },
@@ -272,7 +272,7 @@ async function main() {
     data: {
       heading: faker.company.bs(),
       ctaText: faker.lorem.sentence(12),
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('bottomHero')
         },
@@ -290,12 +290,12 @@ async function main() {
       markdown: faker.lorem.paragraphs(3),
       icon: "mdi:head-lightbulb-outline",
       position: 'SERVICE1',
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('commercial-primary')
         }
       },
-      SecondaryImage: {
+      secondaryImage: {
         create: {
           imageId: await validateImage('commercialsec')
         }
@@ -312,12 +312,12 @@ async function main() {
       markdown: faker.lorem.paragraphs(3),
       icon: 'mdi:account-hard-hat-outline',
       position: 'SERVICE2',
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('highrisepri')
         }
       },
-      SecondaryImage: {
+      secondaryImage: {
         create: {
           imageId: await validateImage('highrisesec')
         }
@@ -341,12 +341,12 @@ async function main() {
       markdown: faker.lorem.paragraphs(3),
       icon: 'mdi:smoke-detector-variant',
       position: 'SERVICE3',
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('firealarmpri')
         }
       },
-      SecondaryImage: {
+      secondaryImage: {
         create: {
           imageId: await validateImage('firealarmsec')
         }
@@ -364,12 +364,12 @@ async function main() {
       markdown: faker.lorem.paragraphs(4),
       icon: 'mdi:smoke-detector-variant',
       position: 'SERVICE4',
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('firealarmpri')
         }
       },
-      SecondaryImage: {
+      secondaryImage: {
         create: {
           imageId: await validateImage('firealarmsec')
         }
@@ -387,12 +387,12 @@ async function main() {
       markdown: faker.lorem.paragraphs(5),
       icon: 'mdi:smoke-detector-variant',
       position: 'SERVICE5',
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('firealarmpri')
         }
       },
-      SecondaryImage: {
+      secondaryImage: {
         create: {
           imageId: await validateImage('firealarmsec')
         }
@@ -407,12 +407,12 @@ async function main() {
       title: 'About Us',
       summary: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
-      PrimaryImage: {
+      primaryImage: {
         create: {
           imageId: await validateImage('aboutusprimary')
         }
       },
-      SecondaryImage: {
+      secondaryImage: {
         create: {
           imageId: await validateImage('aboutussecondary')
         }
@@ -432,7 +432,7 @@ async function main() {
       company: faker.company.name(),
       quote: faker.company.bs(),
       highlighted: true,
-      AvatarImage: {
+      avatarImage: {
         create: {
           imageId: await validateImage('avatar1')
         }
@@ -447,7 +447,7 @@ async function main() {
       company: faker.company.name(),
       quote: faker.company.bs(),
       highlighted: true,
-      AvatarImage: {
+      avatarImage: {
         create: {
           imageId: await validateImage('avatar2')
         }
@@ -509,7 +509,7 @@ async function main() {
 
         },
 
-        PrimaryImage: {
+        primaryImage: {
           create: {
             imageId: await validateImage('commercial-primary')
           }

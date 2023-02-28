@@ -103,7 +103,7 @@ model Hero {
     ctaText      String
     createdAt    DateTime      @default(now())
     position     HeroPosition? @unique
-    PrimaryImage PrimaryImage?
+    primaryImage PrimaryImage?
 }
 
 model Service {
@@ -116,8 +116,8 @@ model Service {
     createdAt        DateTime        @default(now())
     updatedAt        DateTime        @updatedAt
     position         Services?       @unique
-    PrimaryImage     PrimaryImage?
-    SecondaryImage   SecondaryImage?
+    primaryImage     PrimaryImage?
+    secondaryImage   SecondaryImage?
 }
 
 model AboutUs {
@@ -127,8 +127,8 @@ model AboutUs {
     markdown       String
     createdAt      DateTime        @default(now())
     inUse          Boolean         @default(false)
-    PrimaryImage   PrimaryImage?
-    SecondaryImage SecondaryImage?
+    primaryImage   PrimaryImage?
+    secondaryImage SecondaryImage?
 }
 
 model Testimonial {
@@ -139,7 +139,7 @@ model Testimonial {
     quote       String
     createdAt   DateTime     @default(now())
     highlighted Boolean      @default(false)
-    AvatarImage AvatarImage?
+    avatarImage AvatarImage?
 }
 
 model Blog {
@@ -151,7 +151,7 @@ model Blog {
     updatedAt    DateTime      @updatedAt
     author       User          @relation(fields: [userId], references: [id])
     userId       String
-    PrimaryImage PrimaryImage?
+    primaryImage PrimaryImage?
 }
 
 model Image {
@@ -165,11 +165,11 @@ model Image {
     type            String
     blur_url        String
     createdAt       DateTime          @default(now())
-    PrimaryImage    PrimaryImage[]
-    SecondaryImage  SecondaryImage[]
-    ImageForGallery ImageForGallery[]
-    AvatarImage     AvatarImage[]
-    BusinessLogo    BusinessLogo[]
+    primaryImage    PrimaryImage[]
+    secondaryImage  SecondaryImage[]
+    imageForGallery ImageForGallery[]
+    avatarImage     AvatarImage[]
+    businessLogo    BusinessLogo[]
 }
 
 model ImageForGallery {
@@ -188,7 +188,7 @@ model Gallery {
     position GalleryPosition? @unique
 
     createdAt       DateTime          @default(now())
-    ImageForGallery ImageForGallery[]
+    imageForGallery ImageForGallery[]
 }
 
 model PrimaryImage {

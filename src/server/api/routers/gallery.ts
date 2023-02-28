@@ -15,7 +15,7 @@ export const galleryRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const images = await ctx.prisma.image.findMany({
         where: {
-          ImageForGallery: {
+          imageForGallery: {
             some: {
               gallery: {
                 position: "FRONT"
@@ -57,7 +57,7 @@ export const galleryRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const images = await ctx.prisma.image.findMany({
         where: {
-          ImageForGallery: {
+          imageForGallery: {
             some: {
               gallery: {
                 position: "MAIN"

@@ -9,7 +9,7 @@ type Props = {
 
 export const HeroBanner = ({
   hero: {
-    PrimaryImage: { blur_url, format, public_Id, id },
+    primaryImage: { blur_url, format, public_Id, id },
     heading,
     ctaText,
   },

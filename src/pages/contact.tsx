@@ -27,7 +27,7 @@ export const Contact: NextPage<
 > = (props) => {
   const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
   const { blur_url, format, height, width, public_Id, id } =
-    bottomHero.PrimaryImage;
+    bottomHero.primaryImage;
   const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
   const mutation = api.contactForm.sendContactForm.useMutation({

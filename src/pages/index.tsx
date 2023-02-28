@@ -119,24 +119,24 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <div className="col-span-10 col-start-1 row-start-1 h-full ">
                   <CldImg
                     alt="About us"
-                    format={aboutUs.PrimaryImage.format}
+                    format={aboutUs.primaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={aboutUs.PrimaryImage.public_Id}
-                    id={aboutUs.PrimaryImage.id}
-                    blur={aboutUs.PrimaryImage.blur_url}
+                    public_Id={aboutUs.primaryImage.public_Id}
+                    id={aboutUs.primaryImage.id}
+                    blur={aboutUs.primaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-3 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
                   <CldImg
                     alt="About us"
-                    format={aboutUs.SecondaryImage.format}
+                    format={aboutUs.secondaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={aboutUs.SecondaryImage.public_Id}
-                    id={aboutUs.SecondaryImage.id}
-                    blur={aboutUs.SecondaryImage.blur_url}
+                    public_Id={aboutUs.secondaryImage.public_Id}
+                    id={aboutUs.secondaryImage.id}
+                    blur={aboutUs.secondaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
@@ -187,24 +187,24 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <div className="col-span-10 col-start-3 row-start-1 ">
                   <CldImg
                     alt={mainService.title}
-                    format={mainService.PrimaryImage.format}
+                    format={mainService.primaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={mainService.PrimaryImage.public_Id}
-                    id={mainService.PrimaryImage.id}
-                    blur={mainService.PrimaryImage.blur_url}
+                    public_Id={mainService.primaryImage.public_Id}
+                    id={mainService.primaryImage.id}
+                    blur={mainService.primaryImage.blur_url}
                     className=" rounded-lg border-4 border-secondary  shadow-2xl md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-1 col-end-11 row-start-1 pt-24 md:pt-48">
                   <CldImg
                     alt={mainService.title}
-                    format={mainService.SecondaryImage.format}
+                    format={mainService.secondaryImage.format}
                     height={600}
-                    blur={mainService.SecondaryImage.blur_url}
+                    blur={mainService.secondaryImage.blur_url}
                     width={800}
-                    public_Id={mainService.SecondaryImage.public_Id}
-                    id={mainService.SecondaryImage.id}
+                    public_Id={mainService.secondaryImage.public_Id}
+                    id={mainService.secondaryImage.id}
                     className=" rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
@@ -283,8 +283,8 @@ export async function getStaticProps() {
   const gallery = await ssg.gallery.getFrontPageGallery.fetch();
 
   const frontHeroImageUrl = cloudinaryUrlGenerator(
-    frontHero.PrimaryImage.public_Id,
-    frontHero.PrimaryImage.format
+    frontHero.primaryImage.public_Id,
+    frontHero.primaryImage.format
   );
 
   const mainService =

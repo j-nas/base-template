@@ -43,12 +43,12 @@ export const Services: NextPage<
               <figure className="w-full md:max-w-xs">
                 <CldImage
                   alt={service.shortDescription}
-                  format={service.PrimaryImage.format}
-                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.PrimaryImage.public_Id}`}
+                  format={service.primaryImage.format}
+                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_Id}`}
                   height="1600"
                   width="1600"
                   placeholder="blur"
-                  blurDataURL={service.PrimaryImage.blur_url}
+                  blurDataURL={service.primaryImage.blur_url}
                   gravity="auto"
                   crop="thumb"
                   className=" h-full object-cover transition-transform hover:scale-110"
