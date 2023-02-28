@@ -68,7 +68,7 @@ model VerificationToken {
 }
 
 model BusinessInfo {
-    id           String         @id @default(cuid())
+    id           String        @id @default(cuid())
     title        String
     address      String
     city         String
@@ -76,16 +76,16 @@ model BusinessInfo {
     postalCode   String
     telephone    String
     email        String
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    isActive     Boolean        @default(false)
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    isActive     Boolean       @default(false)
     ownerName    String
     ownerTitle   String
     ownerQuote   String
     hours        String
     holidays     String
-    avatarImage  AvatarImage[]
-    businessLogo BusinessLogo[]
+    avatarImage  AvatarImage?
+    businessLogo BusinessLogo?
     facebookUrl  String?
     twitterUrl   String?
     instagramUrl String?
@@ -98,59 +98,60 @@ model BusinessInfo {
 }
 
 model Hero {
-    id           String         @id @default(cuid())
+    id           String        @id @default(cuid())
     heading      String
     ctaText      String
-    createdAt    DateTime       @default(now())
-    position     HeroPosition?  @unique
-    PrimaryImage PrimaryImage[]
+    createdAt    DateTime      @default(now())
+    position     HeroPosition? @unique
+    PrimaryImage PrimaryImage?
 }
 
 model Service {
-    id               String           @id @default(cuid())
-    pageName         String           @unique
+    id               String          @id @default(cuid())
+    pageName         String          @unique
     title            String
     shortDescription String
     markdown         String
     icon             String
-    createdAt        DateTime         @default(now())
-    updatedAt        DateTime         @updatedAt
-    position         Services?        @unique
-    PrimaryImage     PrimaryImage[]
-    SecondaryImage   SecondaryImage[]
+    createdAt        DateTime        @default(now())
+    updatedAt        DateTime        @updatedAt
+    position         Services?       @unique
+    PrimaryImage     PrimaryImage?
+    SecondaryImage   SecondaryImage?
 }
 
 model AboutUs {
-    id             String           @id @default(cuid())
+    id             String          @id @default(cuid())
     title          String
     summary        String
     markdown       String
-    createdAt      DateTime         @default(now())
-    inUse          Boolean          @default(false)
-    PrimaryImage   PrimaryImage[]
-    SecondaryImage SecondaryImage[]
+    createdAt      DateTime        @default(now())
+    inUse          Boolean         @default(false)
+    PrimaryImage   PrimaryImage?
+    SecondaryImage SecondaryImage?
 }
 
 model Testimonial {
-    id          String        @id @default(cuid())
+    id          String       @id @default(cuid())
     name        String
     title       String
+    company     String
     quote       String
-    createdAt   DateTime      @default(now())
-    highlighted Boolean       @default(false)
-    AvatarImage AvatarImage[]
+    createdAt   DateTime     @default(now())
+    highlighted Boolean      @default(false)
+    AvatarImage AvatarImage?
 }
 
 model Blog {
-    id           String         @id @default(cuid())
-    title        String         @unique
+    id           String        @id @default(cuid())
+    title        String        @unique
     summary      String
     markdown     String
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    author       User           @relation(fields: [userId], references: [id])
+    createdAt    DateTime      @default(now())
+    updatedAt    DateTime      @updatedAt
+    author       User          @relation(fields: [userId], references: [id])
     userId       String
-    PrimaryImage PrimaryImage[]
+    PrimaryImage PrimaryImage?
 }
 
 model Image {
@@ -195,13 +196,13 @@ model PrimaryImage {
     image     Image    @relation(fields: [imageId], references: [id])
     imageId   String
     hero      Hero?    @relation(fields: [heroId], references: [id])
-    heroId    String?
+    heroId    String?  @unique
     service   Service? @relation(fields: [serviceId], references: [id])
-    serviceId String?
+    serviceId String?  @unique
     aboutUs   AboutUs? @relation(fields: [aboutUsId], references: [id])
-    aboutUsId String?
+    aboutUsId String?  @unique
     blog      Blog?    @relation(fields: [blogId], references: [id])
-    blogId    String?
+    blogId    String?  @unique
 }
 
 model SecondaryImage {
@@ -209,9 +210,9 @@ model SecondaryImage {
     image     Image    @relation(fields: [imageId], references: [id])
     imageId   String
     aboutUs   AboutUs? @relation(fields: [aboutUsId], references: [id])
-    aboutUsId String?
+    aboutUsId String?  @unique
     service   Service? @relation(fields: [serviceId], references: [id])
-    serviceId String?
+    serviceId String?  @unique
 }
 
 model AvatarImage {
@@ -219,16 +220,16 @@ model AvatarImage {
     image          Image         @relation(fields: [imageId], references: [id])
     imageId        String
     businessInfo   BusinessInfo? @relation(fields: [businessInfoId], references: [id])
-    businessInfoId String?
+    businessInfoId String?       @unique
     testimonial    Testimonial?  @relation(fields: [testimonialId], references: [id])
-    testimonialId  String?
+    testimonialId  String?       @unique
 }
 
 model BusinessLogo {
     image          Image        @relation(fields: [imageId], references: [id])
     imageId        String
     businessInfo   BusinessInfo @relation(fields: [businessInfoId], references: [id])
-    businessInfoId String
+    businessInfoId String       @unique
 
     @@id([imageId, businessInfoId])
 }
