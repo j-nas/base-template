@@ -6,6 +6,7 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
+import Link from "next/link";
 
 const DynamicGallery = dynamic(() => import("../components/FrontGallery"), {
   loading: () => <p>Loading...</p>,
@@ -77,9 +78,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   {frontHero?.heading}
                 </h2>
                 <p className="mb-5 text-xl">{frontHero?.ctaText}</p>
-                <button className="btn-primary btn rounded-none">
+                <Link href="/contact" className="btn-primary btn rounded-none">
                   Get Started
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -143,7 +144,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             )}
           </div>
           {/* text */}
-          <div className="prose flex flex-col justify-center">
+          <div className="prose flex flex-col justify-center prose-a:btn-primary prose-a:btn">
             <span className="font-medium uppercase text-accent">About Us</span>
             <h2 className="mt-0 font-bold text-4xl">About {business?.title}</h2>
             <InlineMarkdown className="text-lg" content={aboutUs.markdown} />
@@ -156,14 +157,16 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <span className={`text-base`}> - {business?.ownerTitle}</span>
               </div>
             </blockquote>
-            <button className="btn-primary btn w-fit">More about us</button>
+            <Link href="/about" className="btn-primary btn w-fit">
+              More about us
+            </Link>
           </div>
         </section>
 
         {/* Middle Hero Section */}
         <section className=" mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2 ">
           {/* text */}
-          <div className="prose order-last flex flex-col justify-center lg:order-first ">
+          <div className="prose order-last flex flex-col justify-center prose-a:btn-primary prose-a:btn lg:order-first ">
             <span className="mt-12 font-medium uppercase text-accent">
               {mainService?.shortDescription}
             </span>
@@ -173,9 +176,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               content={mainService?.markdown}
             />
 
-            <button className="btn-primary btn w-fit">
+            <Link href={`/${mainService?.pageName}`} className="w-fit">
               More about {mainService?.title}
-            </button>
+            </Link>
           </div>
           {/* image with inset image */}
           <div className="relative grid grid-cols-12   ">
@@ -224,7 +227,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </h2>
 
           <DynamicGallery gallery={gallery} />
-          <button className="btn-primary btn mt-8">View full gallery </button>
+          <Link href="/gallery" className="btn-primary btn mt-8">
+            View full gallery{" "}
+          </Link>
         </section>
 
         {/* Testimonials Section */}
@@ -244,7 +249,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               <DynamicTestimonial {...testimonial} key={testimonial.id} />
             ))}
           </div>
-          <button className="btn-primary btn">More reviews</button>
+          <Link href="/testimonials" className="btn-primary btn">
+            More reviews
+          </Link>
         </section>
 
         <HeroBanner businessName={business?.title} hero={bottomHero} />

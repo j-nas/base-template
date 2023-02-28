@@ -1,5 +1,6 @@
 import CldImg from "./CldImg";
 import type { RouterOutputs } from "../utils/api";
+import Link from "next/link";
 
 type Props = {
   hero: RouterOutputs["hero"]["getByPosition"];
@@ -33,11 +34,11 @@ export const HeroBanner = ({
             <h1 className="mb-5 -mt-32 font-semibold uppercase text-primary">
               {businessName}
             </h1>
-            <h2 className="mb-5 text-5xl font-bold md:text-7xl">{heading}</h2>
+            <h2 className="mb-5 font-bold text-5xl md:text-7xl">{heading}</h2>
             <p className="mb-5 text-xl">{ctaText}</p>
-            <button className="btn-primary btn rounded-none">
+            <Link href="/contact" className="btn-primary btn rounded-none">
               Get Started
-            </button>
+            </Link>
           </div>
         </div>
       </div>
