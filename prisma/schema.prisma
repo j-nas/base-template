@@ -147,6 +147,7 @@ model Blog {
     title        String        @unique
     summary      String
     markdown     String
+    featured     Boolean       @default(false)
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt
     author       User          @relation(fields: [userId], references: [id])

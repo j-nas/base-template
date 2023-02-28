@@ -26,6 +26,8 @@ export const businessInfoRouter = createTRPCRouter({
       postalCode: z.string(),
       telephone: z.string(),
       email: z.string().email(),
+      holidays: z.string(),
+      hours: z.string(),
       ownerName: z.string(),
       ownerTitle: z.string(),
       ownerQuote: z.string(),
@@ -45,6 +47,8 @@ export const businessInfoRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.businessInfo.create({
         data: {
+          holidays: input.holidays,
+          hours: input.hours,
           title: input.title,
           address: input.address,
           city: input.city,
@@ -130,18 +134,7 @@ export const businessInfoRouter = createTRPCRouter({
           tiktokUrl: input.tiktokUrl,
           snapchatUrl: input.snapchatUrl,
           whatsappUrl: input.whatsappUrl,
-          avatarImage: {
-            deleteMany: {},
-            create: {
-              imageId: input.avatarImage,
-            },
-          },
-          businessLogo: {
-            deleteMany: {},
-            create: {
-              imageId: input.businessLogo,
-            },
-          },
+
 
         },
       });

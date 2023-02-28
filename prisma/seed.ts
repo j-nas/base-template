@@ -1,3 +1,5 @@
+
+
 import { PrismaClient } from '@prisma/client'
 import { formattedResources } from '../src/utils/cloudinaryApi'
 import { faker } from '@faker-js/faker';
@@ -473,6 +475,25 @@ async function main() {
       skipDuplicates: true,
     })
   }
+  const blog = blogPosts.map(async (post, index) => {
+    await prisma.blog.create({
+      data: {
+        title: `post ${index + 1}`,
+        markdown: post,
+        summary: faker.lorem.paragraphs(1),
+        author: {
+          connect: {
+            id: admin.id
+          }
+        },
+        primaryImage: {
+          create: {
+            imageId: await validateImage('commercial-primary')
+          }
+        },
+      },
+    })
+  })
   const moreTestimonialsCreated = await moreTestimonials()
   console.log('More Testimonials created')
   console.log(
@@ -492,32 +513,11 @@ async function main() {
     admin,
     client,
     gallery,
+    blog
 
   )
 
-  const blog = blogPosts.map(async (post, index) => {
-    prisma.blog.create({
-      data: {
-        title: `post ${index + 1}`,
-        markdown: post,
-        summary: faker.lorem.paragraphs(1),
-        author: {
-          connect: {
-            id: admin.id
-          }
 
-
-        },
-
-        primaryImage: {
-          create: {
-            imageId: await validateImage('commercial-primary')
-          }
-        },
-
-      },
-    })
-  })
 
   async function validateImage(public_id: string) {
 

@@ -14,7 +14,7 @@ const aboutUsOutputSchema = z.object({
     public_Id: z.string(),
     id: z.string(),
     blur_url: z.string(),
-  }),
+  }).nullish(),
   secondaryImage: z.object({
     format: z.string(),
     height: z.number(),
@@ -22,7 +22,7 @@ const aboutUsOutputSchema = z.object({
     public_Id: z.string(),
     id: z.string(),
     blur_url: z.string(),
-  }),
+  }).nullish(),
 });
 
 
@@ -80,29 +80,25 @@ export const aboutUsRouter = createTRPCRouter({
         where: {
           inUse: true,
         },
-      })
-      const primaryImage = await ctx.prisma.image.findFirstOrThrow({
-        where: {
+        include: {
           primaryImage: {
-            some: {
-              aboutUsId: aboutUs.id,
+            select: {
+              image: true
             }
-          }
-        },
-      })
-      const secondaryImage = await ctx.prisma.image.findFirstOrThrow({
-        where: {
+          },
           secondaryImage: {
-            some: {
-              aboutUsId: aboutUs.id,
+            select: {
+              image: true
             }
-          }
-        }
+          },
+        },
+
       })
+
       return {
         ...aboutUs,
-        primaryImage: primaryImage,
-        secondaryImage: secondaryImage
+        primaryImage: aboutUs?.primaryImage?.image,
+        secondaryImage: aboutUs?.secondaryImage?.image
       }
 
     }

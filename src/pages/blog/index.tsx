@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { appRouter } from "../../server/api/root";
+import { env } from "../../env/client.mjs";
 import Link from "next/link";
 const TopHero = dynamic(() => import("../../components/TopHero"), {
   loading: () => <p>Loading...</p>,
@@ -22,7 +23,17 @@ const Navbar = dynamic(() => import("../../components/Navbar"), {
 export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
 ) => {
-  const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
+  const {
+    business,
+    topHero,
+    services,
+    bottomHero,
+    aboutUs,
+    pageTitle,
+    blogs,
+    featured,
+  } = props;
+  console.log(featured.length);
   return (
     <>
       <Head>
@@ -32,9 +43,61 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
       </Head>
       <main className="mx-auto h-full">
         <Navbar business={business} services={services} />
-        <TopHero pageTitle="Our Services" hero={topHero} />
+        <TopHero pageTitle="Blog" hero={topHero} />
 
-        <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 "></section>
+        <section className="container mt-8 flex w-full place-content-center">
+          {/* post list */}
+
+          {/* featured posts */}
+          <div className="w-80 rounded border-2 border-accent">
+            <div className="relative mb-8 flex w-full place-content-center">
+              <h2 className=" mb-2 p-0.5 text-center text-lg after:absolute after:inset-x-0 after:bottom-0 after:mx-auto  after:h-2 after:w-1/2 after:bg-primary">
+                Featured Posts
+              </h2>
+            </div>
+            {featured.length > 0 ? (
+              featured.map((blog, index) => (
+                <div
+                  key={blog.id}
+                  className={`${
+                    index % 2 === 0 ? "bg-base-300" : "bg-base-200"
+                  }`}
+                >
+                  <Link href={`/blog/${blog.pageName}`} className="flex">
+                    {blog.image && (
+                      <div
+                        className={`avatar max-w-fit justify-self-start p-2 `}
+                      >
+                        <div className="relative w-16 rounded-full">
+                          <CldImage
+                            src={
+                              env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
+                              "/" +
+                              blog.image?.public_Id
+                            }
+                            fill
+                            alt={blog.title}
+                            className="rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div className="w-full justify-self-start">
+                      <h3 className="text-md font-semibold">{blog.title}</h3>
+                      <span>
+                        {new Date(blog.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <div className=" flex  place-content-center pb-4">
+                <p>Nothing featured yet</p>
+              </div>
+            )}
+          </div>
+        </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
         <Footer
           aboutSummary={aboutUs.summary}
@@ -57,7 +120,8 @@ export async function getStaticProps() {
   const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
   const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-
+  const blogs = await ssg.blog.getSummaries.fetch();
+  const featured = blogs.filter((blog) => blog.featured);
   const mainService =
     services.find((service) => service.position === "SERVICE1") ?? null;
   const pageTitle = !mainService
@@ -78,6 +142,8 @@ export async function getStaticProps() {
       topHero,
       aboutUs,
       pageTitle,
+      blogs,
+      featured,
     },
   };
 }

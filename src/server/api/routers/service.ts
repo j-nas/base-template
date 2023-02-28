@@ -136,14 +136,12 @@ export const serviceRouter = createTRPCRouter({
               image: true,
 
             },
-            take: 1,
 
           },
           secondaryImage: {
             select: {
               image: true,
             },
-            take: 1
           },
         },
       });
