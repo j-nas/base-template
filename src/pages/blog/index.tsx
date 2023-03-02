@@ -122,7 +122,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             ))}
           </div>
           {/* featured posts */}
-          <div className="sticky top-24 h-fit w-full rounded-lg border-2  border-accent bg-base-200 pb-1 shadow-lg shadow-accent lg:ml-12 lg:w-1/2">
+          <div className="sticky top-24 mb-12 h-fit w-full rounded-lg border-2  border-accent bg-base-200 pb-1 shadow-lg shadow-accent lg:ml-12 lg:w-1/2">
             <div className="relative mb-8 flex w-full place-content-center">
               <h2 className=" mb-2 p-0.5 text-center text-lg after:absolute after:inset-x-0 after:bottom-0 after:mx-auto  after:h-1 after:w-1/2 after:bg-secondary">
                 Featured Posts
