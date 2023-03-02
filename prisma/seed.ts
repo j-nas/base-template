@@ -194,6 +194,13 @@ async function main() {
     data: {
       name: faker.name.firstName() + ' ' + faker.name.lastName(),
       email: faker.internet.email(),
+      editor: true,
+      avatarImage: {
+        create: {
+          imageId: await validateImage('avatar1')
+        }
+      }
+
     },
   })
   console.log('Admin created')
@@ -478,7 +485,7 @@ async function main() {
   const blog = blogPosts.map(async (post, index) => {
     await prisma.blog.create({
       data: {
-        title: `post ${index + 1}`,
+        title: faker.lorem.sentence(),
         markdown: post,
         summary: faker.lorem.paragraphs(1),
         author: {
@@ -486,6 +493,7 @@ async function main() {
             id: admin.id
           }
         },
+        featured: index === 0 ? true : false,
         primaryImage: {
           create: {
             imageId: await validateImage('commercial-primary')

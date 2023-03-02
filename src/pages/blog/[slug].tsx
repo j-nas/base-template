@@ -1,6 +1,11 @@
-import type { InferGetStaticPropsType, NextPage } from "next";
+import type {
+  GetStaticPropsContext,
+  InferGetStaticPropsType,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
+import superjson from "superjson";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { appRouter } from "../../server/api/root";
@@ -20,6 +25,9 @@ const HeroBanner = dynamic(() => import("../../components/BottomHero"), {
 const Navbar = dynamic(() => import("../../components/Navbar"), {
   loading: () => <p>Loading...</p>,
 });
+const Markdown = dynamic(() => import("../../components/Markdown"), {
+  loading: () => <p>Loading...</p>,
+});
 
 export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
@@ -31,7 +39,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
     bottomHero,
     aboutUs,
     pageTitle,
-    blogs,
+    blog,
     featured,
   } = props;
   return (
@@ -43,83 +51,71 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
       </Head>
       <main className="relative mx-auto h-full">
         <Navbar business={business} services={services} />
-        <TopHero pageTitle="Blog" hero={topHero} />
+        <TopHero pageTitle="" hero={topHero} />
 
-        <section className="mx-4 mt-12 flex flex-wrap place-content-center  sm:mx-12 lg:mx-auto lg:w-4/6  lg:flex-nowrap">
-          {/* post list */}
-          <div className="mb-12 flex w-full flex-col gap-12 lg:w-5/6">
-            {blogs.map((blog) => (
-              <article
-                key={blog.id}
-                className="m-0 mt-0 flex flex-col rounded-lg bg-base-300 shadow-lg shadow-accent "
-              >
-                <figure className="relative h-80 w-full">
-                  <CldImage
-                    src={
-                      env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                      "/" +
-                      blog.image?.public_Id
-                    }
-                    placeholder="blur"
-                    blurDataURL={blog.image?.blur_url}
-                    fill
-                    alt={blog.title}
-                    className="rounded-t-lg object-cover"
-                  />
-                </figure>
-                <div className="row-span-2 row-start-2 rounded-b-lg border-2 border-accent p-8">
-                  <div className="flex items-center border-b-2 border-b-secondary">
-                    {blog.author.image ? (
-                      <div
-                        className={`avatar max-w-fit justify-self-start p-2 `}
-                      >
-                        <div className="relative w-10 rounded-full">
-                          <CldImage
-                            src={
-                              env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                              "/" +
-                              blog.author.image?.public_Id
-                            }
-                            fill
-                            alt={blog.title}
-                            className="rounded-t-lg"
-                          />
-                        </div>
+        <section className="mx-4 mt-12 flex flex-wrap place-content-center  sm:mx-12 lg:mx-auto lg:w-5/6  lg:flex-nowrap">
+          {/* post*/}
+          <div className="mb-12 flex w-full flex-col gap-12 lg:w-full">
+            <article key={blog.id} className="m-0  flex flex-col   ">
+              <figure className="relative h-80 w-full">
+                <CldImage
+                  src={
+                    env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
+                    "/" +
+                    blog.image?.public_Id
+                  }
+                  placeholder="blur"
+                  blurDataURL={blog.image?.blur_url}
+                  fill
+                  alt={blog.title}
+                  className="rounded-lg object-cover"
+                />
+              </figure>
+              <div className="row-span-2 row-start-2 rounded-b-lg  p-8">
+                <h3 className="my-8 font-semibold text-3xl">{blog.title}</h3>
+                <div className="mb-12 flex items-center border-b-2 border-b-secondary pb-2">
+                  {blog.author.image ? (
+                    <div className={`avatar max-w-fit justify-self-start p-2 `}>
+                      <div className="relative w-10 rounded-full">
+                        <CldImage
+                          src={
+                            env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
+                            "/" +
+                            blog.author.image?.public_Id
+                          }
+                          fill
+                          alt={blog.title}
+                          className="rounded-t-lg"
+                        />
                       </div>
-                    ) : (
-                      <div className="placeholder avatar max-w-fit justify-self-start p-2 ">
-                        <div className="relative w-10 rounded-full bg-neutral-focus text-neutral-content">
-                          {blog.author?.name.split(" ").map((n) => n[0] ?? "")}
-                        </div>
+                    </div>
+                  ) : (
+                    <div className="placeholder avatar max-w-fit justify-self-start p-2 ">
+                      <div className="relative w-10 rounded-full bg-neutral-focus text-neutral-content">
+                        {blog.author?.name.split(" ").map((n) => n[0] ?? "")}
                       </div>
-                    )}
-                    <span className="ml-4"> {blog.author?.name}</span>
-                    <div className="mx-4 h-[3px] w-[3px] bg-accent"></div>
-                    <span className="">
-                      {new Date(blog.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div className="mb-8">
-                    <h3 className="my-8 font-semibold text-3xl">
-                      {blog.title} really lengthy title like 10 words or oso
-                    </h3>
-                    <p>{blog.summary}</p>
-                  </div>
-                  <div className="">
-                    <Link
-                      className="btn-primary btn"
-                      href={`/blog/${blog.pageName}`}
-                    >
-                      Read More
-                    </Link>
-                  </div>
+                    </div>
+                  )}
+                  <span className="ml-4"> {blog.author?.name}</span>
+                  <div className="mx-4 h-[3px] w-[3px] bg-accent"></div>
+                  <span className="">
+                    {new Date(blog.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
                 </div>
-              </article>
-            ))}
+                <div className="prose mb-8">
+                  <Markdown content={blog.markdown} />
+                </div>
+                <div className="">
+                  <Link className="btn-primary btn" href={`/blog`}>
+                    Back to blogs
+                  </Link>
+                </div>
+              </div>
+            </article>
           </div>
           {/* featured posts */}
           <div className="sticky top-24 h-fit w-full rounded-lg border-2  border-accent bg-base-200 pb-1 shadow-lg shadow-accent lg:ml-12 lg:w-1/2">
@@ -150,7 +146,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                             }
                             fill
                             alt={blog.title}
-                            className="rounded-lg"
+                            className="rounded-full"
                           />
                         </div>
                       </div>
@@ -186,30 +182,47 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   );
 };
 
-export async function getStaticProps() {
+export async function getStaticPaths() {
+  const pageNames = await prisma?.blog?.findMany({
+    select: {
+      title: true,
+    },
+  });
+  console.log(pageNames, "pageNames");
+  return {
+    paths: pageNames?.map((blog) => ({
+      params: {
+        slug: blog.title.replace(/\s/g, "-").toLowerCase(),
+      },
+    })),
+    fallback: "blocking",
+  };
+}
+
+export async function getStaticProps(
+  context: GetStaticPropsContext<{ slug: string }>
+) {
   const ssg = createProxySSGHelpers({
     router: appRouter,
+    transformer: superjson,
     ctx: createInnerTRPCContext({ session: null }),
   });
-
+  const slug = context.params?.slug as string;
+  console.log(slug);
   const business = await ssg.businessInfo.getActive.fetch();
   const services = await ssg.service.getActive.fetch();
   const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
   const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  const blogs = await ssg.blog.getSummaries.fetch();
-  const featured = blogs.filter((blog) => blog.featured);
+  const featured = await ssg.blog.getSummaries
+    .fetch()
+    .then((data) => data.filter((blog) => blog.featured));
+  const blog = await ssg.blog.getByPageName.fetch({ pageName: slug });
   const mainService =
     services.find((service) => service.position === "SERVICE1") ?? null;
   const pageTitle = !mainService
-    ? "About Us"
-    : business.title +
-      " | " +
-      mainService.title +
-      " | " +
-      business.city +
-      ", " +
-      business.province;
+    ? "Blog Post"
+    : blog.title + " | " + business.title;
 
   return {
     props: {
@@ -219,8 +232,8 @@ export async function getStaticProps() {
       topHero,
       aboutUs,
       pageTitle,
-      blogs,
       featured,
+      blog,
     },
   };
 }
