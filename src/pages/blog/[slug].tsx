@@ -6,6 +6,7 @@ import type {
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import superjson from "superjson";
+import { prisma } from "../../server/db";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { appRouter } from "../../server/api/root";
@@ -183,14 +184,14 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
 };
 
 export async function getStaticPaths() {
-  const pageNames = await prisma?.blog?.findMany({
+  const pageNames = await prisma.blog.findMany({
     select: {
       title: true,
     },
   });
   console.log(pageNames, "pageNames");
   return {
-    paths: pageNames?.map((blog) => ({
+    paths: pageNames.map((blog) => ({
       params: {
         slug: blog.title.replace(/\s/g, "-").toLowerCase(),
       },

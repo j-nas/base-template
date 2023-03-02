@@ -14,7 +14,7 @@ const aboutUsOutputSchema = z.object({
     public_Id: z.string(),
     id: z.string(),
     blur_url: z.string(),
-  }).nullish(),
+  }),
   secondaryImage: z.object({
     format: z.string(),
     height: z.number(),
@@ -22,7 +22,7 @@ const aboutUsOutputSchema = z.object({
     public_Id: z.string(),
     id: z.string(),
     blur_url: z.string(),
-  }).nullish(),
+  }),
 });
 
 
@@ -95,10 +95,13 @@ export const aboutUsRouter = createTRPCRouter({
 
       })
 
+      if (!aboutUs.primaryImage || !aboutUs.secondaryImage) {
+        throw new Error("No images found")
+      }
       return {
         ...aboutUs,
-        primaryImage: aboutUs?.primaryImage?.image,
-        secondaryImage: aboutUs?.secondaryImage?.image
+        primaryImage: aboutUs.primaryImage.image,
+        secondaryImage: aboutUs.secondaryImage.image
       }
 
     }
