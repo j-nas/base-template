@@ -105,7 +105,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   </div>
                   <div className="mb-8">
                     <h3 className="my-8 font-semibold text-3xl">
-                      {blog.title} really lengthy title like 10 words or oso
+                      {blog.title}
                     </h3>
                     <p>{blog.summary}</p>
                   </div>
