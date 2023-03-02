@@ -189,7 +189,6 @@ export async function getStaticProps() {
   const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
   const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  console.log(business);
   const mainService =
     services.find((service) => service.position === "SERVICE1") ?? null;
   const pageTitle = !mainService

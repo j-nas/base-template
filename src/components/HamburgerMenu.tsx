@@ -36,14 +36,12 @@ export default function HamburgerButton({ services, business }: Props) {
       setIsMounted(!isMounted);
       setTimeout(() => {
         setIsOpen(!isOpen);
-        console.log(isOpen, isMounted);
       }, 500);
       return;
     }
     setIsOpen(!isOpen);
     setTimeout(() => {
       setIsMounted(!isMounted);
-      console.log(isOpen, isMounted);
     }, 10);
   }
   return (

@@ -27,7 +27,6 @@ export const contactFormRouter = createTRPCRouter({
 
       try {
         await transporter.sendMail(mailOptions);
-        console.log(transporter.logger)
         return mailOptions;
       }
       catch (error) {
