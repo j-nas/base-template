@@ -2,6 +2,13 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 import { Services } from "@prisma/client";
 import { exclude } from "../../../utils/exclude";
+import * as icons from "react-icons/fa"
+
+const IconKeys = Object.keys(icons) as (keyof typeof icons)[];
+
+
+
+
 
 const serviceSchema = z.object({
   id: z.string(),
@@ -9,7 +16,15 @@ const serviceSchema = z.object({
   title: z.string(),
   shortDescription: z.string(),
   markdown: z.string(),
-  icon: z.string(),
+  icon: z.custom((value) => {
+    if (IconKeys.includes(value as any)) {
+      return value;
+    } else {
+      return z.ZodIssueCode.custom;
+
+    }
+  }),
+
   position: z.nativeEnum(Services).nullable(),
 
   primaryImage: z.object({
@@ -79,6 +94,8 @@ export const serviceRouter = createTRPCRouter({
           }
         },
       });
+
+
 
       return { ...data, primaryImage: primaryImage, secondaryImage: secondaryImage }
 

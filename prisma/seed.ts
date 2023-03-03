@@ -3,7 +3,8 @@
 import { PrismaClient } from '@prisma/client'
 import { formattedResources } from '../src/utils/cloudinaryApi'
 import { faker } from '@faker-js/faker';
-
+import * as icons from "react-icons/fa"
+type IconType = keyof typeof icons;
 
 export const prisma = new PrismaClient()
 
@@ -297,7 +298,7 @@ async function main() {
       pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
-      icon: "mdi:head-lightbulb-outline",
+      icon: "FaBeer" as IconType,
       position: 'SERVICE1',
       primaryImage: {
         create: {
@@ -319,7 +320,7 @@ async function main() {
 
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
-      icon: 'mdi:account-hard-hat-outline',
+      icon: "FaBeer" as IconType,
       position: 'SERVICE2',
       primaryImage: {
         create: {
@@ -348,7 +349,7 @@ async function main() {
       pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(3),
-      icon: 'mdi:smoke-detector-variant',
+      icon: "FaBeer" as IconType,
       position: 'SERVICE3',
       primaryImage: {
         create: {
@@ -371,7 +372,7 @@ async function main() {
       pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(4),
-      icon: 'mdi:smoke-detector-variant',
+      icon: "FaBeer" as IconType,
       position: 'SERVICE4',
       primaryImage: {
         create: {
@@ -394,7 +395,7 @@ async function main() {
       pageName: faker.helpers.unique(faker.commerce.department),
       shortDescription: faker.commerce.productDescription(),
       markdown: faker.lorem.paragraphs(5),
-      icon: 'mdi:smoke-detector-variant',
+      icon: "FaBeer" as IconType,
       position: 'SERVICE5',
       primaryImage: {
         create: {
