@@ -48,7 +48,7 @@ export default function HamburgerButton({ services, business }: Props) {
     <>
       <label
         aria-label="nav menu"
-        className={`swap disabled swap-rotate pl-4 lg:hidden ${
+        className={`swap-rotate swap disabled pl-4 lg:hidden ${
           isOpen ? "pointer-events-none" : ""
         }`}
       >
@@ -82,16 +82,16 @@ export default function HamburgerButton({ services, business }: Props) {
           >
             <div
               onClick={toggleOpen}
-              className={`absolue h-full w-full   ${
+              className={`absolue h-screen w-screen   ${
                 isMounted ? "bg-black bg-opacity-70 backdrop-blur-3xl" : ""
               } transition-all duration-500 ease-in-out `}
             ></div>
             <div
-              className={`absolute top-0 flex h-full w-8/12 -translate-x-full flex-col content-between  ${
+              className={`absolute top-0 flex h-full w-8/12 -translate-x-full flex-col overflow-auto  ${
                 isMounted ? "translate-x-[0]" : ""
               } bg-base-300 transition-all duration-500 ease-in-out md:w-1/3`}
             >
-              <ul className="menu  border-none bg-transparent text-accent-content  ">
+              <ul className="menu border-none bg-transparent text-accent-content  ">
                 <li className="menu-title  text-center ">
                   <span className="!text-lg">Navigation</span>
                 </li>
@@ -125,7 +125,18 @@ export default function HamburgerButton({ services, business }: Props) {
                     Contact
                   </Link>
                 </li>
-
+                <li>
+                  <Link
+                    href="/services"
+                    className={`${
+                      router.asPath.startsWith("/services")
+                        ? "btn-accent"
+                        : "btn-ghost"
+                    } btn rounded-none `}
+                  >
+                    Services
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href="/gallery"
@@ -158,25 +169,8 @@ export default function HamburgerButton({ services, business }: Props) {
                     Blog
                   </Link>
                 </li>
-                <li className="menu-title  text-center ">
-                  <span className="!text-lg">Services</span>
-                </li>
-                {services.map((service) => (
-                  <li key={service.id}>
-                    <Link
-                      href={`/services/${service.pageName}`}
-                      className={`btn rounded-none ${
-                        router.asPath === `/services/${service.pageName}`
-                          ? "btn-accent"
-                          : "btn-ghost"
-                      }`}
-                    >
-                      {service.title}
-                    </Link>
-                  </li>
-                ))}
               </ul>
-              <div className="flex h-full place-items-end p-4 ">
+              <div className=" mx-auto my-24 flex place-items-center ">
                 <DynamicSocials {...business} />
               </div>
             </div>

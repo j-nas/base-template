@@ -81,7 +81,6 @@ export const Contact: NextPage<
             <form
               className="form-control m-4 flex flex-col  rounded-lg px-4 "
               onSubmit={handleSubmit(onSubmit)}
-              data-netlify="true"
             >
               <div className="input-group-lg my-4 flex flex-wrap  justify-between gap-4">
                 <InputWrapper

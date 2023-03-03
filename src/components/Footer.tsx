@@ -77,7 +77,10 @@ export default function Footer({ business, services, aboutSummary }: Props) {
 
       <footer className="footer border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
         <div className=" flex grid-flow-col flex-col items-baseline ">
-          <Logo className="z-50 h-auto w-[160px] fill-base-content" />
+          <Link href="/">
+            <Logo className="btn-ghost btn z-50 h-auto w-[160px] fill-base-content" />
+          </Link>
+
           <p className="mx-auto">Copyright © {new Date().getFullYear()}</p>
         </div>
         <div className="pr-4 md:place-self-center md:justify-self-end">

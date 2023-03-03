@@ -66,7 +66,8 @@ export default function Navbar({ services, business }: Props) {
         }`}
       ></div>
       <div className="navbar-start">
-        <button
+        <Link
+          href="/"
           aria-label="home button logo"
           className="btn-ghost btn fill-white stroke-white lowercase text-xl"
         >
@@ -75,7 +76,7 @@ export default function Navbar({ services, business }: Props) {
               scrollPosition ? "fill-base-content" : ""
             }`}
           />
-        </button>
+        </Link>
       </div>
 
       <div className="navbar-end mr-2 w-full flex-grow">
