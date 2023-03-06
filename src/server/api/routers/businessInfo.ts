@@ -2,6 +2,34 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
 import { exclude } from "../../../utils/exclude";
 
+export const businessProfileValidation = z.object({
+  id: z.string(),
+  title: z.string().min(1, { message: "Business name required" }),
+  address: z.string().min(1),
+  city: z.string().min(1),
+  province: z.string().min(1),
+  postalCode: z.string().min(1),
+  telephone: z.string().min(1, { message: "Phone number required" }),
+  email: z.string().email().min(1, { message: "Email is required" }),
+  holidays: z.string(),
+  hours: z.string(),
+  ownerName: z.string(),
+  ownerTitle: z.string(),
+  ownerQuote: z.string(),
+  avatarImage: z.string(),
+  businessLogo: z.string(),
+  facebookUrl: z.string().url().nullable(),
+  instagramUrl: z.string().url().nullable(),
+  twitterUrl: z.string().url().nullable(),
+  youtubeUrl: z.string().url().nullable(),
+  linkedInUrl: z.string().url().nullable(),
+  pinterestUrl: z.string().url().nullable(),
+  tiktokUrl: z.string().url().nullable(),
+  snapchatUrl: z.string().url().nullable(),
+  whatsappUrl: z.string().url().nullable(),
+});
+
+
 
 export const businessInfoRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -15,6 +43,16 @@ export const businessInfoRouter = createTRPCRouter({
     });
 
     return exclude(data, ["createdAt", "updatedAt"]);
+
+  }),
+  getActiveWithDateTime: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.businessInfo.findFirstOrThrow({
+      where: {
+        isActive: true,
+      }
+    });
+
+    return data;
 
   }),
   create: editorProcedure
@@ -83,32 +121,8 @@ export const businessInfoRouter = createTRPCRouter({
       });
     }
     ),
-  edit: editorProcedure
-    .input(z.object({
-      id: z.string(),
-      title: z.string(),
-      address: z.string(),
-      city: z.string(),
-      province: z.string(),
-      postalCode: z.string(),
-      avatarImage: z.string(),
-      businessLogo: z.string(),
-      telephone: z.string(),
-      email: z.string().email(),
-      ownerName: z.string(),
-      ownerTitle: z.string(),
-      ownerQuote: z.string(),
-      facebookUrl: z.string().url().optional(),
-      instagramUrl: z.string().url().optional(),
-      twitterUrl: z.string().url().optional(),
-      youtubeUrl: z.string().url().optional(),
-      linkedinUrl: z.string().url().optional(),
-      pinterestUrl: z.string().url().optional(),
-      tiktokUrl: z.string().url().optional(),
-      snapchatUrl: z.string().url().optional(),
-      whatsappUrl: z.string().url().optional(),
-
-    }))
+  update: editorProcedure
+    .input(businessProfileValidation)
     .mutation(({ ctx, input }) => {
       return ctx.prisma.businessInfo.update({
         where: {
@@ -129,11 +143,12 @@ export const businessInfoRouter = createTRPCRouter({
           instagramUrl: input.instagramUrl,
           twitterUrl: input.twitterUrl,
           youtubeUrl: input.youtubeUrl,
-          linkedInUrl: input.linkedinUrl,
+          linkedInUrl: input.linkedInUrl,
           pinterestUrl: input.pinterestUrl,
           tiktokUrl: input.tiktokUrl,
           snapchatUrl: input.snapchatUrl,
           whatsappUrl: input.whatsappUrl,
+
 
 
         },

@@ -6,8 +6,15 @@ import { ThemeProvider } from "next-themes";
 import { api } from "../utils/api";
 
 import "../styles/globals.css";
+import type { ReactElement, ReactNode } from "react";
+import type { NextPage } from "next";
+import type { AppProps } from "next/app";
 
-const themes = [
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+export const themes = [
   "light",
   "dark",
   "cupcake",
@@ -38,17 +45,23 @@ const themes = [
   "coffee",
   "winter",
 ];
-const MyApp: AppType<{ session: Session | null }> = ({
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const MyApp = (({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
+}: AppPropsWithLayout) => {
+  const getLayout = Component.getLayout || ((page) => page);
   return (
     <SessionProvider session={session}>
       <ThemeProvider themes={themes} attribute="data-theme">
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </ThemeProvider>
     </SessionProvider>
   );
-};
+}) as AppType<{ session: Session | null }>;
 
 export default api.withTRPC(MyApp);
