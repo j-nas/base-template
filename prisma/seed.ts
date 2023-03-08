@@ -124,7 +124,7 @@ async function main() {
   console.log('Images fetched, formatted and blur url generated')
   await prisma.image.createMany({
     data: imagesRes.map((resource) => ({
-      public_Id: resource.public_id,
+      public_id: resource.public_id,
       format: resource.format,
       width: resource.width,
       height: resource.height,
@@ -139,7 +139,7 @@ async function main() {
 
   const nineGalleryImages = await prisma.image.findMany({
     where: {
-      public_Id: {
+      public_id: {
         not: {
           startsWith: 'avatar'
         }
@@ -166,7 +166,7 @@ async function main() {
 
   const fullGalleryImages = await prisma.image.findMany({
     where: {
-      public_Id: {
+      public_id: {
         not: {
           startsWith: 'avatar'
         }
@@ -532,7 +532,7 @@ async function main() {
 
     const imageId = await prisma.image.findFirstOrThrow({
       where: {
-        public_Id: {
+        public_id: {
           startsWith: public_id
         }
       }

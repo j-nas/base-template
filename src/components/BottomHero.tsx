@@ -1,6 +1,7 @@
-import CldImg from "./CldImg";
+import { CldImage } from "next-cloudinary";
 import type { RouterOutputs } from "../utils/api";
 import Link from "next/link";
+import { env } from "../env/client.mjs";
 
 type Props = {
   hero: RouterOutputs["hero"]["getByPosition"];
@@ -9,7 +10,7 @@ type Props = {
 
 export const HeroBanner = ({
   hero: {
-    primaryImage: { blur_url, format, public_Id, id },
+    primaryImage: { blur_url, format, public_id, id },
     heading,
     ctaText,
   },
@@ -18,12 +19,12 @@ export const HeroBanner = ({
   return (
     <section className={`mx-0 mt-32 md:mx-14`}>
       <div className={`hero`}>
-        <CldImg
+        <CldImage
+          src={env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + public_id}
           alt="hero image"
-          blur={blur_url}
-          format={format}
+          placeholder="blur"
+          blurDataURL={blur_url}
           height={600}
-          public_Id={public_Id}
           width={2000}
           id={id}
           className={`h-[80vh] object-cover`}

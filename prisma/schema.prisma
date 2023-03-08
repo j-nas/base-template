@@ -158,7 +158,7 @@ model Blog {
 
 model Image {
     id              String            @id
-    public_Id       String            @unique
+    public_id       String            @unique
     format          String
     width           Int
     height          Int

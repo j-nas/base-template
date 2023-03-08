@@ -1,11 +1,14 @@
 import { RouterOutputs } from "../../utils/api";
 import Link from "next/link";
+import type { Image } from "./ImageDeleteDialog";
 
 type Props = {
-  imageUsage: RouterOutputs["image"]["imageInUseBy"];
+  image: Image;
 };
 
-export default function ImageInUseWidget({ imageUsage }: Props) {
+export default function ImageInUseWidget({ image }: Props) {
+  const { inUseProps: imageUsage } = image;
+
   return (
     <div className=" mx-2 flex   flex-col place-content-center gap-2 place-self-center  px-4 py-2">
       <div className="flex flex-col gap-2">

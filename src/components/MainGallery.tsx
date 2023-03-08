@@ -25,7 +25,7 @@ export default function MainGallery({ gallery }: Props) {
                 <Image
                   width={720}
                   height={720}
-                  src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${photo.public_Id}.${photo.format}`}
+                  src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${photo.public_id}.${photo.format}`}
                   alt={photo.altText || ""}
                   className="mb-4 aspect-auto max-h-72 object-cover shadow-2xl hover:brightness-125"
                   placeholder="blur"
@@ -47,7 +47,7 @@ export default function MainGallery({ gallery }: Props) {
         index={index}
         close={() => setIndex(-1)}
         slides={gallery.map((image) => ({
-          src: image.public_Id + "." + image.format,
+          src: image.public_id + "." + image.format,
           key: image.id,
           height: image.height,
           width: image.width,
@@ -90,7 +90,7 @@ export default function MainGallery({ gallery }: Props) {
                   placeholder="blur"
                   blurDataURL={
                     gallery.filter(
-                      (i) => i.public_Id === image.src.split(".")[0]
+                      (i) => i.public_id === image.src.split(".")[0]
                     )[0]?.blur_url || ""
                   }
                   alt={image.alt || ""}
@@ -134,7 +134,7 @@ export default function MainGallery({ gallery }: Props) {
                   className="border-none"
                   blurDataURL={
                     gallery.filter(
-                      (i) => i.public_Id === slide.src.split(".")[0]
+                      (i) => i.public_id === slide.src.split(".")[0]
                     )[0]?.blur_url || ""
                   }
                   alt={slide?.alt || ""}

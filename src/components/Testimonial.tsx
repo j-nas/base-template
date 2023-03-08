@@ -7,7 +7,7 @@ type Props = RouterOutputs["testimonial"]["getOne"];
 
 export default function Testimonial(props: Props) {
   const { id, name, image, company, quote, title } = props;
-  const { public_Id, format } = image ?? {};
+  const { public_id, format } = image ?? {};
 
   const placeholder = (
     <div className="placeholder avatar absolute -top-8 left-8">
@@ -22,7 +22,7 @@ export default function Testimonial(props: Props) {
   const avatar = (
     <div className=" absolute -top-8 left-8">
       <Image
-        src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/q_80/w_80,h_80,c_fill,g_face/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}.${format}`}
+        src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/q_80/w_80,h_80,c_fill,g_face/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_id}.${format}`}
         alt={name}
         width={80}
         height={80}

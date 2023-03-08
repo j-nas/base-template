@@ -1,6 +1,15 @@
 import axios from 'axios';
 import { env } from '../env/server.mjs'
 import getBase64ImageUrl from './generateBlurPlaceholder';
+import cloudinary, { type ConfigOptions } from "cloudinary";
+
+const cloudinaryConfig: ConfigOptions = {
+  cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET,
+};
+
+export const cloudinaryApi = cloudinary.v2.config(cloudinaryConfig)
 
 export type CloudinaryResource = {
   resources: [{
@@ -13,6 +22,7 @@ export type CloudinaryResource = {
     bytes: number;
     type: string;
     asset_id: string;
+    version: number;
   }]
 }
 

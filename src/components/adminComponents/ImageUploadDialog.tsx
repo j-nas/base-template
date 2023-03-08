@@ -6,10 +6,9 @@ import Link from "next/link";
 import ImageInUseWidget from "./ImageInUseWidget";
 type Props = {
   children: React.ReactNode;
-  image: RouterOutputs["image"]["getImageById"];
 };
 
-export default function ImageUploadDialog({ children, image }: Props) {
+export default function ImageUploadDialog({ children }: Props) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
@@ -22,7 +21,17 @@ export default function ImageUploadDialog({ children, image }: Props) {
           <Dialog.Description className="mt-2 mb-5">
             Select an image to upload
           </Dialog.Description>
-          <div className="flex flex-col gap-2"></div>
+          <div className="flex flex-col gap-2">
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">10MB Limit</span>
+              </label>
+              <input
+                type="file"
+                className="file-input-bordered file-input w-full max-w-xs"
+              />
+            </div>
+          </div>
           <div className="mt-6 flex justify-end">
             <Dialog.Close asChild>
               <button aria-label="delete" className="btn-success btn ">

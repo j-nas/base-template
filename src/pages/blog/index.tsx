@@ -58,7 +58,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     src={
                       env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
                       "/" +
-                      blog.image?.public_Id
+                      blog.image?.public_id
                     }
                     placeholder="blur"
                     blurDataURL={blog.image?.blur_url}
@@ -78,7 +78,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                             src={
                               env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
                               "/" +
-                              blog.author.image?.public_Id
+                              blog.author.image?.public_id
                             }
                             fill
                             alt={blog.title}
@@ -146,7 +146,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                             src={
                               env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
                               "/" +
-                              blog.image?.public_Id
+                              blog.image?.public_id
                             }
                             fill
                             alt={blog.title}

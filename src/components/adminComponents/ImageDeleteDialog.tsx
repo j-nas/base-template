@@ -4,21 +4,19 @@ import { api, type RouterOutputs } from "../../utils/api";
 import { IoMdCloseCircle } from "react-icons/io";
 import Link from "next/link";
 import ImageInUseWidget from "./ImageInUseWidget";
+import type { ImageAdmin } from "../../types/image";
+
 type Props = {
   children: React.ReactNode;
-  image: RouterOutputs["image"]["getImageById"];
+  image: ImageAdmin;
 };
 
 export default function ImageDeleteDialog({ children, image }: Props) {
-  const { data, isLoading, error } = api.image.imageInUseBy.useQuery({
-    id: image.id,
-  });
+  const { inUseProps } = image;
 
-  if (!data) return null;
-
-  const isImageInuse = (Object.keys(data) as (keyof typeof data)[]).some(
-    (key) => data[key].length > 0
-  );
+  const isImageInuse = (
+    Object.keys(inUseProps) as (keyof typeof inUseProps)[]
+  ).some((key) => inUseProps[key].length > 0);
 
   const description = isImageInuse ? (
     <Dialog.Description className="mt-2 mb-5">
@@ -42,10 +40,7 @@ export default function ImageDeleteDialog({ children, image }: Props) {
           </Dialog.Title>
           {description}
           <div className="flex flex-col gap-2">
-            {isLoading && <span>Loading...</span>}
-
-            {error && <span>Error: {error.message}</span>}
-            <ImageInUseWidget imageUsage={data} />
+            <ImageInUseWidget image={image} />
           </div>
           <div className="mt-6 flex justify-end">
             <Dialog.Close asChild>

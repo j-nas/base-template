@@ -5,11 +5,11 @@ import { env } from '../env/client.mjs'
 
 
 export default async function getBase64ImageUrl(
-  public_Id: string, format: string
+  public_id: string, format: string
 ) {
   let url = ""
   const response = await fetch(
-    `https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/f_jpg,w_8,q_70/${public_Id}.${format}`
+    `https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/f_jpg,w_8,q_70/${public_id}.${format}`
   )
   const buffer = await response.arrayBuffer()
 
