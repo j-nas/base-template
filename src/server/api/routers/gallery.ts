@@ -8,7 +8,7 @@ export const galleryRouter = createTRPCRouter({
       format: z.string(),
       height: z.number(),
       width: z.number(),
-      public_Id: z.string(),
+      public_id: z.string(),
       blur_url: z.string(),
       altText: z.string(),
     }).array())
@@ -49,7 +49,7 @@ export const galleryRouter = createTRPCRouter({
       format: z.string(),
       height: z.number(),
       width: z.number(),
-      public_Id: z.string(),
+      public_id: z.string(),
       blur_url: z.string(),
       altText: z.string(),
       index: z.number(),

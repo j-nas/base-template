@@ -26,7 +26,7 @@ export const Contact: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
   const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
-  const { blur_url, format, height, width, public_Id, id } =
+  const { blur_url, format, height, width, public_id, id } =
     bottomHero.primaryImage;
   const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
@@ -157,7 +157,7 @@ export const Contact: NextPage<
                 blurDataURL={blur_url}
                 format={format}
                 height={1200}
-                src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_Id}`}
+                src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_id}`}
                 width={1200}
                 crop="fill"
                 id={id}

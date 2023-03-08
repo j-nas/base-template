@@ -44,7 +44,7 @@ export const Services: NextPage<
                 <CldImage
                   alt={service.shortDescription}
                   format={service.primaryImage.format}
-                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_Id}`}
+                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_id}`}
                   height="1600"
                   width="1600"
                   placeholder="blur"

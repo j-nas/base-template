@@ -13,7 +13,7 @@ const testimonialSchema = z.object({
     id: z.string(),
     height: z.number(),
     width: z.number(),
-    public_Id: z.string(),
+    public_id: z.string(),
     format: z.string(),
   }).nullable(),
 });

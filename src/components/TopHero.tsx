@@ -8,7 +8,7 @@ type Props = {
 
 export default function TopHero({
   hero: {
-    primaryImage: { blur_url, format, id, height, public_Id, width },
+    primaryImage: { blur_url, format, id, height, public_id, width },
   },
   pageTitle,
 }: Props) {
@@ -21,7 +21,7 @@ export default function TopHero({
           format={format}
           id={id}
           height={height}
-          public_Id={public_Id}
+          public_id={public_id}
           width={width}
           className="h-[40vh] object-cover"
         />

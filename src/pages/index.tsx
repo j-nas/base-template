@@ -132,7 +132,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     format={aboutUs.primaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={aboutUs.primaryImage.public_Id}
+                    public_id={aboutUs.primaryImage.public_id}
                     id={aboutUs.primaryImage.id}
                     blur={aboutUs.primaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
@@ -144,7 +144,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     format={aboutUs.secondaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={aboutUs.secondaryImage.public_Id}
+                    public_id={aboutUs.secondaryImage.public_id}
                     id={aboutUs.secondaryImage.id}
                     blur={aboutUs.secondaryImage.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
@@ -200,7 +200,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     format={mainService.primaryImage.format}
                     height={600}
                     width={800}
-                    public_Id={mainService.primaryImage.public_Id}
+                    public_id={mainService.primaryImage.public_id}
                     id={mainService.primaryImage.id}
                     blur={mainService.primaryImage.blur_url}
                     className=" rounded-lg border-4 border-secondary  shadow-2xl md:border-[12px]"
@@ -213,7 +213,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     height={600}
                     blur={mainService.secondaryImage.blur_url}
                     width={800}
-                    public_Id={mainService.secondaryImage.public_Id}
+                    public_id={mainService.secondaryImage.public_id}
                     id={mainService.secondaryImage.id}
                     className=" rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
@@ -293,7 +293,7 @@ export async function getStaticProps() {
   const gallery = await ssg.gallery.getFrontPageGallery.fetch();
 
   const frontHeroImageUrl = cloudinaryUrlGenerator(
-    frontHero.primaryImage.public_Id,
+    frontHero.primaryImage.public_id,
     frontHero.primaryImage.format
   );
 
