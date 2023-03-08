@@ -9,25 +9,40 @@ import { IoMdAdd } from "react-icons/io";
 import ImageDeleteDialog from "../../components/adminComponents/ImageDeleteDialog";
 import ImageRenameDialog from "../../components/adminComponents/ImageRenameDialog";
 import ImageUploadDialog from "../../components/adminComponents/ImageUploadDialog";
-
+import toast, { Toaster } from "react-hot-toast";
+import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 export const ImageManager = () => {
-  const { data: images } = api.image.getAllImages.useQuery();
+  const { data: images } = api.image.getAllImages.useQuery(undefined, {});
   const [uploading, setUploading] = useState(false);
   const [buffer, setBuffer] = useState(0);
   const renameMutation = api.image.renameImage.useMutation();
+  const ctx = api.useContext();
 
-  const renameHandler = (
+  const handleRename = (
     imageId: string,
     newName: string,
     public_id: string
   ) => {
-    renameMutation.mutate({ id: imageId, name: newName, public_id: public_id });
+    renameMutation.mutate(
+      { id: imageId, name: newName, public_id: public_id },
+      {
+        onSuccess: () => {
+          ctx.image.getAllImages.refetch();
+          toast.success("Image renamed");
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      }
+    );
     console.log({ renameMutation });
   };
   const uploadHandler = (e: any) => {};
 
   return (
     <div className="relative grid h-full w-full place-items-center overflow-auto">
+      <Toaster position="bottom-right" />
+      <Breadcrumbs subName="Image Manager" subPath="images" />
       <div>
         <h1 className="mt-6 font-black  text-2xl">Image Managment</h1>
       </div>
@@ -60,7 +75,7 @@ export const ImageManager = () => {
               <ImageDeleteDialog image={image}>
                 <button className="btn-error btn-sm btn">Delete</button>
               </ImageDeleteDialog>
-              <ImageRenameDialog renameHandler={renameHandler} image={image}>
+              <ImageRenameDialog renameHandler={handleRename} image={image}>
                 <button className="btn-primary btn-sm btn">Rename</button>
               </ImageRenameDialog>
             </span>
