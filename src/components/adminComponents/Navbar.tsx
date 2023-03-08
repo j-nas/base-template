@@ -13,9 +13,10 @@ import { useSession } from "next-auth/react";
 type Props = {
   services: RouterOutputs["service"]["getActive"];
   business: RouterOutputs["businessInfo"]["getActive"];
+  toggleSidebar: () => void;
 };
 
-export default function Navbar({ services, business }: Props) {
+export default function Navbar({ services, business, toggleSidebar }: Props) {
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const session = useSession();
@@ -25,19 +26,26 @@ export default function Navbar({ services, business }: Props) {
   };
 
   return (
-    <div className="navbar absolute  bg-base-300 shadow-xl">
-      <div className="navbar-start">
-        <Link href="/" aria-label="home button logo" className="btn-ghost btn ">
+    <div className="navbar absolute z-20  bg-base-300 shadow-xl">
+      <div className="navbar-start  md:block">
+        <button onClick={toggleSidebar} className="btn-secondary btn md:hidden">
+          M
+        </button>
+        <Link
+          href="/"
+          aria-label="home button logo"
+          className="btn-ghost btn hidden md:block "
+        >
           <Logo
             className={`z-50 h-auto w-40 fill-base-content stroke-base-content`}
           />
         </Link>
       </div>
       <div className="navbar-center hidden lg:block">
-        <span className="font-bold uppercase text-lg">Page Administration</span>
+        <span className="font-bold  text-lg">Admin Dashboard</span>
       </div>
 
-      <div className="navbar-end mr-2  ">
+      <div className="mr-2 w-full justify-end md:navbar-end ">
         {session && <button className="btn-primary btn">Log out</button>}
         <DarkModeButton theme={theme} toggleTheme={toggleTheme} />
       </div>

@@ -44,7 +44,7 @@ export const testimonialRouter = createTRPCRouter({
 
     }
     ),
-  getOne: publicProcedure
+  getById: publicProcedure
     .input(z.object({
       id: z.string(),
     }))
@@ -70,8 +70,23 @@ export const testimonialRouter = createTRPCRouter({
     }
     ),
 
+  getByAvatarImageId: publicProcedure
+    .input(z.object({
+      id: z.string(),
+    }))
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.testimonial.findMany({
+        where: {
+          avatarImage: {
+            imageId: input.id,
+          }
+        },
 
+      })
 
+      return data;
+    }
+    ),
 
 
 
