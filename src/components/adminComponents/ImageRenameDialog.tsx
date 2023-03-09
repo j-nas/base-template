@@ -4,10 +4,15 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { Form, Field } from "houseform";
 import { z } from "zod";
 import { ImageAdmin } from "../../types/image";
+import InputWrapper from "../InputWrapper";
 
 type Props = {
   children: React.ReactNode;
-  renameHandler: (newName: string, id: string, public_id: string) => void;
+  renameHandler: (
+    newName: string,
+    id: string,
+    public_id: string
+  ) => Promise<void>;
   image: ImageAdmin;
 };
 
@@ -16,10 +21,9 @@ export default function ImageRenameDialog({
   renameHandler,
   image,
 }: Props) {
-  const [newName, setNewName] = React.useState<string>("");
-
+  const [open, setOpen] = React.useState(false);
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 h-screen w-screen bg-black/50 blur-3xl" />
@@ -32,9 +36,15 @@ export default function ImageRenameDialog({
             site.
           </Dialog.Description>
           <Form
-            onSubmit={(values) =>
-              renameHandler(image.id, values.newName, image.public_id)
-            }
+            onSubmit={(values) => {
+              renameHandler(image.id, values.newName, image.public_id).then(
+                () => {
+                  setOpen(false);
+                }
+              );
+
+              return;
+            }}
           >
             {({ submit }) => (
               <>
@@ -52,27 +62,36 @@ export default function ImageRenameDialog({
                         })}
                     >
                       {({ value, setValue, onBlur, errors }) => (
-                        <input
-                          type="text"
-                          className="input-bordered input w-full"
-                          onChange={(e) => setValue(e.target.value)}
-                          value={value}
-                          onBlur={onBlur}
-                        />
+                        <InputWrapper
+                          error={errors[0]}
+                          label="New Name"
+                          htmlFor="newName"
+                        >
+                          <input
+                            type="text"
+                            id="newName"
+                            className="input-bordered input w-full"
+                            onChange={(e) => setValue(e.target.value)}
+                            value={value}
+                            onBlur={onBlur}
+                          />
+                        </InputWrapper>
                       )}
                     </Field>
                   </div>
                 </div>
                 <div className="mt-6 flex justify-end">
                   <Dialog.Close asChild>
-                    <button
-                      onClick={submit}
-                      aria-label="rename"
-                      className="btn-success btn "
-                    >
-                      Confirm Rename
-                    </button>
+                    <button className="btn mr-2">Cancel</button>
                   </Dialog.Close>
+                  <button
+                    onClick={submit}
+                    aria-label="rename"
+                    type="submit"
+                    className="btn-success btn"
+                  >
+                    Confirm Rename
+                  </button>
                 </div>
               </>
             )}
