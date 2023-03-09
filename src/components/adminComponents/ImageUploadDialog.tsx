@@ -1,12 +1,11 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { api, type RouterOutputs } from "../../utils/api";
 import { IoMdCloseCircle } from "react-icons/io";
-import Link from "next/link";
-import ImageInUseWidget from "./ImageInUseWidget";
-import { Field, Form } from "houseform";
+import { formatBytes } from "../../utils/format";
+import { Field, Form, type FieldInstance } from "houseform";
 import { z } from "zod";
 import Image from "next/image";
+
 type Props = {
   children: React.ReactNode;
   handleUpload: (input: string) => void;
@@ -21,9 +20,7 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export default function ImageUploadDialog({ children, handleUpload }: Props) {
-  const [open, setOpen] = React.useState(false);
   const [base64, setBase64] = React.useState<string | null>(null);
-  const [tempImage, setTempImage] = React.useState<FileList | null>(null);
 
   const encodeBase64 = (file: File) => {
     return new Promise<string>((resolve, reject) => {
@@ -34,12 +31,14 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
     });
   };
 
+  const fieldRef = React.useRef<FieldInstance>(null);
+
   return (
     <Dialog.Root onOpenChange={() => setBase64(null)}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 h-screen w-screen bg-black/50 blur-3xl" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-base-300 p-6 drop-shadow-xl">
+        <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-base-300 p-6 drop-shadow-xl">
           <Dialog.Title className="font-bold text-lg">
             Upload Image
           </Dialog.Title>
@@ -49,13 +48,14 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
           </Dialog.Description>
           <Form
             onSubmit={(values) => {
-              console.log(values.file[0]);
+              console.log(values.file);
               return;
             }}
           >
-            {({ submit, errors, getFieldValue }) => (
+            {({ submit, errors }) => (
               <>
                 <Field
+                  ref={fieldRef}
                   name="file"
                   onChangeValidate={z
                     .instanceof(File, { message: "Please select a file" })
@@ -72,22 +72,25 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
                       }
                     )}
                 >
-                  {({ value, setValue, onBlur, errors }) => (
+                  {({ setValue, onBlur, errors }) => (
                     <>
                       <input
                         type="file"
-                        className="w-full"
+                        className="file-input-primary file-input w-full"
                         accept="image/*"
                         onChange={(e) => {
                           if (!e.target.files) return null;
                           const file = e.target.files[0];
 
                           setValue(() => {
+                            console.log({ file });
                             return file;
                           });
                           if (!file) return null;
+                          if (!ACCEPTED_IMAGE_TYPES.includes(file.type))
+                            return null;
+                          if (file.size > MAX_FILE_SIZE) return null;
                           encodeBase64(file).then((base64) => {
-                            console.log({ base64 });
                             setBase64(base64);
                           });
                         }}
@@ -115,6 +118,16 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
                         width={200}
                         alt="preview"
                       />
+                    </div>
+                  )}
+                  {fieldRef.current && (
+                    <div className="flex flex-col">
+                      <span>{fieldRef.current?.value.name}</span>
+                      <span>
+                        {fieldRef.current?.value.size === undefined
+                          ? ""
+                          : formatBytes(fieldRef.current?.value.size, 2)}
+                      </span>
                     </div>
                   )}
                 </div>

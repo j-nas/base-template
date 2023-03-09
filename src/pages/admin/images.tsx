@@ -99,7 +99,9 @@ export const ImageManager = () => {
       <Toaster position="bottom-right" />
       <Breadcrumbs subName="Image Manager" subPath="images" />
       <div>
-        <h1 className="mt-6 font-black  text-2xl">Image Managment</h1>
+        <h1 className="mt-6 place-self-center text-center font-black  text-2xl">
+          Image Managment
+        </h1>
       </div>
       {isLoading && (
         <div className="flex flex-col place-content-center place-items-center gap-2">
@@ -108,9 +110,9 @@ export const ImageManager = () => {
         </div>
       )}
       {!isLoading && (
-        <div className="form-control ml-8 place-self-start">
+        <div className="form-control ml-8 mt-6 place-self-center lg:place-self-start">
           <div className="input-group">
-            <span className="text-md font-bold uppercase">Sorting</span>
+            <span className="text-md font-bold uppercase">Sort</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
