@@ -12,6 +12,7 @@ import ImageUploadDialog from "../../components/adminComponents/ImageUploadDialo
 import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import { RouterOutputs } from "../../utils/api";
+
 type Sorting =
   | "nameAsc"
   | "nameDes"
@@ -63,7 +64,10 @@ export const ImageManager = () => {
     console.log({ renameMutation });
     return;
   };
-  const uploadHandler = (e: any) => {};
+  const handleUpload = (input: string) => {
+    console.log({ input });
+  };
+
   const sortImages = (
     images: RouterOutputs["image"]["getAllImages"],
     sort: string
@@ -161,7 +165,7 @@ export const ImageManager = () => {
           ))}
         {!isLoading && (
           <div className="flex flex-col place-self-start">
-            <ImageUploadDialog>
+            <ImageUploadDialog handleUpload={handleUpload}>
               <button className="overflow-hidden rounded-lg bg-base-300 drop-shadow-xl transition-all hover:brightness-150">
                 <IoMdAdd className="h-[200px] w-[224px] transition-all hover:scale-125" />
               </button>
