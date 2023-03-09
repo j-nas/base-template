@@ -11,7 +11,11 @@ export default function Breadcrumbs({ subPath, subName, subSubName }: Props) {
     <div className="breadcrumbs place-self-start p-2 text-xs">
       <ul>
         <li>
-          <Link href="/admin">Dashboard Home</Link>
+          {subPath ? (
+            <Link href="/admin">Dashboard Home</Link>
+          ) : (
+            "Dashboard Home"
+          )}
         </li>
         {subName && subPath && (
           <li>
