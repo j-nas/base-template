@@ -34,11 +34,7 @@ export default function Layout({ children }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="relative">
-        <Navbar
-          services={services}
-          business={business}
-          toggleSidebar={toggleSidebar}
-        />
+        <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
         <main className="relative flex h-screen w-screen auto-cols-min grid-flow-col pt-16">
           <Sidebar sidebarOpen={sidebarOpen} />
           <div

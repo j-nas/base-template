@@ -8,7 +8,7 @@ type Props = {
 
 export default function Breadcrumbs({ subPath, subName, subSubName }: Props) {
   return (
-    <div className="text-md breadcrumbs place-self-start p-2">
+    <div className="breadcrumbs place-self-start p-2 text-xs">
       <ul>
         <li>
           <Link href="/admin">Dashboard Home</Link>
