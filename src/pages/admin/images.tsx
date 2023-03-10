@@ -175,7 +175,7 @@ export const ImageManager = () => {
       )}
       <div
         ref={parent}
-        className=" m-8 flex flex-wrap place-content-center place-items-center gap-8 place-self-center  align-middle md:place-content-start"
+        className=" m-8 flex flex-wrap place-content-center place-items-center gap-8 place-self-center pb-8  align-middle md:place-content-start"
       >
         {images &&
           sortImages(images, sort)?.map((image) => (

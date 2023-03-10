@@ -120,12 +120,13 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
                 </Field>
                 <div>
                   {base64 && (
-                    <div className="relative mt-4 flex h-full w-full place-content-center">
+                    <div className="relative m-4 flex aspect-auto h-full max-h-[30vh] place-content-center">
                       <Image
                         src={base64}
                         height={200}
                         width={200}
                         alt="preview"
+                        className="object-contain "
                       />
                     </div>
                   )}
