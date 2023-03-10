@@ -12,6 +12,7 @@ import ImageUploadDialog from "../../components/adminComponents/ImageUploadDialo
 import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import { RouterOutputs } from "../../utils/api";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Sorting =
   | "nameAsc"
@@ -35,6 +36,7 @@ export const ImageManager = () => {
   const [sort, setSort] = useState("nameDes");
   const [uploading, setUploading] = useState(false);
   const [buffer, setBuffer] = useState(0);
+  const [parent, enableAnimations] = useAutoAnimate();
   const renameMutation = api.image.renameImage.useMutation();
   const uploadMutation = api.image.uploadImage.useMutation();
   const deleteMutation = api.image.deleteImage.useMutation();
@@ -171,7 +173,10 @@ export const ImageManager = () => {
           </div>
         </div>
       )}
-      <div className=" m-8 flex flex-wrap place-content-center place-items-center gap-8 place-self-center  align-middle md:place-content-start">
+      <div
+        ref={parent}
+        className=" m-8 flex flex-wrap place-content-center place-items-center gap-8 place-self-center  align-middle md:place-content-start"
+      >
         {images &&
           sortImages(images, sort)?.map((image) => (
             <div
