@@ -89,10 +89,10 @@ export const ImageManager = () => {
     console.log({ uploadMutation });
     return;
   };
-  const handleDelete = async (imageId: string) => {
+  const handleDelete = async (public_id: string) => {
     toast.promise(
       deleteMutation.mutateAsync(
-        { id: imageId },
+        { public_id: public_id },
         {
           onSuccess: () => {
             ctx.image.getAllImages.refetch();
@@ -200,7 +200,7 @@ export const ImageManager = () => {
               </Tooltip>
               <span className="px-2">{formatBytes(image.bytes)}</span>
               <span className="space-x-2 p-2">
-                <ImageDeleteDialog image={image}>
+                <ImageDeleteDialog image={image} handleDelete={handleDelete}>
                   <button className="btn-error btn-sm btn">Delete</button>
                 </ImageDeleteDialog>
                 <ImageRenameDialog renameHandler={handleRename} image={image}>
