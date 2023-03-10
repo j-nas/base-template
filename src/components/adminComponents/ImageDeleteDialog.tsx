@@ -9,9 +9,14 @@ import type { ImageAdmin } from "../../types/image";
 type Props = {
   children: React.ReactNode;
   image: ImageAdmin;
+  handleDelete: (id: string) => Promise<void>;
 };
 
-export default function ImageDeleteDialog({ children, image }: Props) {
+export default function ImageDeleteDialog({
+  children,
+  image,
+  handleDelete,
+}: Props) {
   const { inUseProps } = image;
 
   const isImageInuse = (
@@ -47,6 +52,11 @@ export default function ImageDeleteDialog({ children, image }: Props) {
               <button
                 aria-label="delete"
                 className={`btn-error btn ${isImageInuse && "btn-disabled"}`}
+                onClick={() => {
+                  if (!isImageInuse) {
+                    handleDelete(image.public_id);
+                  }
+                }}
               >
                 Confirm Delete
               </button>

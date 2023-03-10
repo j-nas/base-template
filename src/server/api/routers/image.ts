@@ -42,23 +42,27 @@ export const imageRouter = createTRPCRouter({
     ),
   deleteImage: publicProcedure
     .input(z.object({
-      id: z.string(),
+
+      public_id: z.string(),
     }),
     )
     .mutation(async ({ ctx, input }) => {
-      cloudinary.v2.config(cloudinaryConfig);
-      try {
-        const result = await cloudinary.v2.uploader.destroy(input.id, { invalidate: true, resource_type: "image", });
-        const data = await ctx.prisma.image.delete({
-          where: {
-            id: result.asset_id,
-          },
-        });
-        return data;
-      } catch (error) {
-        console.log(error);
 
+      const fullPath = env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.public_id;
+      console.log({ fullPath })
+      cloudinary.v2.config(cloudinaryConfig);
+
+      const result = await cloudinary.v2.uploader.destroy(fullPath, { invalidate: true, resource_type: "image", });
+      console.log(result)
+      if (result.result !== "ok") {
+        throw new Error("Image deletion failed");
       }
+      const data = await ctx.prisma.image.delete({
+        where: {
+          public_id: input.public_id,
+        },
+      });
+      return data;
 
     }
     ),
