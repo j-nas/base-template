@@ -36,6 +36,8 @@ export const ImageManager = () => {
   const [uploading, setUploading] = useState(false);
   const [buffer, setBuffer] = useState(0);
   const renameMutation = api.image.renameImage.useMutation();
+  const uploadMutation = api.image.uploadImage.useMutation();
+  const deleteMutation = api.image.deleteImage.useMutation();
   const ctx = api.useContext();
 
   const handleRename = async (
@@ -64,8 +66,50 @@ export const ImageManager = () => {
     console.log({ renameMutation });
     return;
   };
-  const handleUpload = (input: string) => {
-    console.log({ input });
+  const handleUpload = async (base64: string, publicId: string) => {
+    const fileName = publicId.split(".")[0] || `image-${Date.now()}`;
+    toast.promise(
+      uploadMutation.mutateAsync(
+        { file: base64, public_id: fileName },
+        {
+          onSuccess: () => {
+            ctx.image.getAllImages.refetch();
+          },
+          onError: (error) => {
+            toast.error(error.message);
+          },
+        }
+      ),
+      {
+        loading: "Uploading image...",
+        success: "Image uploaded",
+        error: "Error uploading image",
+      }
+    );
+    console.log({ uploadMutation });
+    return;
+  };
+  const handleDelete = async (imageId: string) => {
+    toast.promise(
+      deleteMutation.mutateAsync(
+        { id: imageId },
+        {
+          onSuccess: () => {
+            ctx.image.getAllImages.refetch();
+          },
+          onError: (error) => {
+            toast.error(error.message);
+          },
+        }
+      ),
+      {
+        loading: "Deleting image...",
+        success: "Image deleted",
+        error: "Error deleting image",
+      }
+    );
+    console.log({ deleteMutation });
+    return;
   };
 
   const sortImages = (
