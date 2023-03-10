@@ -40,20 +40,39 @@ export const imageRouter = createTRPCRouter({
       return data;
     }
     ),
-  uploadImage: editorProcedure
+  deleteImage: publicProcedure
+    .input(z.object({
+      id: z.string(),
+    }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      cloudinary.v2.config(cloudinaryConfig);
+      try {
+        const result = await cloudinary.v2.uploader.destroy(input.id, { invalidate: true, resource_type: "image", });
+        const data = await ctx.prisma.image.delete({
+          where: {
+            id: result.asset_id,
+          },
+        });
+        return data;
+      } catch (error) {
+        console.log(error);
+
+      }
+
+    }
+    ),
+
+  uploadImage: publicProcedure
     .input(z.object({
       file: z.string(),
-      name: z.string(),
+      public_id: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const cloudinaryConfig: ConfigOptions = {
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-      };
+
       cloudinary.v2.config(cloudinaryConfig);
       const result = await cloudinary.v2.uploader.upload(input.file, {
-        public_id: env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.name,
+        public_id: env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.public_id,
         overwrite: true,
         invalidate: true,
         resource_type: "image",
@@ -64,7 +83,7 @@ export const imageRouter = createTRPCRouter({
           type: result.resource_type,
           id: result.asset_id,
           blur_url: blurData,
-          public_id: result.public_id,
+          public_id: input.public_id,
           bytes: result.bytes,
           format: result.format,
           height: result.height,

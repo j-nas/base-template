@@ -58,7 +58,8 @@ export default function ImageRenameDialog({
                         .min(1, { message: "Must not be blank" })
                         .max(28, { message: "Please limit to 28 characters" })
                         .regex(/^[a-zA-Z0-9-_]+$/, {
-                          message: "Please use only letters, numbers, - and _",
+                          message:
+                            "Please use only letters, numbers, '-' and '_'",
                         })}
                     >
                       {({ value, setValue, onBlur, errors }) => (

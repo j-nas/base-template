@@ -8,10 +8,10 @@ import Image from "next/image";
 
 type Props = {
   children: React.ReactNode;
-  handleUpload: (input: string) => void;
+  handleUpload: (base64: string, publicId: string) => Promise<void>;
 };
 
-const MAX_FILE_SIZE = 5000000;
+const MAX_FILE_SIZE = 4000000;
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -21,7 +21,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 export default function ImageUploadDialog({ children, handleUpload }: Props) {
   const [base64, setBase64] = React.useState<string | null>(null);
-
+  const [open, setOpen] = React.useState(false);
   const encodeBase64 = (file: File) => {
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
@@ -34,7 +34,13 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
   const fieldRef = React.useRef<FieldInstance>(null);
 
   return (
-    <Dialog.Root onOpenChange={() => setBase64(null)}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={() => {
+        setBase64(null);
+        return setOpen(!open);
+      }}
+    >
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
@@ -44,12 +50,15 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
           </Dialog.Title>
           <Dialog.Description className="mt-2 mb-5">
             Select an image to upload. Only .jpg, .jpeg, .png and .webp formats.
-            Please keep the size under 5MB.
+            Please keep the size under 4MB.
           </Dialog.Description>
           <Form
             onSubmit={(values) => {
-              console.log(values.file);
-              return;
+              encodeBase64(values.file).then((base64) => {
+                handleUpload(base64, values.file.name).then(() => {
+                  setOpen(false);
+                });
+              });
             }}
           >
             {({ submit, errors }) => (
