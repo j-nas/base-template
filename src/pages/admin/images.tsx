@@ -11,6 +11,7 @@ import ImageRenameDialog from "../../components/adminComponents/ImageRenameDialo
 import ImageUploadDialog from "../../components/adminComponents/ImageUploadDialog";
 import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import { RouterOutputs } from "../../utils/api";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
@@ -33,7 +34,8 @@ const sorters = [
 
 export const ImageManager = () => {
   const { data: images, isLoading } = api.image.getAllImages.useQuery();
-  const [sort, setSort] = useState("nameDes");
+  const { data: size } = api.image.getTotalSize.useQuery();
+  const [sort, setSort] = useState("dateDes");
   const [uploading, setUploading] = useState(false);
   const [buffer, setBuffer] = useState(0);
   const [parent, enableAnimations] = useAutoAnimate();
@@ -42,6 +44,7 @@ export const ImageManager = () => {
   const deleteMutation = api.image.deleteImage.useMutation();
   const ctx = api.useContext();
 
+  const maxSizeExceeded = size?._sum.bytes && size._sum.bytes > 100000000;
   const handleRename = async (
     imageId: string,
     newName: string,
@@ -149,12 +152,7 @@ export const ImageManager = () => {
           Image Managment
         </h1>
       </div>
-      {isLoading && (
-        <div className="flex flex-col place-content-center place-items-center gap-2">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-gray-900"></div>
-          <span>Loading...</span>
-        </div>
-      )}
+      {isLoading && <LoadingSpinner />}
       {!isLoading && (
         <div className="form-control ml-8 mt-6 place-self-center lg:place-self-start">
           <div className="input-group">
@@ -214,7 +212,7 @@ export const ImageManager = () => {
               </span>
             </div>
           ))}
-        {!isLoading && (
+        {!isLoading && !maxSizeExceeded && (
           <div className="flex flex-col place-self-start">
             <ImageUploadDialog handleUpload={handleUpload}>
               <button className="overflow-hidden rounded-lg bg-base-300 drop-shadow-xl transition-all hover:brightness-150">
