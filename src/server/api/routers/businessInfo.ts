@@ -16,17 +16,15 @@ export const businessProfileValidation = z.object({
   ownerName: z.string(),
   ownerTitle: z.string(),
   ownerQuote: z.string(),
-  avatarImage: z.string(),
-  businessLogo: z.string(),
-  facebookUrl: z.string().url().nullable(),
-  instagramUrl: z.string().url().nullable(),
-  twitterUrl: z.string().url().nullable(),
-  youtubeUrl: z.string().url().nullable(),
-  linkedInUrl: z.string().url().nullable(),
-  pinterestUrl: z.string().url().nullable(),
-  tiktokUrl: z.string().url().nullable(),
-  snapchatUrl: z.string().url().nullable(),
-  whatsappUrl: z.string().url().nullable(),
+  facebookUrl: z.string().nullish(),
+  instagramUrl: z.string().nullish(),
+  twitterUrl: z.string().nullish(),
+  youtubeUrl: z.string().nullish(),
+  linkedInUrl: z.string().nullish(),
+  pinterestUrl: z.string().nullish(),
+  tiktokUrl: z.string().nullish(),
+  snapchatUrl: z.string().nullish(),
+  whatsappUrl: z.string().nullish(),
 });
 
 
@@ -55,73 +53,8 @@ export const businessInfoRouter = createTRPCRouter({
     return data;
 
   }),
-  create: editorProcedure
-    .input(z.object({
-      title: z.string(),
-      address: z.string(),
-      city: z.string(),
-      province: z.string(),
-      postalCode: z.string(),
-      telephone: z.string(),
-      email: z.string().email(),
-      holidays: z.string(),
-      hours: z.string(),
-      ownerName: z.string(),
-      ownerTitle: z.string(),
-      ownerQuote: z.string(),
-      avatarImage: z.string(),
-      businessLogo: z.string(),
-      facebookUrl: z.string().url().optional(),
-      instagramUrl: z.string().url().optional(),
-      twitterUrl: z.string().url().optional(),
-      youtubeUrl: z.string().url().optional(),
-      linkedinUrl: z.string().url().optional(),
-      pinterestUrl: z.string().url().optional(),
-      tiktokUrl: z.string().url().optional(),
-      snapchatUrl: z.string().url().optional(),
-      whatsappUrl: z.string().url().optional(),
 
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.businessInfo.create({
-        data: {
-          holidays: input.holidays,
-          hours: input.hours,
-          title: input.title,
-          address: input.address,
-          city: input.city,
-          province: input.province,
-          postalCode: input.postalCode,
-          businessLogo: {
-            create: {
-              imageId: input.businessLogo,
-            },
-          },
-          avatarImage: {
-            create: {
-              imageId: input.avatarImage,
-            },
-          },
-          telephone: input.telephone,
-          email: input.email,
-          ownerName: input.ownerName,
-          ownerTitle: input.ownerTitle,
-          ownerQuote: input.ownerQuote,
-          facebookUrl: input.facebookUrl,
-          instagramUrl: input.instagramUrl,
-          twitterUrl: input.twitterUrl,
-          youtubeUrl: input.youtubeUrl,
-          linkedInUrl: input.linkedinUrl,
-          pinterestUrl: input.pinterestUrl,
-          tiktokUrl: input.tiktokUrl,
-          snapchatUrl: input.snapchatUrl,
-          whatsappUrl: input.whatsappUrl,
-        },
-
-      });
-    }
-    ),
-  update: editorProcedure
+  update: publicProcedure
     .input(businessProfileValidation)
     .mutation(({ ctx, input }) => {
       return ctx.prisma.businessInfo.update({
