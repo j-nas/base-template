@@ -11,6 +11,7 @@ import { IoMdHelpCircle } from "react-icons/io";
 import React from "react";
 import { RouterOutputs } from "../../utils/api";
 import { Toaster, toast } from "react-hot-toast";
+import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 
 const provinces = [
   "AB",
@@ -62,6 +63,7 @@ export const BusinessProfile: NextPageWithLayout = () => {
   return (
     <div className="grid h-full w-full grid-rows-[max-content_1fr]  place-items-center ">
       <Toaster position="bottom-right" />
+      <Breadcrumbs subName="Business Profile" subPath="business" />
       <div className="">
         <h1 className="p-8 text-4xl">Business Profile</h1>
       </div>

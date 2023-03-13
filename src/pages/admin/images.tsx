@@ -36,8 +36,6 @@ export const ImageManager = () => {
   const { data: images, isLoading } = api.image.getAllImages.useQuery();
   const { data: size } = api.image.getTotalSize.useQuery();
   const [sort, setSort] = useState("dateDes");
-  const [uploading, setUploading] = useState(false);
-  const [buffer, setBuffer] = useState(0);
   const [parent, enableAnimations] = useAutoAnimate();
   const renameMutation = api.image.renameImage.useMutation();
   const uploadMutation = api.image.uploadImage.useMutation();
