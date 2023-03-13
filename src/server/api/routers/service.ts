@@ -65,6 +65,35 @@ export const serviceRouter = createTRPCRouter({
     });
   }
   ),
+  getAllAdmin: publicProcedure
+    .output(z.object({
+      id: z.string(),
+      pageName: z.string(),
+      title: z.string(),
+      shortDescription: z.string(),
+      markdown: z.string(),
+      icon: z.custom((value) => {
+        if (IconKeys.includes(value as any)) {
+          return value;
+        } else {
+          return z.ZodIssueCode.custom;
+
+        }
+      }),
+      updatedAt: z.date(),
+
+      position: z.nativeEnum(Services).nullable(),
+    }).array())
+    .query(async ({ ctx }) => {
+      return await ctx.prisma.service.findMany({
+        where: {
+          position: {
+            not: null,
+          }
+        }
+      });
+    }
+    ),
   getByPageName: publicProcedure
     .input(z.object({ pageName: z.string() }))
     .output(serviceSchema)
@@ -101,6 +130,7 @@ export const serviceRouter = createTRPCRouter({
 
     }
     ),
+
   getActive: publicProcedure
     .output(serviceSchema.array())
     .query(async ({ ctx }) => {
@@ -179,6 +209,40 @@ export const serviceRouter = createTRPCRouter({
       });
     }
     ),
+  swapPosition: publicProcedure
+    .input(z.object({
+      existingPosition: z.nativeEnum(Services),
+      requestedPosition: z.nativeEnum(Services),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const swapService = await ctx.prisma.service.update({
+        where: {
+          position: input.requestedPosition,
+        },
+        data: {
+          position: null,
+        },
+      });
+      const newPosition = await ctx.prisma.service.update({
+        where: {
+          position: input.existingPosition,
+        },
+        data: {
+          position: input.requestedPosition,
+        },
+      });
+      await ctx.prisma.service.update({
+        where: {
+          id: swapService.id,
+        },
+        data: {
+          position: input.existingPosition,
+        },
+      });
+
+      return newPosition;
+    }),
+
   create: editorProcedure
     .input(z.object({
       title: z.string(),
