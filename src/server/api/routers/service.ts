@@ -172,8 +172,8 @@ export const serviceRouter = createTRPCRouter({
     ),
   getByPosition: publicProcedure
     .input(z.object({ position: z.nativeEnum(Services) }))
-    .query(({ ctx, input }) => {
-      return ctx.prisma.service.findUnique({
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.service.findUniqueOrThrow({
         where: {
           position: input.position,
         },
@@ -192,23 +192,13 @@ export const serviceRouter = createTRPCRouter({
           },
         },
       });
+
+      return { ...data, primaryImage: data?.primaryImage?.image, secondaryImage: data?.secondaryImage?.image }
     }
 
     ),
 
-  removePosition: editorProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.service.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          position: null,
-        },
-      });
-    }
-    ),
+
   swapPosition: publicProcedure
     .input(z.object({
       existingPosition: z.nativeEnum(Services),
@@ -243,98 +233,7 @@ export const serviceRouter = createTRPCRouter({
       return newPosition;
     }),
 
-  create: editorProcedure
-    .input(z.object({
-      title: z.string(),
-      markdown: z.string(),
-      primaryImage: z.string(),
-      secondaryImage: z.string(),
-      shortDescription: z.string(),
-      icon: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.service.create({
-        data: {
-          title: input.title,
-          markdown: input.markdown,
-          shortDescription: input.shortDescription,
-          icon: input.icon,
-          pageName: input.title.toLowerCase().replace(/ /g, "-"),
-          primaryImage: {
-            create: {
-              imageId: input.primaryImage
-            }
-          },
-          secondaryImage: {
-            create: {
-              imageId: input.secondaryImage
-            }
-          },
-        },
-      });
-    }
-    ),
-  edit: editorProcedure
-    .input(z.object({
-      id: z.string(),
-      title: z.string(),
-      markdown: z.string(),
-      primaryImage: z.string(),
-      secondaryImage: z.string(),
-      shortDescription: z.string(),
-      icon: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.service.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          title: input.title,
-          markdown: input.markdown,
-          shortDescription: input.shortDescription,
-          icon: input.icon,
-          primaryImage: {
-            create: {
-              imageId: input.primaryImage
-            }
-          },
-          secondaryImage: {
-            create: {
-              imageId: input.secondaryImage
-            }
-          },
-        },
-      });
-    }
-    ),
-  assignPosition: editorProcedure
-    .input(z.object({
-      id: z.string(),
-      position: z.nativeEnum(Services),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.$transaction([
-        ctx.prisma.service.update({
-          where: {
-            position: input.position,
-          },
-          data: {
-            position: null,
-          },
-        }),
-        ctx.prisma.service.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            position: input.position,
-          },
-        }),
-      ]);
 
-    }
-    ),
 
 });
 

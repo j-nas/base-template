@@ -3,7 +3,7 @@ import Image from "next/image";
 import { env } from "../env/client.mjs";
 import { type RouterOutputs } from "../utils/api";
 
-type Props = RouterOutputs["testimonial"]["getOne"];
+type Props = RouterOutputs["testimonial"]["getById"];
 
 export default function Testimonial(props: Props) {
   const { id, name, image, company, quote, title } = props;
