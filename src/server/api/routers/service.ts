@@ -171,6 +171,24 @@ export const serviceRouter = createTRPCRouter({
     }
     ),
   getByPosition: publicProcedure
+    .output(z.object({
+      id: z.string(),
+      pageName: z.string(),
+      title: z.string(),
+      shortDescription: z.string(),
+      markdown: z.string(),
+      icon: z.custom((value) => {
+        if (IconKeys.includes(value as any)) {
+          return value;
+        } else {
+          return z.ZodIssueCode.custom;
+
+        }
+      }),
+      updatedAt: z.date(),
+
+      position: z.nativeEnum(Services).nullable(),
+    }))
     .input(z.object({ position: z.nativeEnum(Services) }))
     .query(async ({ ctx, input }) => {
       const data = await ctx.prisma.service.findUniqueOrThrow({

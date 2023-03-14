@@ -16,7 +16,9 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { ParsedUrlQuery } from "querystring";
 import Layout from "../../../components/adminComponents/Layout";
 import { ReactElement } from "react";
-
+import { Form, Field, FieldInstance, FormInstance } from "houseform";
+import IconSelectDialog from "../../../components/adminComponents/IconSelectDialog";
+import React from "react";
 export interface ServicePageQuery extends ParsedUrlQuery {
   slug: Services;
 }
@@ -29,8 +31,11 @@ export const ServiceEditor = () => {
   const { data: data, isLoading } = api.service.getByPosition.useQuery({
     position: servicePageFormatted,
   });
-  console.log(data);
 
+  const iconRef = React.useRef<FieldInstance>(null);
+  const handleIconChange = (value: string) => {
+    iconRef.current?.setValue(value);
+  };
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto">
       <>
@@ -52,9 +57,38 @@ export const ServiceEditor = () => {
           </h1>
           {isLoading && <LoadingSpinner />}
         </div>
-        <div>
-          <div className="flex h-full w-full flex-col">hello</div>
-        </div>
+        {data && (
+          <div>
+            <div className="flex h-full w-full flex-col">
+              <Form>
+                {({ submit }) => (
+                  <Field name="icon" initialValue={data?.icon} ref={iconRef}>
+                    {({ value, setValue, isDirty }) => (
+                      <div className="flex flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm ${
+                            isDirty && "text-success"
+                          }`}
+                        >
+                          Icon
+                        </label>
+                        <IconSelectDialog handleIconChange={handleIconChange}>
+                          <button
+                            className={`btn-outline btn-square btn ${
+                              isDirty && "btn-success"
+                            }`}
+                          >
+                            <IconDisplay icon={value} />
+                          </button>
+                        </IconSelectDialog>
+                      </div>
+                    )}
+                  </Field>
+                )}
+              </Form>
+            </div>
+          </div>
+        )}
       </>
     </div>
   );
