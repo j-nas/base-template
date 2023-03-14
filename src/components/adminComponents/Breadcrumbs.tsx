@@ -8,7 +8,7 @@ type Props = {
 
 export default function Breadcrumbs({ subPath, subName, subSubName }: Props) {
   return (
-    <div className="breadcrumbs min-h-12 place-self-start p-2 text-xs">
+    <div className="breadcrumbs min-h-12 place-self-start p-2 overflow-y-hidden scrollbar-none text-xs">
       <ul>
         <li>
           {subPath ? (

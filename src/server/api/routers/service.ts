@@ -171,23 +171,9 @@ export const serviceRouter = createTRPCRouter({
     }
     ),
   getByPosition: publicProcedure
-    .output(z.object({
-      id: z.string(),
-      pageName: z.string(),
-      title: z.string(),
-      shortDescription: z.string(),
-      markdown: z.string(),
-      icon: z.custom((value) => {
-        if (IconKeys.includes(value as any)) {
-          return value;
-        } else {
-          return z.ZodIssueCode.custom;
-
-        }
-      }),
+    .output(serviceSchema.extend({
+      createdAt: z.date(),
       updatedAt: z.date(),
-
-      position: z.nativeEnum(Services).nullable(),
     }))
     .input(z.object({ position: z.nativeEnum(Services) }))
     .query(async ({ ctx, input }) => {
@@ -210,8 +196,11 @@ export const serviceRouter = createTRPCRouter({
           },
         },
       });
+      if (!data.primaryImage || !data.secondaryImage) {
+        throw new Error("No image found")
+      }
 
-      return { ...data, primaryImage: data?.primaryImage?.image, secondaryImage: data?.secondaryImage?.image }
+      return { ...data, primaryImage: data.primaryImage?.image, secondaryImage: data?.secondaryImage?.image }
     }
 
     ),

@@ -50,6 +50,7 @@ export default function IconSelectDialog({
                 const Icon = icons[icon as keyof typeof icons];
                 return (
                   <button
+                    key={icon}
                     onClick={() => {
                       console.log(icon);
                       setSelectedIcon(icon);
