@@ -26,7 +26,7 @@ export default function Breadcrumbs({ subPath, subName, subSubName }: Props) {
             )}
           </li>
         )}
-        {subSubName && <li>Add Document</li>}
+        {subSubName && <li>{subSubName}</li>}
       </ul>
     </div>
   );

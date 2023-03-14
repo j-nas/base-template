@@ -1,9 +1,9 @@
 import { RouterOutputs } from "../../utils/api";
 import Link from "next/link";
-import type { Image } from "./ImageDeleteDialog";
+import type { ImageAdmin } from "../../types/image";
 
 type Props = {
-  image: Image;
+  image: ImageAdmin;
 };
 
 export default function ImageInUseWidget({ image }: Props) {
