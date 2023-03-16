@@ -38,15 +38,17 @@ export default function Footer({ business, services, aboutSummary }: Props) {
         </nav>
         <nav>
           <span className="footer-title text-base-content">Services</span>
-          {services?.map((service) => (
-            <Link
-              key={service.id}
-              href={`/services/${service.pageName}`}
-              className="link-hover link"
-            >
-              {service.title}
-            </Link>
-          ))}
+          {services
+            ?.sort((a: any, b: any) => a.position.localeCompare(b.position))
+            .map((service) => (
+              <Link
+                key={service.id}
+                href={`/services/${service.pageName}`}
+                className="link-hover link"
+              >
+                {service.title}
+              </Link>
+            ))}
         </nav>
         {/* </div> */}
         <div className="prose">

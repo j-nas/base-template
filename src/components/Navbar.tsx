@@ -136,20 +136,22 @@ export default function Navbar({ services, business }: Props) {
               </svg>
             </Link>
             <ul className="bg-base-300 p-2">
-              {services.map((service) => (
-                <li key={service.id}>
-                  <Link
-                    href={`/services/${service.pageName}`}
-                    className={`rounded-none ${
-                      router.asPath.includes(service.pageName)
-                        ? "btn-accent  btn"
-                        : "btn-ghost btn text-base-content"
-                    }`}
-                  >
-                    {service.title}
-                  </Link>
-                </li>
-              ))}
+              {services
+                .sort((a: any, b: any) => a.position.localeCompare(b.position))
+                .map((service) => (
+                  <li key={service.id}>
+                    <Link
+                      href={`/services/${service.pageName}`}
+                      className={`rounded-none ${
+                        router.asPath.includes(service.pageName)
+                          ? "btn-accent  btn"
+                          : "btn-ghost btn text-base-content"
+                      }`}
+                    >
+                      {service.title}
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </li>
           <li>
