@@ -43,11 +43,15 @@ export const ServiceEditor = () => {
   const servicePage = router.query.slug as string;
   const servicePageFormatted = servicePage.toUpperCase() as Services;
   const submitMutation = api.service.update.useMutation();
-  const { data: data, isLoading } = api.service.getByPosition.useQuery({
+
+  const {
+    data: data,
+    isLoading,
+    error,
+  } = api.service.getByPosition.useQuery({
     position: servicePageFormatted,
   });
   const ctx = api.useContext();
-
   const iconRef = React.useRef<FieldInstance>(null);
   const primaryImageRef = React.useRef<FieldInstance>(null);
   const secondaryImageRef = React.useRef<FieldInstance>(null);
@@ -105,6 +109,16 @@ export const ServiceEditor = () => {
     );
     formRef.current?.setIsDirty(false);
   };
+  if (error?.data?.httpStatus === 400) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-bold text-2xl">Service not found</h1>
+        <Link href="/admin/services">
+          <span className="text-primary">Go back</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-200 scrollbar-thumb-primary scrollbar-track-rounded-lg scrollbar-thumb-rounded-lg">
@@ -162,7 +176,7 @@ export const ServiceEditor = () => {
                             >
                               <div className="flex w-52">
                                 <button
-                                  className={`btn-outline btn-square btn ${
+                                  className={`btn-outline btn btn-square ${
                                     isDirty && "btn-success"
                                   }`}
                                 >
@@ -274,7 +288,7 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >
@@ -318,7 +332,7 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >
@@ -371,7 +385,7 @@ export const ServiceEditor = () => {
                       </Link>
                       <button
                         onClick={submit}
-                        className={`btn-success btn ${
+                        className={`btn btn-success ${
                           errors.length > 0 && "btn-disabled"
                         }`}
                       >
