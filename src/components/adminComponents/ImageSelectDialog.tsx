@@ -35,7 +35,7 @@ export default function ImageSelectDialog({
             Select {position} image
           </Dialog.Title>
           {/* <div className="mt-6 w-full place-content-center md:flex">help</div> */}
-          <div className="m-8 flex h-[40vh] flex-wrap place-content-start overflow-auto rounded-lg bg-base-100 text-base-content drop-shadow-2xl scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg">
+          <div className="m-2 flex h-[40vh] flex-wrap place-content-start overflow-auto rounded-lg bg-base-100 text-base-content drop-shadow-2xl scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg md:m-8">
             {isLoading ? (
               <div className="flex justify-center">
                 <LoadingSpinner />
@@ -44,7 +44,7 @@ export default function ImageSelectDialog({
               data?.map((image) => (
                 <button
                   key={image.public_id}
-                  className={`btn-outline btn-square btn  m-2 h-24 w-24 cursor-pointer p-1 ${
+                  className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
                     selectedImage === image.public_id && "btn-primary"
                   }`}
                   onClick={() => setSelectedImage(image.public_id)}
@@ -72,14 +72,14 @@ export default function ImageSelectDialog({
           <span>Selected image: {selectedImage}</span>
           <div className="mt-6 flex justify-end">
             <Dialog.Close asChild>
-              <button aria-label="cancel" className={`btn-warning btn `}>
+              <button aria-label="cancel" className={`btn btn-warning `}>
                 Cancel
               </button>
             </Dialog.Close>
             <Dialog.Close asChild>
               <button
                 onClick={() => handleImageChange(selectedImage, position)}
-                className="btn-primary btn ml-2"
+                className="btn btn-primary ml-2"
               >
                 Accept
               </button>
@@ -87,7 +87,7 @@ export default function ImageSelectDialog({
           </div>
           <Dialog.Close asChild>
             <button
-              className="btn-ghost btn-circle btn absolute top-3 right-3"
+              className="btn btn-ghost btn-circle absolute top-3 right-3"
               aria-label="Close"
             >
               <IoMdCloseCircle className="text-xl" />

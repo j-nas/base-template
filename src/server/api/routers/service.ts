@@ -9,7 +9,6 @@ const IconKeys = Object.keys(icons) as (keyof typeof icons)[];
 
 
 
-
 const serviceSchema = z.object({
   id: z.string(),
   pageName: z.string(),
@@ -66,24 +65,10 @@ export const serviceRouter = createTRPCRouter({
   }
   ),
   getAllAdmin: publicProcedure
-    .output(z.object({
-      id: z.string(),
-      pageName: z.string(),
-      title: z.string(),
-      shortDescription: z.string(),
-      markdown: z.string(),
-      icon: z.custom((value) => {
-        if (IconKeys.includes(value as any)) {
-          return value;
-        } else {
-          return z.ZodIssueCode.custom;
-
-        }
-      }),
-      updatedAt: z.date(),
-
-      position: z.nativeEnum(Services).nullable(),
-    }).array())
+    .output(serviceSchema
+      .extend({ updatedAt: z.date() })
+      .omit({ primaryImage: true, secondaryImage: true })
+      .array())
     .query(async ({ ctx }) => {
       return await ctx.prisma.service.findMany({
         where: {
@@ -240,6 +225,65 @@ export const serviceRouter = createTRPCRouter({
       return newPosition;
     }),
 
+  update: publicProcedure
+    .input(z.object({
+      id: z.string(),
+      title: z.string(),
+      shortDescription: z.string(),
+      markdown: z.string(),
+      icon: z.custom((value) => {
+        if (IconKeys.includes(value as any)) {
+          return value;
+        } else {
+          return z.ZodIssueCode.custom;
+
+        }
+      }
+      ),
+      primaryImage: z.string(),
+      secondaryImage: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+
+      const pageName = input.title.toLowerCase().replace(/ /g, "-");
+
+
+      return await ctx.prisma.service.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          title: input.title,
+          pageName: pageName,
+          shortDescription: input.shortDescription,
+          markdown: input.markdown,
+          icon: input.icon,
+          primaryImage: {
+            update: {
+              image: {
+                connect: {
+                  public_id: input.primaryImage,
+                }
+              }
+            },
+
+
+
+          },
+          secondaryImage: {
+            update: {
+              image: {
+                connect: {
+                  public_id: input.secondaryImage,
+                }
+              }
+            },
+          },
+        },
+
+      });
+    }
+    ),
 
 
 });
