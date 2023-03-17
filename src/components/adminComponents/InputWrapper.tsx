@@ -22,10 +22,16 @@ export default function InputWrapper({
       initialValue={initialValue}
       onChangeValidate={zodValidate}
     >
-      {({ value, setValue, onBlur }) => (
+      {({ value, setValue, onBlur, isDirty, errors }) => (
         <div className="form-control place-self-stretch pt-2 md:place-self-auto">
           <label className=" label">
-            <span className="label-text">{label}</span>
+            <span
+              className={`label-text ${isDirty && "text-success"} ${
+                errors.length > 0 && "!text-error"
+              }`}
+            >
+              {label}
+            </span>
 
             {tooltip && (
               <span
@@ -41,7 +47,9 @@ export default function InputWrapper({
             onChange={(e) => setValue(e.target.value)}
             onBlur={onBlur}
             type="text"
-            className={`input-bordered input place-self-stretch`}
+            className={`input-bordered input place-self-stretch ${
+              isDirty && "input-success"
+            } ${errors.length > 0 && "!input-error"}`}
           ></input>
         </div>
       )}
