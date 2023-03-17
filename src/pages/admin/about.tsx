@@ -1,26 +1,20 @@
 import { toast, Toaster } from "react-hot-toast";
-import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
-import LoadingSpinner from "../../../components/LoadingSpinner";
-import IconDisplay from "../../../components/IconDisplay";
-import { api } from "../../../utils/api";
+import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import IconDisplay from "../../components/IconDisplay";
+import { api } from "../../utils/api";
 import { IoMdHelpCircle } from "react-icons/io";
-import { useRouter } from "next/router";
-import { Services } from "@prisma/client";
-import { ParsedUrlQuery } from "querystring";
-import Layout from "../../../components/adminComponents/Layout";
+import Layout from "../../components/adminComponents/Layout";
 import { ReactElement } from "react";
 import { Form, Field, FieldInstance, FormInstance } from "houseform";
-import IconSelectDialog from "../../../components/adminComponents/IconSelectDialog";
-import ImageSelectDialog from "../../../components/adminComponents/ImageSelectDialog";
+import IconSelectDialog from "../../components/adminComponents/IconSelectDialog";
+import ImageSelectDialog from "../../components/adminComponents/ImageSelectDialog";
 import React from "react";
 import { CldImage } from "next-cloudinary";
-import { env } from "../../../env/client.mjs";
+import { env } from "../../env/client.mjs";
 import Link from "next/link";
-import ServiceContentEditor from "../../../components/adminComponents/TextEditor";
+import ServiceContentEditor from "../../components/adminComponents/TextEditor";
 import { z } from "zod";
-export interface ServicePageQuery extends ParsedUrlQuery {
-  slug: Services;
-}
 
 type FormData = {
   title: string;
@@ -31,29 +25,19 @@ type FormData = {
   description: string;
 };
 
-export const ServiceEditor = () => {
-  const router = useRouter();
-  const servicePage = router.query.slug as string;
-  const servicePageFormatted = servicePage.toUpperCase() as Services;
-  const submitMutation = api.service.update.useMutation();
-
+export const AboutUsEditor = () => {
+  const submitMutation = api.aboutUs.update.useMutation();
   const {
     data: data,
     isLoading,
     error,
-  } = api.service.getByPosition.useQuery({
-    position: servicePageFormatted,
-  });
+  } = api.aboutUs.getCurrentWithDate.useQuery();
   const ctx = api.useContext();
-  const iconRef = React.useRef<FieldInstance>(null);
   const primaryImageRef = React.useRef<FieldInstance>(null);
   const secondaryImageRef = React.useRef<FieldInstance>(null);
   const contentRef = React.useRef<FieldInstance>(null);
   const formRef = React.useRef<FormInstance>(null);
 
-  const handleIconChange = (value: string) => {
-    iconRef.current?.setValue(value);
-  };
   const handleImageChange = (
     value: string,
     position: "primary" | "secondary" | "hero"
@@ -70,24 +54,20 @@ export const ServiceEditor = () => {
   };
 
   const handleSubmit = async (formData: FormData) => {
-    const { title, icon, primaryImage, secondaryImage, markdown, description } =
+    const { title, primaryImage, secondaryImage, markdown, description } =
       formData;
     const submission = {
       id: data?.id || "",
       title,
-      icon,
       primaryImage,
       secondaryImage,
       markdown: markdown,
-      shortDescription: description,
+      summary: description,
     };
     await toast.promise(
       submitMutation.mutateAsync(submission, {
         onSuccess: async () => {
-          await ctx.service.invalidate();
-          await ctx.service.getByPosition.refetch({
-            position: servicePageFormatted,
-          });
+          toast.success("Submitted!");
         },
         onError: async (error) => {
           console.log(error);
@@ -102,35 +82,19 @@ export const ServiceEditor = () => {
     );
     formRef.current?.setIsDirty(false);
   };
-  if (error?.data?.httpStatus === 400) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">Service not found</h1>
-        <Link href="/admin/services">
-          <span className="text-primary">Go back to services</span>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-200 scrollbar-thumb-primary scrollbar-track-rounded-lg scrollbar-thumb-rounded-lg">
       <>
         <Toaster position="bottom-right" />
-        {data && (
-          <Breadcrumbs
-            subName="Services Manager"
-            subPath="services"
-            subSubName={data.title}
-          />
-        )}
+        {data && <Breadcrumbs subName="About Us Editor" subPath="about" />}
 
         <div className="my-8">
           <h1 className=" place-self-center text-center font-black  text-2xl">
-            {data?.title}{" "}
-            <span className="tooltip tooltip-left">
+            About Us Editor{" "}
+            {/* <span className="tooltip tooltip-left">
               <IoMdHelpCircle />
-            </span>
+            </span> */}
           </h1>
           {data && (
             <span>
@@ -149,83 +113,9 @@ export const ServiceEditor = () => {
               <Form onSubmit={(values) => handleSubmit(values)} ref={formRef}>
                 {({ submit, errors }) => (
                   <React.Fragment>
-                    <div className="flex flex-col">
-                      <Field
-                        name="icon"
-                        initialValue={data?.icon}
-                        ref={iconRef}
-                      >
-                        {({ value, setValue, isDirty }) => (
-                          <div className="flex flex-col">
-                            <label
-                              className={`font-bold tracking-wide text-sm ${
-                                isDirty && "text-success"
-                              }`}
-                            >
-                              Icon
-                            </label>
-                            <IconSelectDialog
-                              handleIconChange={handleIconChange}
-                            >
-                              <div className="flex w-52">
-                                <button
-                                  className={`btn-outline btn btn-square ${
-                                    isDirty && "btn-success"
-                                  }`}
-                                >
-                                  <IconDisplay icon={value} />
-                                </button>
-                                <input
-                                  value={value}
-                                  className="input input-disabled ml-2 w-full"
-                                />
-                              </div>
-                            </IconSelectDialog>
-                          </div>
-                        )}
-                      </Field>
-                      <Field<string>
-                        name="title"
-                        initialValue={data.title}
-                        onChangeValidate={z
-                          .string()
-                          .min(1, { message: "Required" })
-                          .max(50, { message: "Max 50 characters" })
-                          .regex(/^[a-zA-Z0-9 ]*$/, {
-                            message: "Only letters, numbers and spaces",
-                          })}
-                      >
-                        {({ value, setValue, isDirty, errors }) => (
-                          <div className="mx-auto flex w-52 flex-col">
-                            <label
-                              className={`font-bold tracking-wide text-sm 
-                              ${errors.length > 0 && "!text-error"}
-                              
-                              ${isDirty && "text-success"} 
-                            }`}
-                            >
-                              Title
-                            </label>
-                            <input
-                              className={`input-bordered input ${
-                                isDirty && "input-success"
-                              } ${errors.length > 0 && "input-error"}`}
-                              value={value}
-                              onChange={(e) => setValue(e.target.value)}
-                            />
-                            {errors.length > 0 &&
-                              errors.map((error) => (
-                                <span className="text-error text-xs">
-                                  {error}
-                                </span>
-                              ))}
-                          </div>
-                        )}
-                      </Field>
-                    </div>
                     <Field<string>
                       name="description"
-                      initialValue={data.shortDescription}
+                      initialValue={data.summary}
                       onChangeValidate={z
                         .string()
                         .min(1, { message: "Required" })
@@ -238,7 +128,7 @@ export const ServiceEditor = () => {
                               errors.length > 0 && "!text-error"
                             } ${isDirty && "text-success"}`}
                           >
-                            Description
+                            Summary
                           </label>
                           <textarea
                             className={`textarea-bordered textarea   w-52 resize-none scrollbar-thin 
@@ -373,9 +263,6 @@ export const ServiceEditor = () => {
                       )}
                     </Field>
                     <div className="place-self-end">
-                      <Link href="/admin/services" className="btn mr-2">
-                        Back to services
-                      </Link>
                       <button
                         onClick={submit}
                         className={`btn btn-success ${
@@ -396,8 +283,8 @@ export const ServiceEditor = () => {
   );
 };
 
-export default ServiceEditor;
+export default AboutUsEditor;
 
-ServiceEditor.getLayout = (page: ReactElement) => {
+AboutUsEditor.getLayout = (page: ReactElement) => {
   return <Layout>{page}</Layout>;
 };
