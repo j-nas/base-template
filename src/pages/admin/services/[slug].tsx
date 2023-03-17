@@ -114,7 +114,7 @@ export const ServiceEditor = () => {
       <div className="flex h-full w-full flex-col items-center justify-center">
         <h1 className="font-bold text-2xl">Service not found</h1>
         <Link href="/admin/services">
-          <span className="text-primary">Go back</span>
+          <span className="text-primary">Go back to services</span>
         </Link>
       </div>
     );

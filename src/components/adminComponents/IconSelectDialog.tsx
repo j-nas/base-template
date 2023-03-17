@@ -23,7 +23,7 @@ export default function IconSelectDialog({
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-base-300 p-6  drop-shadow-xl">
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-base-100/50 p-6 drop-shadow-xl  backdrop-blur-3xl">
           <Dialog.Title className="font-bold text-lg">Select Icon</Dialog.Title>
           <div className="mt-6 w-full place-content-center md:flex">
             <label htmlFor="icon-search" className="label">
@@ -44,7 +44,7 @@ export default function IconSelectDialog({
           <div className="m-8 flex h-[40vh] flex-wrap place-content-start overflow-auto rounded-lg bg-base-100 text-base-content scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg">
             {Object.keys(icons)
               .filter((icon) =>
-                icon.toLowerCase().startsWith("fa" + searchTerm.toLowerCase())
+                icon.toLowerCase().includes(searchTerm.toLowerCase())
               )
               .map((icon) => {
                 const Icon = icons[icon as keyof typeof icons];
@@ -55,7 +55,7 @@ export default function IconSelectDialog({
                       console.log(icon);
                       setSelectedIcon(icon);
                     }}
-                    className={`btn-outline btn-square btn m-2 ${
+                    className={`btn-outline btn btn-square m-2 ${
                       selectedIcon === icon && "btn-primary"
                     }`}
                   >
@@ -68,14 +68,14 @@ export default function IconSelectDialog({
 
           <div className="mt-6 flex justify-end">
             <Dialog.Close asChild>
-              <button aria-label="cancel" className={`btn-warning btn `}>
+              <button aria-label="cancel" className={`btn btn-warning `}>
                 Cancel
               </button>
             </Dialog.Close>
             <Dialog.Close asChild>
               <button
                 onClick={() => handleIconChange(selectedIcon)}
-                className="btn-primary btn ml-2"
+                className="btn btn-primary ml-2"
               >
                 Accept
               </button>
@@ -83,7 +83,7 @@ export default function IconSelectDialog({
           </div>
           <Dialog.Close asChild>
             <button
-              className="btn-ghost btn-circle btn absolute top-3 right-3"
+              className="btn btn-ghost btn-circle absolute top-3 right-3"
               aria-label="Close"
             >
               <IoMdCloseCircle className="text-xl" />

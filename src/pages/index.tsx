@@ -82,7 +82,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   {frontHero?.heading}
                 </h2>
                 <p className="mb-5 text-xl">{frontHero?.ctaText}</p>
-                <Link href="/contact" className="btn-primary btn rounded-none">
+                <Link href="/contact" className="btn btn-primary rounded-none">
                   Get Started
                 </Link>
               </div>
@@ -93,30 +93,33 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         {/* Services summary Section */}
         <section className=" mx-auto flex w-10/12 justify-center lg:w-5/6">
           <div className="z-30 -mt-32 grid w-fit justify-center gap-0 rounded-t-md border-t-8 border-primary shadow-lg lg:w-11/12 lg:grid-cols-3">
-            {services.slice(0, 3).map((service) => (
-              <ServiceSummaryCard
-                key={service.id}
-                icon={service.icon}
-                summary={service.shortDescription}
-                title={service.title}
-              />
-              // <div className="card rounded-none bg-base-300 " key={service.id}>
-              //   <div className="card-body">
-              //     <div className="mb-8 h-auto w-fit place-self-center rounded-full bg-primary py-4 px-4 text-center">
-              //       <Image
-              //         src="https://icons.getbootstrap.com/assets/icons/1-circle.svg"
-              //         width={24}
-              //         height={24}
-              //         alt="icon"
-              //       />
-              //     </div>
-              //     <h2 className=" text-center font-medium text-xl">
-              //       {service.title}
-              //     </h2>
-              //     <p className="text-center">{service.shortDescription}</p>
-              //   </div>
-              // </div>
-            ))}
+            {services
+              .sort((a: any, b: any) => a.position.localeCompare(b.position))
+              .slice(0, 3)
+              .map((service) => (
+                <ServiceSummaryCard
+                  key={service.id}
+                  icon={service.icon}
+                  summary={service.shortDescription}
+                  title={service.title}
+                />
+                // <div className="card rounded-none bg-base-300 " key={service.id}>
+                //   <div className="card-body">
+                //     <div className="mb-8 h-auto w-fit place-self-center rounded-full bg-primary py-4 px-4 text-center">
+                //       <Image
+                //         src="https://icons.getbootstrap.com/assets/icons/1-circle.svg"
+                //         width={24}
+                //         height={24}
+                //         alt="icon"
+                //       />
+                //     </div>
+                //     <h2 className=" text-center font-medium text-xl">
+                //       {service.title}
+                //     </h2>
+                //     <p className="text-center">{service.shortDescription}</p>
+                //   </div>
+                // </div>
+              ))}
           </div>
         </section>
 
@@ -167,7 +170,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <span className={`text-base`}> - {business?.ownerTitle}</span>
               </div>
             </blockquote>
-            <Link href="/about" className="btn-primary btn w-fit">
+            <Link href="/about" className="btn btn-primary w-fit">
               More about us
             </Link>
           </div>
@@ -237,7 +240,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </h2>
 
           <DynamicGallery gallery={gallery} />
-          <Link href="/gallery" className="btn-primary btn mt-8">
+          <Link href="/gallery" className="btn btn-primary mt-8">
             View full gallery{" "}
           </Link>
         </section>
@@ -259,7 +262,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               <DynamicTestimonial {...testimonial} key={testimonial.id} />
             ))}
           </div>
-          <Link href="/testimonials" className="btn-primary btn">
+          <Link href="/testimonials" className="btn btn-primary">
             More reviews
           </Link>
         </section>

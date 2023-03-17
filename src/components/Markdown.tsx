@@ -5,7 +5,7 @@ type Props = {
 };
 
 export default function InlineMarkdown({ content, className }: Props) {
-  const clean = DOMPurify.sanitize(content || "");
+  const clean = DOMPurify.sanitize(content || "", {});
   return (
     <div
       className={className}
