@@ -45,6 +45,7 @@ export const BusinessProfile: NextPageWithLayout = () => {
         { ...formData, id: data?.id ?? "" },
         {
           onSuccess: () => {
+            formRef.current?.setIsDirty(false);
             ctx.businessInfo.getActiveWithDateTime.refetch();
           },
           onError: (error) => {
@@ -77,8 +78,8 @@ export const BusinessProfile: NextPageWithLayout = () => {
             }}
           >
             {({ submit, errors }) => (
-              <div className="flex flex-wrap gap-6">
-                <div className="flex w-full flex-col place-items-center">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="flex w-full flex-col place-items-stretch">
                   <InputWrapper
                     label="Business Name"
                     name="title"
@@ -221,6 +222,8 @@ export const BusinessProfile: NextPageWithLayout = () => {
                         message: "Please limit title to 30 characters",
                       })}
                   />
+                </div>
+                <div className="flex w-full flex-col place-items-stretch">
                   <InputWrapper
                     label="Facebook Page URL"
                     name="facebookUrl"
@@ -284,12 +287,16 @@ export const BusinessProfile: NextPageWithLayout = () => {
                     tooltip="Enter the URL of your WhatsApp page. For example: https://www.whatsapp.com/yourbusiness. Leave blank if you do not have a WhatsApp page."
                     zodValidate={z.string().optional()}
                   />
+                </div>
+                <div className="col-span-full row-start-2">
                   <button
-                    className="btn-primary btn-block btn mb-2 mt-6"
+                    className={`btn btn-success btn-block mt-6 mb-2 ${
+                      errors.length > 0 && "btn-disabled"
+                    }`}
                     onClick={submit}
                     type="button"
                   >
-                    Save
+                    Save Changes
                   </button>
                   <div>
                     {errors && (
