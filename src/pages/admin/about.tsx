@@ -67,7 +67,8 @@ export const AboutUsEditor = () => {
     await toast.promise(
       submitMutation.mutateAsync(submission, {
         onSuccess: async () => {
-          toast.success("Submitted!");
+          ctx.aboutUs.invalidate();
+          ctx.aboutUs.getCurrentWithDate.refetch();
         },
         onError: async (error) => {
           console.log(error);
