@@ -24,6 +24,8 @@ export const imageRouter = createTRPCRouter({
   }
   ),
 
+
+
   getImageById: publicProcedure
     .input(z.object({
       id: z.string(),
@@ -77,10 +79,12 @@ export const imageRouter = createTRPCRouter({
       cloudinary.v2.config(cloudinaryConfig);
       const result = await cloudinary.v2.uploader.upload(input.file, {
         public_id: env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.public_id,
-        overwrite: true,
+        overwrite: false,
         invalidate: true,
         resource_type: "image",
+
       });
+      console.log({ result })
       const blurData = await getBase64ImageUrl(result.public_id, result.format);
       const data = await ctx.prisma.image.create({
         data: {

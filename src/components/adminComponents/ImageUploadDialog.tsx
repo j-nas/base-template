@@ -5,13 +5,19 @@ import { formatBytes } from "../../utils/format";
 import { Field, Form, type FieldInstance } from "houseform";
 import { z } from "zod";
 import Image from "next/image";
+import cloudinary, { type ConfigOptions } from "cloudinary";
 
 type Props = {
   children: React.ReactNode;
   handleUpload: (base64: string, publicId: string) => Promise<void>;
 };
 
-const MAX_FILE_SIZE = 4000000;
+type FileInfo = {
+  name: string;
+  size: number;
+};
+
+const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -21,8 +27,10 @@ const ACCEPTED_IMAGE_TYPES = [
 
 export default function ImageUploadDialog({ children, handleUpload }: Props) {
   const [base64, setBase64] = React.useState<string | null>(null);
+  const [fileInfo, setFileInfo] = React.useState<FileInfo | null>(null);
   const [open, setOpen] = React.useState(false);
   const encodeBase64 = (file: File) => {
+    setFileInfo((f) => ({ ...f, name: file.name, size: file.size }));
     return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -30,7 +38,10 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
       reader.onerror = (error) => reject(error);
     });
   };
-
+  const clearState = () => {
+    setBase64(null);
+    setFileInfo(null);
+  };
   const fieldRef = React.useRef<FieldInstance>(null);
 
   return (
@@ -44,7 +55,7 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
-        <Dialog.Content className="glass fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg p-6  text-primary-content drop-shadow-xl">
+        <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-base-300/50 p-6 drop-shadow-xl   backdrop-blur-3xl">
           <Dialog.Title className="font-bold text-lg">
             Upload Image
           </Dialog.Title>
@@ -95,9 +106,14 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
                             console.log({ file });
                             return file;
                           });
-                          if (!file) return null;
-                          if (!ACCEPTED_IMAGE_TYPES.includes(file.type))
+                          if (!file) {
+                            clearState();
                             return null;
+                          }
+                          if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+                            clearState();
+                            return null;
+                          }
                           if (file.size > MAX_FILE_SIZE) return null;
                           encodeBase64(file).then((base64) => {
                             setBase64(base64);
@@ -130,13 +146,11 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
                       />
                     </div>
                   )}
-                  {fieldRef.current && (
+                  {fileInfo && base64 && (
                     <div className="flex flex-col">
-                      <span>{fieldRef.current?.value.name}</span>
+                      <span>{fileInfo.name}</span>
                       <span>
-                        {fieldRef.current?.value.size === undefined
-                          ? ""
-                          : formatBytes(fieldRef.current?.value.size, 2)}
+                        {fileInfo.size < 0 ? "" : formatBytes(fileInfo.size, 2)}
                       </span>
                     </div>
                   )}
@@ -153,7 +167,7 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
                       onClick={submit}
                       aria-label="upload"
                       type="submit"
-                      className={`btn-success btn ml-2 ${
+                      className={`btn btn-success ml-2 ${
                         errors.length > 0 && "btn-disabled"
                       } `}
                     >
@@ -167,7 +181,7 @@ export default function ImageUploadDialog({ children, handleUpload }: Props) {
 
           <Dialog.Close asChild>
             <button
-              className="btn-ghost btn-circle btn absolute top-3 right-3"
+              className="btn btn-ghost btn-circle absolute top-3 right-3"
               aria-label="Close"
             >
               <IoMdCloseCircle className="text-xl" />
