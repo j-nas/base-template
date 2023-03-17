@@ -12,6 +12,8 @@ import { createInnerTRPCContext } from "../../server/api/trpc";
 import { api } from "../../utils/api";
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import Link from "next/link";
+import { FaPhone } from "react-icons/fa";
 
 const TopHero = dynamic(() => import("../../components/TopHero"), {
   loading: () => <p>Loading...</p>,
@@ -95,7 +97,17 @@ export const ServicePage = (
             <h2 className="mt-0 font-bold text-4xl">About {service.title}</h2>
             <Markdown className="text-lg" content={service.markdown} />
 
-            <button className="btn-primary btn w-fit">Contact us today</button>
+            <div className="flex">
+              <div className="tooltip" data-tip={business.telephone}>
+                <Link
+                  href={`tel:${business.telephone}`}
+                  className="btn btn-primary w-fit no-underline"
+                >
+                  <FaPhone className="mr-2" />
+                  Give us a call
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />

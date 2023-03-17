@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
+import Link from "next/link";
+import { FaPhone } from "react-icons/fa";
 
 const TopHero = dynamic(() => import("../components/TopHero"), {
   loading: () => <p>Loading...</p>,
@@ -84,7 +86,17 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <span className={`text-base`}> - {business?.ownerTitle}</span>
               </div>
             </blockquote>
-            <button className="btn-primary btn w-fit">More about us</button>
+            <div className="flex">
+              <div className="tooltip" data-tip={business.telephone}>
+                <Link
+                  href={`tel:${business.telephone}`}
+                  className="btn btn-primary w-fit no-underline"
+                >
+                  <FaPhone className="mr-2" />
+                  Give us a call
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />

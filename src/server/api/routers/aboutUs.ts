@@ -106,6 +106,39 @@ export const aboutUsRouter = createTRPCRouter({
 
     }
     ),
+  getCurrentWithDate: publicProcedure
+
+    .query(async ({ ctx }) => {
+      const aboutUs = await ctx.prisma.aboutUs.findFirstOrThrow({
+        where: {
+          inUse: true,
+        },
+        include: {
+          primaryImage: {
+            select: {
+              image: true
+            }
+          },
+          secondaryImage: {
+            select: {
+              image: true
+            }
+          },
+        },
+
+      })
+
+      if (!aboutUs.primaryImage || !aboutUs.secondaryImage) {
+        throw new Error("No images found")
+      }
+      return {
+        ...aboutUs,
+        primaryImage: aboutUs.primaryImage.image,
+        secondaryImage: aboutUs.secondaryImage.image
+      }
+
+    }
+    ),
   create: editorProcedure
     .input(z.object({
       title: z.string(),
@@ -135,10 +168,9 @@ export const aboutUsRouter = createTRPCRouter({
         },
       });
     }),
-  edit: editorProcedure
+  update: publicProcedure
     .input(z.object({
       id: z.string(),
-      title: z.string(),
       summary: z.string(),
       markdown: z.string(),
       primaryImage: z.string(),
@@ -151,18 +183,28 @@ export const aboutUsRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          title: input.title,
           summary: input.summary,
           markdown: input.markdown,
           primaryImage: {
-            create: {
-              imageId: input.primaryImage
-            }
+            update: {
+              image: {
+                connect: {
+                  public_id: input.primaryImage,
+                }
+              }
+            },
+
+
+
           },
           secondaryImage: {
-            create: {
-              imageId: input.secondaryImage
-            }
+            update: {
+              image: {
+                connect: {
+                  public_id: input.secondaryImage,
+                }
+              }
+            },
           },
         },
       });
