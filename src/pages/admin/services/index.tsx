@@ -104,8 +104,8 @@ export const ServiceManager = () => {
                 <div className="flex w-1/2 flex-col place-content-center place-self-end">
                   <select
                     id={service.id}
-                    className="btn-primary btn-sm btn ml-2 place-self-start px-1"
-                    defaultValue={service.position as string}
+                    className="btn btn-primary btn-sm ml-2 place-self-start px-1"
+                    // defaultValue={service.position as string}
                     onChange={(e) =>
                       handleSwap(
                         service.position as Services,

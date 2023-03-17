@@ -5,20 +5,20 @@ import {
   generateHTML,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Link as LinkExtension } from "@tiptap/extension-link";
+import { Link } from "@tiptap/extension-link";
 import {
   MdFormatItalic,
   MdFormatBold,
   MdFormatListNumbered,
   MdFormatListBulleted,
-  MdOutlineFormatAlignJustify,
   MdLink,
   MdFormatQuote,
 } from "react-icons/md";
 import { VscHorizontalRule } from "react-icons/vsc";
 import { BiParagraph, BiHeading } from "react-icons/bi";
 import { IoMdHelpCircle } from "react-icons/io";
-import Link from "next/link";
+// import Link from "next/link";
+import React from "react";
 
 type Props = {
   content: string;
@@ -26,11 +26,68 @@ type Props = {
   isDirty: boolean;
 };
 
-const MenuBar = ({ editor }: EditorContentProps) => {
+interface MenuBarProps extends EditorContentProps {
+  // setLink: () => void;
+}
+
+export const Tiptap = ({ content, setContent, isDirty }: Props) => {
+  const editor = useEditor({
+    extensions: [StarterKit, Link],
+    content: content,
+    editorProps: {
+      attributes: {
+        class:
+          " place-self-stretch min-w-full min-h-fit  rounded-b-lg p-2 h-96 prose-sm md:prose place-self-center bg-base-300 overflow-auto",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+    },
+  });
+
+  Link.configure({
+    HTMLAttributes: {
+      class: "link cursor-pointer z-20",
+    },
+  });
+
   if (!editor) {
     return null;
   }
 
+  return (
+    <div
+      className={`${
+        isDirty ? "textarea-success" : "textarea-bordered"
+      } min-h textarea flex  flex-col p-1 lg:place-self-stretch`}
+    >
+      <MenuBar editor={editor} />
+      <EditorContent editor={editor} />
+    </div>
+  );
+};
+
+export default Tiptap;
+
+function MenuBar({ editor }: MenuBarProps) {
+  if (!editor) {
+    return null;
+  }
+  const setLink = React.useCallback(() => {
+    const previousUrl = editor.getAttributes("link")?.href;
+    const url = window.prompt("Enter the URL", previousUrl);
+
+    if (url === null) {
+      return;
+    }
+
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
+    }
+
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }, [editor]);
   return (
     <div className="menu-bar relative mb-1 flex min-w-full flex-wrap place-items-center gap-x-4 gap-y-2 p-1 focus:outline-base-content">
       <div className="btn-group">
@@ -110,8 +167,10 @@ const MenuBar = ({ editor }: EditorContentProps) => {
         </div>
         <div className="tooltip" data-tip="Insert link">
           <button
-            className="btn-outline btn btn-square text-lg"
-            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("link") && "btn-active"
+            }`}
+            onClick={setLink}
           >
             <MdLink />
           </button>
@@ -135,33 +194,4 @@ const MenuBar = ({ editor }: EditorContentProps) => {
       </div>
     </div>
   );
-};
-
-export const Tiptap = ({ content, setContent, isDirty }: Props) => {
-  const editor = useEditor({
-    extensions: [StarterKit, LinkExtension],
-    content: content,
-    editorProps: {
-      attributes: {
-        class:
-          " place-self-stretch min-w-full min-h-fit  rounded-b-lg p-2 h-96 prose-sm md:prose place-self-center bg-base-300 overflow-auto",
-      },
-    },
-    onUpdate: ({ editor }) => {
-      setContent(editor.getHTML());
-    },
-  });
-
-  return (
-    <div
-      className={`${
-        isDirty ? "textarea-success" : "textarea-bordered"
-      } min-h textarea flex  flex-col p-1 lg:place-self-stretch`}
-    >
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
-    </div>
-  );
-};
-
-export default Tiptap;
+}
