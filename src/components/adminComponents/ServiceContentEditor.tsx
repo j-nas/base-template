@@ -93,7 +93,9 @@ function MenuBar({ editor }: MenuBarProps) {
       <div className="btn-group">
         <div data-tip="bold" className="tooltip">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("bold") && "btn-active"
+            }`}
             onClick={() => editor.chain().focus().toggleBold().run()}
           >
             <MdFormatBold />
@@ -101,7 +103,9 @@ function MenuBar({ editor }: MenuBarProps) {
         </div>
         <div className="tooltip" data-tip="italics">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("italic") && "btn-active"
+            }`}
             onClick={() => editor.chain().focus().toggleItalic().run()}
           >
             <MdFormatItalic />
@@ -111,7 +115,9 @@ function MenuBar({ editor }: MenuBarProps) {
       <div className="btn-group">
         <div className="tooltip" data-tip="Heading level 2">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("heading", { level: 2 }) && "btn-active"
+            }`}
             onClick={() =>
               editor.chain().focus().setHeading({ level: 2 }).run()
             }
@@ -121,7 +127,9 @@ function MenuBar({ editor }: MenuBarProps) {
         </div>
         <div className="tooltip" data-tip="Heading level 3">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("heading", { level: 3 }) && "btn-active"
+            }`}
             onClick={() =>
               editor.chain().focus().setHeading({ level: 3 }).run()
             }
@@ -131,7 +139,9 @@ function MenuBar({ editor }: MenuBarProps) {
         </div>
         <div className="tooltip" data-tip="Paragraph">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("paragraph") && "btn-active"
+            }`}
             onClick={() => editor.chain().focus().setParagraph().run()}
           >
             <BiParagraph />
@@ -141,7 +151,9 @@ function MenuBar({ editor }: MenuBarProps) {
       <div className="btn-group">
         <div className="tooltip" data-tip="Bullet list">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("bulletList") && "btn-active"
+            }`}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
           >
             <MdFormatListBulleted />
@@ -149,7 +161,9 @@ function MenuBar({ editor }: MenuBarProps) {
         </div>
         <div className="tooltip" data-tip="Numbered list">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("orderedList") && "btn-active"
+            }`}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
           >
             <MdFormatListNumbered />
@@ -159,32 +173,45 @@ function MenuBar({ editor }: MenuBarProps) {
       <div className="btn-group">
         <div className="tooltip" data-tip="Insert Quote">
           <button
-            className="btn-outline btn btn-square text-lg"
+            className={`btn-outline btn btn-square text-lg ${
+              editor.isActive("blockquote") && "btn-active"
+            }`}
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
           >
             <MdFormatQuote />
           </button>
         </div>
-        <div className="tooltip" data-tip="Insert link">
-          <button
-            className={`btn-outline btn btn-square text-lg ${
-              editor.isActive("link") && "btn-active"
-            }`}
-            onClick={setLink}
-          >
-            <MdLink />
-          </button>
-        </div>
+        {editor.isActive("link") ? (
+          <div className="tooltip" data-tip="Remove link">
+            <button
+              className={`btn-outline btn btn-active btn-square text-lg`}
+              onClick={() => editor.chain().focus().unsetLink().run()}
+            >
+              <MdLink />
+            </button>
+          </div>
+        ) : (
+          <div className="tooltip" data-tip="Insert link">
+            <button
+              className={`btn-outline btn btn-square text-lg `}
+              onClick={setLink}
+            >
+              <MdLink />
+            </button>
+          </div>
+        )}
       </div>
       <div className="tooltip" data-tip="Horizontal rule">
         <button
-          className="btn-outline btn btn-square text-lg"
+          className={`btn-outline btn btn-square text-lg ${
+            editor.isActive("bold") && "btn-active"
+          }`}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >
           <VscHorizontalRule />
         </button>
       </div>
-      <div className=" absolute right-2 top-14 z-10 text-xl">
+      <div className=" absolute right-2 -top-8 z-10 text-xl">
         <span
           data-tip="SEO Tips: Make sure to include areas served, and keywords your customers would likely search for. This helps build your search engine rankings."
           className="tooltip tooltip-left"
