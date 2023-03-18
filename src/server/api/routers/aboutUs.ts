@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 
 const aboutUsOutputSchema = z.object({
   id: z.string(),
@@ -139,36 +139,8 @@ export const aboutUsRouter = createTRPCRouter({
 
     }
     ),
-  create: editorProcedure
-    .input(z.object({
-      title: z.string(),
-      summary: z.string(),
-      markdown: z.string(),
-      primaryImage: z.string(),
-      secondaryImage: z.string(),
 
-
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.aboutUs.create({
-        data: {
-          title: input.title,
-          summary: input.summary,
-          markdown: input.markdown,
-          primaryImage: {
-            create: {
-              imageId: input.primaryImage
-            }
-          },
-          secondaryImage: {
-            create: {
-              imageId: input.secondaryImage
-            }
-          },
-        },
-      });
-    }),
-  update: publicProcedure
+  update: adminProcedure
     .input(z.object({
       id: z.string(),
       summary: z.string(),
@@ -209,15 +181,6 @@ export const aboutUsRouter = createTRPCRouter({
         },
       });
     }),
-  delete: editorProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.aboutUs.delete({
-        where: {
-          id: input.id,
-        },
-      });
-    }
-    ),
+
 
 });

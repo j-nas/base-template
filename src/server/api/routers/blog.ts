@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 import { exclude } from "../../../utils/exclude";
 import { userAgent } from "next/server";
 
@@ -155,7 +155,7 @@ export const blogRouter = createTRPCRouter({
 
 
 
-  get: publicProcedure
+  getById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const data = await ctx.prisma.blog.findUniqueOrThrow({
@@ -165,7 +165,7 @@ export const blogRouter = createTRPCRouter({
       });
       return exclude(data, ["createdAt", "updatedAt"])
     }),
-  create: editorProcedure
+  create: adminProcedure
     .input(z.object({
       title: z.string(),
       summary: z.string(),
@@ -189,7 +189,7 @@ export const blogRouter = createTRPCRouter({
         },
       });
     }),
-  edit: editorProcedure
+  edit: adminProcedure
     .input(z.object({
       id: z.string(),
       title: z.string(),
@@ -214,7 +214,7 @@ export const blogRouter = createTRPCRouter({
         },
       });
     }),
-  delete: editorProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.blog.delete({

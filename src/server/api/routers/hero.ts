@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 import { HeroPosition } from "@prisma/client";
 
 
@@ -46,7 +46,7 @@ export const heroRouter = createTRPCRouter({
     }
     ),
 
-  create: editorProcedure
+  create: adminProcedure
     .input(z.object({
       heading: z.string(),
       ctaText: z.string(),
@@ -67,7 +67,7 @@ export const heroRouter = createTRPCRouter({
       });
     }
     ),
-  edit: editorProcedure
+  edit: adminProcedure
     .input(z.object({
       id: z.string(),
       heading: z.string(),
@@ -91,7 +91,7 @@ export const heroRouter = createTRPCRouter({
       });
     }
     ),
-  delete: editorProcedure
+  delete: adminProcedure
     .input(z.object({
       id: z.string(),
     }))
@@ -103,7 +103,7 @@ export const heroRouter = createTRPCRouter({
       });
     }
     ),
-  setTop: editorProcedure
+  setTop: adminProcedure
     .input(z.object({
       id: z.string(),
     }))
@@ -128,7 +128,7 @@ export const heroRouter = createTRPCRouter({
       ]);
     }
     ),
-  setBottom: editorProcedure
+  setBottom: adminProcedure
     .input(z.object({
       id: z.string(),
     }))
@@ -153,7 +153,7 @@ export const heroRouter = createTRPCRouter({
       ]);
     }
     ),
-  setFront: editorProcedure
+  setFront: adminProcedure
     .input(z.object({
       id: z.string(),
     }))

@@ -5,7 +5,7 @@ import Login from "./Login";
 import { api } from "../../utils/api";
 import { ThemeProvider } from "next-themes";
 import { themes } from "../../pages/_app";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider, useSession, signIn } from "next-auth/react";
 import Head from "next/head";
 import { useState } from "react";
 
@@ -33,18 +33,26 @@ export default function Layout({ children }: Props) {
         <title>{business.title} Page Administration</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="relative">
-        <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-        <main className="relative flex h-screen w-screen auto-cols-min grid-flow-col pt-16">
-          <Sidebar sidebarOpen={sidebarOpen} />
-          <div
-            onClick={() => setSidebarOpen(false)}
-            className="h-full w-screen scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary "
-          >
-            {session.data ? <Login /> : children}
-          </div>
-        </main>
-      </div>
+      {session.status === "authenticated" ? (
+        <div className="relative">
+          <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+          <main className="relative flex h-screen w-screen auto-cols-min grid-flow-col pt-16">
+            <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+            <div
+              onClick={() => setSidebarOpen(false)}
+              className="h-full w-screen scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary "
+            >
+              {children}
+            </div>
+          </main>
+        </div>
+      ) : (
+        <div className="relative flex h-screen w-screen flex-col place-items-center">
+          <button className="btn-primary btn" onClick={() => signIn("email")}>
+            Login
+          </button>
+        </div>
+      )}
     </>
   );
 }
