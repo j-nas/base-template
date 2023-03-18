@@ -9,6 +9,7 @@ import { testimonialRouter } from "./routers/testimonial";
 import { galleryRouter } from "./routers/gallery";
 import { contactFormRouter } from "./routers/contactForm";
 import { imageRouter } from "./routers/image";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -25,6 +26,7 @@ export const appRouter = createTRPCRouter({
   gallery: galleryRouter,
   contactForm: contactFormRouter,
   image: imageRouter,
+  user: userRouter,
   // add more routers here
 });
 

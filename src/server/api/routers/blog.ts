@@ -1,7 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure, protectedProcedure } from "../trpc";
 import { exclude } from "../../../utils/exclude";
-import { userAgent } from "next/server";
 
 const blogSchema = z.object({
   id: z.string(),
@@ -220,6 +219,16 @@ export const blogRouter = createTRPCRouter({
       return ctx.prisma.blog.delete({
         where: {
           id: input.id,
+        },
+      });
+    }
+    ),
+  countBlogsByUser: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.prisma.blog.count({
+        where: {
+          userId: input.userId,
         },
       });
     }
