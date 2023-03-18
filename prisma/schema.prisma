@@ -56,6 +56,7 @@ model User {
     accounts      Account[]
     sessions      Session[]
     admin         Boolean      @default(false)
+    superAdmin    Boolean      @default(false)
     Blog          Blog[]
     avatarImage   AvatarImage?
 }

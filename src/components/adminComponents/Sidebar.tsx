@@ -8,6 +8,7 @@ import {
   IoMdHeart,
   IoMdPaper,
 } from "react-icons/io";
+import { HiOutlineUserGroup } from "react-icons/hi";
 
 type Props = {
   sidebarOpen: boolean;
@@ -59,6 +60,12 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
           </Link>
         </li>
 
+        <li>
+          <Link href="/admin/user">
+            <HiOutlineUserGroup />
+            User Management
+          </Link>
+        </li>
         <li></li>
       </ul>
       <div>
