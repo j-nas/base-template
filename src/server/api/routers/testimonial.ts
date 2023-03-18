@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure, editorProcedure } from '../trpc';
+import { createTRPCRouter, publicProcedure, adminProcedure } from '../trpc';
 
 const testimonialSchema = z.object({
   id: z.string(),
@@ -90,7 +90,7 @@ export const testimonialRouter = createTRPCRouter({
 
 
 
-  edit: editorProcedure
+  edit: adminProcedure
     .input(z.object({
       id: z.string(),
       name: z.string(),
@@ -116,7 +116,7 @@ export const testimonialRouter = createTRPCRouter({
       });
     }
     ),
-  delete: editorProcedure
+  delete: adminProcedure
     .input(z.object({
       id: z.string(),
     }))
@@ -128,7 +128,7 @@ export const testimonialRouter = createTRPCRouter({
       });
     }
     ),
-  toggleHighlight: editorProcedure
+  toggleHighlight: adminProcedure
     .input(z.object({
       id: z.string(),
     }))

@@ -124,7 +124,7 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
 
 /**
- * Reusable middleware that enforces users are editors before running the
+ * Reusable middleware that enforces users are administrators before running the
  * procedure
  * 
  * @see https://trpc.io/docs/middleware
@@ -132,9 +132,10 @@ export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
  * 
  */
 
-const enforoceUserCanEdit = protectedProcedure.use(({ ctx, next }) => {
-  if (!ctx.session.user.editor) {
-    throw new TRPCError({ code: "FORBIDDEN", message: "You are not an editor" });
+const enforceUserIsAdmin = protectedProcedure.use(({ ctx, next }) => {
+  console.log("ctx.session.user", ctx.session.user)
+  if (!ctx.session.user.admin) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "You do not have the administrator role" });
   }
   return next();
 });
@@ -143,14 +144,14 @@ const enforoceUserCanEdit = protectedProcedure.use(({ ctx, next }) => {
  * Editor procedure
  * 
  * This procedure extends `protectedProcedure`. If you want a query or mutation to
- * ONLY be accessible to users flagged as editors, use this. It verifies the
+ * ONLY be accessible to users flagged as admin, use this. It verifies the
  * session is valid and guarantees `ctx.session.user` is not null, as well as
- * `ctx.session.user.editor` is true
+ * `ctx.session.user.admin` is true
  * 
  * @see https://trpc.io/docs/procedures
  * 
  */
 
 
-export const editorProcedure = enforoceUserCanEdit;
+export const adminProcedure = enforceUserIsAdmin;
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 import { Services } from "@prisma/client";
 import { exclude } from "../../../utils/exclude";
 import * as icons from "react-icons/fa"
@@ -191,7 +191,7 @@ export const serviceRouter = createTRPCRouter({
     ),
 
 
-  swapPosition: publicProcedure
+  swapPosition: adminProcedure
     .input(z.object({
       existingPosition: z.nativeEnum(Services),
       requestedPosition: z.nativeEnum(Services),
@@ -225,7 +225,7 @@ export const serviceRouter = createTRPCRouter({
       return newPosition;
     }),
 
-  update: publicProcedure
+  update: adminProcedure
     .input(z.object({
       id: z.string(),
       title: z.string(),

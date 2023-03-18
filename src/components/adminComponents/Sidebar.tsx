@@ -11,16 +11,17 @@ import {
 
 type Props = {
   sidebarOpen: boolean;
+  toggleSidebar: () => void;
 };
 
-export default function Sidebar({ sidebarOpen }: Props) {
+export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
   return (
     <div
       className={`${
         sidebarOpen ? "fixed" : "hidden"
       } z-10 h-full w-72 flex-col overflow-hidden bg-base-300 shadow-xl transition-all md:relative md:flex`}
     >
-      <ul className="menu">
+      <ul onClick={toggleSidebar} className="menu">
         <li>
           <Link href="/admin">
             <IoMdHome />

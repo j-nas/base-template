@@ -1,9 +1,10 @@
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
+
 import Link from "next/link";
 import Logo from "../Logo";
 import DarkModeButton from "../DarkModeButton";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import HamburgerButton from "./HamburgerButton";
 
 type Props = {
@@ -30,19 +31,37 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
         <Link
           href="/"
           aria-label="home button logo"
-          className="btn-ghost btn hidden md:block "
+          className="btn btn-ghost hidden md:block "
         >
           <Logo
             className={`z-50 h-auto w-40 fill-base-content stroke-base-content`}
           />
         </Link>
       </div>
-      <div className="navbar-center hidden lg:block">
+      <div className="navbar-center hidden lg:flex">
         <span className="font-bold  text-lg">Your Dashboard</span>
       </div>
 
       <div className="mr-2 w-full justify-end md:navbar-end ">
-        {session && <button className="btn-primary btn">Log out</button>}
+        {session && (
+          <>
+            <span>
+              Logged in as{" "}
+              <Link
+                className="link"
+                href={`/admin/user/${session.data?.user?.id}`}
+              >
+                {session.data?.user?.email}
+              </Link>
+            </span>
+            <button
+              onClick={() => signOut()}
+              className="btn btn-primary btn-xs ml-2"
+            >
+              Log out
+            </button>
+          </>
+        )}
         <DarkModeButton theme={theme} toggleTheme={toggleTheme} />
       </div>
     </div>

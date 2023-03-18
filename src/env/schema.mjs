@@ -26,7 +26,7 @@ export const serverSchema = z.object({
 
   EMAIL_HOST: z.string(),
   EMAIL_PASS: z.string(),
-  EMAIL_PORT: z.string(),
+  EMAIL_PORT: z.coerce.number(),
   EMAIL_USER: z.string(),
   EMAIL_FROM: z.string(),
   EMAIL_TO: z.string(),
@@ -48,7 +48,7 @@ export const serverEnv = {
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
   EMAIL_HOST: process.env.EMAIL_HOST,
   EMAIL_PASS: process.env.EMAIL_PASS,
-  EMAIL_PORT: process.env.EMAIL_PORT,
+  EMAIL_PORT: Number(process.env.EMAIL_PORT),
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_FROM: process.env.EMAIL_FROM,
   EMAIL_TO: process.env.EMAIL_TO,

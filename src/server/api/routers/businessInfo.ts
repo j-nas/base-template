@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, editorProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 import { exclude } from "../../../utils/exclude";
 
 export const businessProfileValidation = z.object({
@@ -30,9 +30,7 @@ export const businessProfileValidation = z.object({
 
 
 export const businessInfoRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.businessInfo.findMany();
-  }),
+
   getActive: publicProcedure.query(async ({ ctx }) => {
     const data = await ctx.prisma.businessInfo.findFirstOrThrow({
       where: {
@@ -54,7 +52,7 @@ export const businessInfoRouter = createTRPCRouter({
 
   }),
 
-  update: publicProcedure
+  update: adminProcedure
     .input(businessProfileValidation)
     .mutation(({ ctx, input }) => {
       return ctx.prisma.businessInfo.update({
@@ -84,42 +82,6 @@ export const businessInfoRouter = createTRPCRouter({
 
 
 
-        },
-      });
-    }
-    ),
-  setInUse: editorProcedure
-    .input(z.object({
-      id: z.string(),
-      inUse: z.boolean(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.$transaction([
-        ctx.prisma.businessInfo.updateMany({
-
-          data: {
-            isActive: false,
-          },
-        }),
-        ctx.prisma.businessInfo.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            isActive: input.inUse,
-          },
-        }),
-      ]);
-    }
-    ),
-  delete: editorProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.businessInfo.delete({
-        where: {
-          id: input.id,
         },
       });
     }
