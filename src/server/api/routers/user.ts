@@ -173,13 +173,14 @@ export const userRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
     }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const data = await ctx.prisma.user.delete({
 
         where: {
           id: input.id,
 
         },
+
 
       });
       return data;
