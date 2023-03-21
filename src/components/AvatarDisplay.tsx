@@ -28,7 +28,11 @@ export default function AvatarDisplay({ public_id, size, name }: Props) {
         </div>
       ) : (
         <div className="placeholder avatar max-w-fit justify-self-start p-2 ">
-          <div className="relative w-10 rounded-full bg-neutral-focus text-neutral-content">
+          <div
+            className={` relative w-${size} ${
+              size === "20" && "text-xl"
+            } rounded-full bg-neutral-focus text-neutral-content`}
+          >
             {name.split(" ").map((n) => n[0] ?? "")}
           </div>
         </div>

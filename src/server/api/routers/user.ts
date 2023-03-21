@@ -1,6 +1,9 @@
 import { z } from "zod";
 import {
-  createTRPCRouter, protectedProcedure, publicProcedure, adminProcedure
+  createTRPCRouter,
+  protectedProcedure,
+  adminProcedure,
+  superAdminProcedure,
 } from "../trpc";
 import { exclude } from "../../../utils/exclude";
 
@@ -94,25 +97,15 @@ export const userRouter = createTRPCRouter({
     }),
 
   // create
-  create: adminProcedure
+  create: superAdminProcedure
     .input(z.object({
       name: z.string(),
       email: z.string(),
-      avatarImageId: z.string().optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const data = await ctx.prisma.user.create({
         data: {
           ...input,
-          avatarImage: {
-            create: {
-              image: {
-                connect: {
-                  public_id: input.avatarImageId,
-                }
-              }
-            }
-          }
         },
       });
       return data;
@@ -176,7 +169,7 @@ export const userRouter = createTRPCRouter({
 
 
   // delete
-  delete: adminProcedure
+  delete: superAdminProcedure
     .input(z.object({
       id: z.string(),
     }))
@@ -193,12 +186,12 @@ export const userRouter = createTRPCRouter({
     }),
 
   // toggleAdmin
-  toggleAdmin: adminProcedure
+  toggleAdmin: superAdminProcedure
     .input(z.object({
       id: z.string(),
       admin: z.boolean(),
     }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const data = await ctx.prisma.user.update({
         where: {
           id: input.id,
@@ -207,6 +200,13 @@ export const userRouter = createTRPCRouter({
           admin: input.admin,
         },
       });
+
+      await prisma?.session.deleteMany({
+        where: {
+          userId: input.id,
+        },
+      });
+
       return data;
     }),
 
