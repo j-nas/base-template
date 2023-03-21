@@ -18,6 +18,7 @@ import type { Session } from "next-auth";
 import { NextPage } from "next";
 import UserRoleToggleDialog from "../../../components/adminComponents/dialogs/UserRoleToggleDialog";
 import UserCreateDialog from "../../../components/adminComponents/dialogs/UserCreateDialog";
+import UserDeleteDialog from "../../../components/adminComponents/dialogs/UserDeleteDialog";
 
 export const UserManager = () => {
   const [isToggling, setIsToggling] = useState(false);
@@ -38,6 +39,7 @@ export const UserManager = () => {
 
   const toggleAdminMutation = api.user.toggleAdmin.useMutation();
   const createUserMutation = api.user.create.useMutation();
+  const deleteUserMutation = api.user.delete.useMutation();
 
   const canEdit = (user: User) => {
     if (user.id === session.data?.user?.id) return true;
@@ -96,6 +98,26 @@ export const UserManager = () => {
       }
     );
   };
+  const handleUserDelete = async (id: string) => {
+    toast.promise(
+      deleteUserMutation.mutateAsync(
+        { id },
+        {
+          onSuccess: async () => {
+            await ctx.user.getAll.refetch();
+          },
+          onError: () => {
+            return "Error deleting user";
+          },
+        }
+      ),
+      {
+        loading: "Deleting user",
+        success: `User deleted.`,
+        error: ({ data }) => data,
+      }
+    );
+  };
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg">
@@ -123,7 +145,7 @@ export const UserManager = () => {
                 key={user.id}
                 className={`flex w-72 flex-col rounded-lg bg-base-300 p-4 drop-shadow-2xl ${
                   user.id === session.data?.user?.id &&
-                  "border-2 border-primary shadow-lg shadow-primary"
+                  "shadow-lg shadow-primary outline outline-2 outline-primary"
                 }`}
               >
                 <div className="mb-6 flex">
@@ -195,20 +217,25 @@ export const UserManager = () => {
                     </Link>
                   </div>
                   <div className="flex flex-col">
-                    <button
-                      disabled={user.superAdmin}
-                      className={`btn btn-outline btn-error btn-sm ${
-                        user.superAdmin && "btn-disabled "
-                      }`}
+                    <UserDeleteDialog
+                      user={user}
+                      handleUserDelete={handleUserDelete}
                     >
-                      <MdDeleteOutline className="mr-2 text-lg" />
-                      Delete User
-                    </button>
+                      <button
+                        disabled={user.superAdmin}
+                        className={`btn btn-outline btn-error btn-sm btn-block ${
+                          user.superAdmin && "btn-disabled "
+                        }`}
+                      >
+                        <MdDeleteOutline className="mr-2 text-lg" />
+                        Delete User
+                      </button>
+                    </UserDeleteDialog>
                   </div>
                 </div>
               </div>
             ))}
-          <div className="flex w-72 flex-col place-content-center rounded-lg bg-base-300 p-4 drop-shadow-2xl">
+          <div className="flex max-h-20 w-72 flex-col place-content-center rounded-lg bg-base-300 p-4 drop-shadow-2xl">
             <UserCreateDialog handleUserCreate={handleUserCreate}>
               <button className="btn btn-xl btn-primary btn-block">
                 <IoMdAdd className="mr-2 text-xl" />
