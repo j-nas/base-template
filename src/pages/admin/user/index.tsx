@@ -1,31 +1,104 @@
 import React, { type ReactElement, useState } from "react";
 import { Layout } from "../../../components/AdminComponents";
 import { api } from "../../../utils/api";
-import { IoMdConstruct, IoMdHelpCircle } from "react-icons/io";
+import { IoMdAdd, IoMdConstruct, IoMdHelpCircle } from "react-icons/io";
+import { MdDeleteOutline } from "react-icons/md";
 import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import IconDisplay from "../../../components/IconDisplay";
-import { Services } from "@prisma/client";
+import { User } from "@prisma/client";
 import Link from "next/link";
 import Tooltip from "../../../components/Tooltip";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import AvatarDisplay from "../../../components/AvatarDisplay";
+import type { Session } from "next-auth";
+import { NextPage } from "next";
+import UserRoleToggleDialog from "../../../components/adminComponents/dialogs/UserRoleToggleDialog";
+import UserCreateDialog from "../../../components/adminComponents/dialogs/UserCreateDialog";
 
-export const ServiceManager = () => {
+export const UserManager = () => {
+  const [isToggling, setIsToggling] = useState(false);
   const router = useRouter();
   const session = useSession();
-  if (session.data?.user?.admin !== true) {
-    router.push(`/admin/user/${session.data?.user?.id}`);
+  console.log(session);
+  if (!session.data?.user?.superAdmin) {
+    router.push(`/admin/user/me`);
+    return (
+      <div className="grid h-full w-full place-content-center font-bold text-2xl">
+        Not Authorized
+      </div>
+    );
   }
   const { isLoading, data: users } = api.user.getAll.useQuery();
   const [parent, enableAnimations] = useAutoAnimate();
   const ctx = api.useContext();
 
+  const toggleAdminMutation = api.user.toggleAdmin.useMutation();
+  const createUserMutation = api.user.create.useMutation();
+
+  const canEdit = (user: User) => {
+    if (user.id === session.data?.user?.id) return true;
+    if (user.superAdmin) return false;
+    return true;
+  };
+
+  const handleToggleAdmin = async (user: User) => {
+    if (user.superAdmin) return;
+    setIsToggling(true);
+    toast.promise(
+      toggleAdminMutation.mutateAsync(
+        {
+          id: user.id,
+          admin: !user.admin,
+        },
+        {
+          onSuccess: async () => {
+            setIsToggling(false);
+
+            await ctx.user.getAll.refetch();
+          },
+          onError: () => {
+            setIsToggling(false);
+            return "Error updating user";
+          },
+        }
+      ),
+      {
+        loading: "Updating user",
+        success: "User's role changed. User will be logged out.",
+        error: ({ data }) => data,
+      }
+    );
+  };
+  const handleUserCreate = async (name: string, email: string) => {
+    toast.promise(
+      createUserMutation.mutateAsync(
+        {
+          name,
+          email,
+        },
+        {
+          onSuccess: async () => {
+            await ctx.user.getAll.refetch();
+          },
+          onError: () => {
+            return "Error adding user";
+          },
+        }
+      ),
+      {
+        loading: "Creating user",
+        success: `User ${name} created.`,
+        error: ({ data }) => data,
+      }
+    );
+  };
+
   return (
-    <div className="relative flex h-full w-full flex-col place-items-center overflow-auto">
+    <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg">
       <Toaster position="bottom-right" />
       <Breadcrumbs subName="Services Manager" subPath="services" />
       <div>
@@ -33,7 +106,7 @@ export const ServiceManager = () => {
           Users Managment{" "}
           <span
             className="tooltip tooltip-left"
-            data-tip="On this page you can swap the position of your offered services as they appear on the home page. The service in position 1 has a short summary featured on the landing page, while the first 3 positions are shown just below the hero image."
+            data-tip="On this page you can swap the position of your offered services as they appear on the home page. The service in position 1 is featured on the landing page, while the first 3 positions show short summaries just below the hero image."
           >
             <IoMdHelpCircle />
           </span>
@@ -41,51 +114,116 @@ export const ServiceManager = () => {
         {isLoading && <LoadingSpinner />}
         <div
           ref={parent}
-          className="flex w-full flex-col items-center justify-center gap-6"
+          className="ml-6 flex w-auto flex-wrap place-content-stretch  gap-6"
         >
-          {users?.map((user) => (
-            <div
-              key={user.id}
-              className="flex  rounded-lg bg-base-300 p-4 drop-shadow-2xl"
-            >
-              <div className=" flex place-items-center">
-                <AvatarDisplay
-                  name={user.name || ""}
-                  public_id={user.avatarImage}
-                  size={"10"}
-                />
-              </div>
-              <div className="mx-4 flex min-w-fit flex-col place-self-center">
-                <span className="text-md font-medium">
-                  {user.id && (
-                    <Link href={`user/${user?.id}`}>
-                      <span className="link mr-1">{user.name}</span>
-                      <span className="badge-primary badge">
-                        <IoMdConstruct className="mr-2 " /> Edit
-                      </span>
-                    </Link>
-                  )}
-                </span>
-                <span className="text-xs">Last updated: </span>
-              </div>
-              {/* <span>{user.position}</span> */}
+          {users
+            ?.sort((a: any, b: any) => a.name?.localeCompare(b.name))
+            .map((user) => (
+              <div
+                key={user.id}
+                className={`flex w-72 flex-col rounded-lg bg-base-300 p-4 drop-shadow-2xl ${
+                  user.id === session.data?.user?.id &&
+                  "border-2 border-primary shadow-lg shadow-primary"
+                }`}
+              >
+                <div className="mb-6 flex">
+                  <div className=" flex place-items-center">
+                    <AvatarDisplay
+                      name={user.name || ""}
+                      public_id={user.avatarImage}
+                      size={"10"}
+                    />
+                  </div>
+                  <div className="mx-4 flex min-w-fit flex-col place-self-center">
+                    <span className="text-md font-medium">
+                      {canEdit(user) ? (
+                        <Link href={`user/${user?.id}`}>
+                          <span className="text-md link  mr-1">
+                            {user.name}
+                          </span>
+                        </Link>
+                      ) : (
+                        <span className="text-md   mr-1">{user.name}</span>
+                      )}
+                    </span>
+                    <span className="text-xs">
+                      {user.superAdmin
+                        ? "Super Admin"
+                        : user.admin
+                        ? "Admininstrator"
+                        : "Contributor"}
+                    </span>
+                  </div>
+                </div>
 
-              <div className="flex w-1/2 flex-col place-content-center place-self-end">
-                <input type="checkbox" />
-                <label htmlFor={user.id}>
-                  <span className="text-xs">Admin</span>
-                </label>
+                <div className="p btn-group btn-group-vertical gap-1">
+                  <div
+                    className={`${
+                      user.superAdmin && "pointer-events-none"
+                    } flex flex-col`}
+                  >
+                    <UserRoleToggleDialog
+                      user={user}
+                      handleToggleAdmin={handleToggleAdmin}
+                    >
+                      <button
+                        className={`btn btn-outline btn-sm w-full ${
+                          user.superAdmin && "btn-disabled "
+                        }`}
+                        disabled={user.superAdmin}
+                      >
+                        <input
+                          type="checkbox"
+                          id={user.id}
+                          className="checkbox checkbox-sm"
+                          disabled={user.superAdmin || isToggling}
+                          checked={user.admin}
+                          // onChange={() => handleToggleAdmin(user)}
+                        ></input>
+                        <span className="ml-2 text-xs">Toggle Admin</span>
+                      </button>
+                    </UserRoleToggleDialog>
+                  </div>
+                  <div className="flex flex-col">
+                    <Link
+                      href={`/admin/user/${user?.id}`}
+                      className={`btn btn-outline btn-sm ${
+                        canEdit(user) ? "" : "btn-disabled "
+                      }`}
+                    >
+                      <IoMdConstruct className="mr-2 text-lg" /> Edit Profile
+                    </Link>
+                  </div>
+                  <div className="flex flex-col">
+                    <button
+                      disabled={user.superAdmin}
+                      className={`btn btn-outline btn-error btn-sm ${
+                        user.superAdmin && "btn-disabled "
+                      }`}
+                    >
+                      <MdDeleteOutline className="mr-2 text-lg" />
+                      Delete User
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          <div className="flex w-72 flex-col place-content-center rounded-lg bg-base-300 p-4 drop-shadow-2xl">
+            <UserCreateDialog handleUserCreate={handleUserCreate}>
+              <button className="btn btn-xl btn-primary btn-block">
+                <IoMdAdd className="mr-2 text-xl" />
+                Add User
+              </button>
+            </UserCreateDialog>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ServiceManager;
+export default UserManager;
 
-ServiceManager.getLayout = (page: ReactElement) => {
+UserManager.getLayout = (page: ReactElement) => {
   return <Layout>{page}</Layout>;
 };

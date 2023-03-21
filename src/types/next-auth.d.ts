@@ -8,10 +8,12 @@ declare module "next-auth" {
     user?: {
       id: string;
       admin: boolean;
+      superAdmin: boolean;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     admin: boolean;
+    superAdmin: boolean;
   }
 }

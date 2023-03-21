@@ -155,3 +155,33 @@ const enforceUserIsAdmin = protectedProcedure.use(({ ctx, next }) => {
 
 export const adminProcedure = enforceUserIsAdmin;
 
+/**
+ * Reusable middleware that enforces users are super administrators before running the
+ * procedure
+ * 
+ * @see https://trpc.io/docs/middleware
+ * 
+ */
+
+
+
+const enforceUserIsSuperAdmin = adminProcedure.use(({ ctx, next }) => {
+  if (!ctx.session.user.superAdmin) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "You do not have the super administrator role" });
+  }
+  return next();
+});
+
+/**
+ * Super admin procedure
+ * 
+ * This procedure extends `adminProcedure`. If you want a query or mutation to
+ * ONLY be accessible to users flagged as super admin, use this. It verifies the
+ * session is valid and guarantees `ctx.session.user` is not null, as well as
+ * `ctx.session.user.superAdmin` is true
+ *    
+ * @see https://trpc.io/docs/procedures
+ * 
+ * 
+ */
+export const superAdminProcedure = enforceUserIsSuperAdmin;

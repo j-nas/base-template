@@ -47,9 +47,9 @@ export default function Layout({ children }: Props) {
           </main>
         </div>
       ) : (
-        <div className="relative flex h-screen w-screen flex-col place-items-center">
+        <div className="relative flex h-screen w-screen flex-col place-content-center">
           <button
-            className="btn-primary btn"
+            className="btn btn-primary"
             onClick={() => signIn("email", {})}
           >
             Login
