@@ -3,10 +3,10 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { IoMdCloseCircle } from "react-icons/io";
 import * as icons from "react-icons/fa";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { api } from "../../utils/api";
-import LoadingSpinner from "../LoadingSpinner";
+import { api } from "../../../utils/api";
+import LoadingSpinner from "../../LoadingSpinner";
 import { CldImage } from "next-cloudinary";
-import { env } from "../../env/client.mjs";
+import { env } from "../../../env/client.mjs";
 
 type Props = {
   children: React.ReactNode;

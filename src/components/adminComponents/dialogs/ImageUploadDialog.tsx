@@ -1,7 +1,7 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { IoMdCloseCircle } from "react-icons/io";
-import { formatBytes } from "../../utils/format";
+import { formatBytes } from "../../../utils/format";
 import { Field, Form, type FieldInstance } from "houseform";
 import { z } from "zod";
 import Image from "next/image";
