@@ -11,9 +11,9 @@ import {
 import { env } from "../../env/client.mjs";
 import Tooltip from "../../components/Tooltip";
 import { IoMdAdd } from "react-icons/io";
-import ImageDeleteDialog from "../../components/adminComponents/ImageDeleteDialog";
-import ImageRenameDialog from "../../components/adminComponents/ImageRenameDialog";
-import ImageUploadDialog from "../../components/adminComponents/ImageUploadDialog";
+import ImageDeleteDialog from "../../components/adminComponents/dialogs/ImageDeleteDialog";
+import ImageRenameDialog from "../../components/adminComponents/dialogs/ImageRenameDialog";
+import ImageUploadDialog from "../../components/adminComponents/dialogs/ImageUploadDialog";
 import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../components/LoadingSpinner";
