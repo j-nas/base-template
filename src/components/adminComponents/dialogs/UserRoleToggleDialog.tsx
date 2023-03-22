@@ -19,7 +19,7 @@ export default function UserRoleToggleDialog({
 }: Props) {
   return (
     <Dialog.Root>
-      <Dialog.Trigger>{children}</Dialog.Trigger>
+      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
         <Dialog.Content className="glass fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg p-6 text-primary-content drop-shadow-xl">

@@ -189,11 +189,10 @@ export const UserManager = () => {
                       user={user}
                       handleToggleAdmin={handleToggleAdmin}
                     >
-                      <button
+                      <div
                         className={`btn btn-outline btn-sm w-full ${
                           user.superAdmin && "btn-disabled "
                         }`}
-                        disabled={user.superAdmin}
                       >
                         <input
                           type="checkbox"
@@ -204,7 +203,7 @@ export const UserManager = () => {
                           readOnly
                         ></input>
                         <span className="ml-2 text-xs">Toggle Admin</span>
-                      </button>
+                      </div>
                     </UserRoleToggleDialog>
                   </div>
                   <div className="flex flex-col">
@@ -226,15 +225,14 @@ export const UserManager = () => {
                       user={user}
                       handleUserDelete={handleUserDelete}
                     >
-                      <button
-                        disabled={user.superAdmin}
+                      <div
                         className={`btn btn-outline btn-error btn-sm btn-block ${
-                          user.superAdmin && "btn-disabled "
+                          user.superAdmin && "!btn-disabled "
                         }`}
                       >
                         <MdDeleteOutline className="mr-2 text-lg" />
                         Delete User
-                      </button>
+                      </div>
                     </UserDeleteDialog>
                   </div>
                 </div>
@@ -243,10 +241,10 @@ export const UserManager = () => {
           {!isLoading && (
             <div className="flex max-h-20 w-72 flex-col place-content-center rounded-lg bg-base-300 p-4 drop-shadow-2xl">
               <UserCreateDialog handleUserCreate={handleUserCreate}>
-                <button className="btn btn-xl btn-primary btn-block">
+                <div className="btn btn-xl btn-primary btn-block">
                   <IoMdAdd className="mr-2 text-xl" />
                   Add User
-                </button>
+                </div>
               </UserCreateDialog>
             </div>
           )}
