@@ -8,18 +8,14 @@ import InputWrapper from "../../InputWrapper";
 
 type Props = {
   children: React.ReactNode;
-  renameHandler: (
-    newName: string,
-    id: string,
-    public_id: string
-  ) => Promise<void>;
-  image: ImageAdmin;
+  setLink: (link: string) => void;
+  previousUrl: string;
 };
 
-export default function ImageRenameDialog({
+export default function LinkInsertDialog({
   children,
-  renameHandler,
-  image,
+  setLink,
+  previousUrl,
 }: Props) {
   const [open, setOpen] = React.useState(false);
   return (
@@ -29,19 +25,13 @@ export default function ImageRenameDialog({
         <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
         <Dialog.Content className="glass fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg p-6 text-primary-content drop-shadow-xl">
           <Dialog.Title className="font-bold text-lg">
-            Rename Image
+            Enter URL of link
           </Dialog.Title>
-          <Dialog.Description className="mt-2 mb-5">
-            Note: It may take a few minutes before changes are reflected on the
-            site.
-          </Dialog.Description>
+          <Dialog.Description className="mt-2 mb-5"></Dialog.Description>
           <Form
             onSubmit={(values) => {
-              renameHandler(image.id, values.newName, image.public_id).then(
-                () => {
-                  setOpen(false);
-                }
-              );
+              setLink(values.link);
+              setOpen(false);
 
               return;
             }}
@@ -51,26 +41,22 @@ export default function ImageRenameDialog({
                 <div className="flex flex-col gap-2">
                   <div className=" mx-2 flex   flex-col place-content-center gap-2 place-self-center  px-4 py-2">
                     <Field
-                      name="newName"
-                      initialValue={image.public_id}
+                      name="link"
+                      initialValue={previousUrl}
                       onChangeValidate={z
                         .string()
-                        .min(1, { message: "Must not be blank" })
-                        .max(28, { message: "Please limit to 28 characters" })
-                        .regex(/^[a-zA-Z0-9-_]+$/, {
-                          message:
-                            "Please use only letters, numbers, '-' and '_'",
-                        })}
+                        .url({ message: "Please enter a valid URL" })
+                        .optional()}
                     >
                       {({ value, setValue, onBlur, errors }) => (
                         <InputWrapper
                           error={errors[0]}
-                          label="New Name"
-                          htmlFor="newName"
+                          label="Link"
+                          htmlFor="link"
                         >
                           <input
-                            type="text"
-                            id="newName"
+                            type="url"
+                            id="link"
                             className="input-bordered input w-full"
                             onChange={(e) => setValue(e.target.value)}
                             value={value}
@@ -91,7 +77,7 @@ export default function ImageRenameDialog({
                     type="submit"
                     className="btn btn-success"
                   >
-                    Confirm Rename
+                    Confirm
                   </button>
                 </div>
               </>
