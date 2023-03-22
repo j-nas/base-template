@@ -18,100 +18,89 @@ import { env } from "../../../env/client.mjs";
 import Link from "next/link";
 import ServiceContentEditor from "../../../components/adminComponents/TextEditor";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 export interface ServicePageQuery extends ParsedUrlQuery {
   slug: Services;
 }
 
 type FormData = {
-  title: string;
-  icon: string;
-  primaryImage: string;
-  secondaryImage: string;
-  markdown: string;
-  description: string;
+  id: string;
+  name: string;
+  email: string;
+  avatarImage: string | undefined;
 };
 
 export const ServiceEditor = () => {
   const router = useRouter();
-  const servicePage = router.query.slug as string;
-  const servicePageFormatted = servicePage.toUpperCase() as Services;
-  const submitMutation = api.service.update.useMutation();
+  const session = useSession();
+  const queryId = router.query.slug as string;
 
-  const {
-    data: data,
-    isLoading,
-    error,
-  } = api.service.getByPosition.useQuery({
-    position: servicePageFormatted,
+  const superAdminMutation = api.user.update.useMutation();
+
+  if (!session.data?.user?.superAdmin) {
+    router.push(`/admin/user/me`);
+    return (
+      <div className="grid h-full w-full place-content-center font-bold text-2xl">
+        Not Authorized, taking you to your profile.
+      </div>
+    );
+  }
+
+  const { isLoading, data, isError, error } = api.user.getById.useQuery({
+    id: queryId,
   });
+
+  if (isError) {
+    return (
+      <div className="grid h-full w-full place-content-center font-bold text-2xl">
+        Error loading user. Check the URL and try again.
+      </div>
+    );
+  }
+
   const ctx = api.useContext();
   const iconRef = React.useRef<FieldInstance>(null);
-  const primaryImageRef = React.useRef<FieldInstance>(null);
-  const secondaryImageRef = React.useRef<FieldInstance>(null);
+  const avatarImageRef = React.useRef<FieldInstance>(null);
   const contentRef = React.useRef<FieldInstance>(null);
   const formRef = React.useRef<FormInstance>(null);
 
-  const handleIconChange = (value: string) => {
-    iconRef.current?.setValue(value);
-  };
-  const handleImageChange = (
-    value: string,
-    position: "primary" | "secondary" | "hero"
-  ) => {
-    if (position === "primary") {
-      primaryImageRef.current?.setValue(value);
-    } else {
-      secondaryImageRef.current?.setValue(value);
-    }
-  };
-
-  const handleContentChange = (value: string) => {
-    contentRef.current?.setValue(value);
+  const handleImageChange = (value: string, _position: string) => {
+    avatarImageRef.current?.setValue(value);
   };
 
   const handleSubmit = async (formData: FormData) => {
-    const { title, icon, primaryImage, secondaryImage, markdown, description } =
-      formData;
+    const { name, email, avatarImage, id } = formData;
     const submission = {
-      id: data?.id || "",
-      title,
-      icon,
-      primaryImage,
-      secondaryImage,
-      markdown: markdown,
-      shortDescription: description,
+      email,
+      name,
+      avatarImage,
+      id,
     };
     await toast.promise(
-      submitMutation.mutateAsync(submission, {
-        onSuccess: async () => {
-          await ctx.service.invalidate();
-          await ctx.service.getByPosition.refetch({
-            position: servicePageFormatted,
-          });
-        },
-        onError: async (error) => {
-          console.log(error);
-          toast.error(error.message);
-        },
-      }),
+      superAdminMutation.mutateAsync(
+        { ...submission },
+        {
+          onSuccess: async () => {
+            await ctx.user.invalidate();
+            await ctx.user.getById.refetch({
+              id: id,
+            });
+          },
+          onError: async (error) => {
+            console.log(error);
+            toast.error(error.message);
+          },
+        }
+      ),
       {
         loading: "Submitting...",
         success: "Submitted!",
         error: "Error",
       }
     );
+
     formRef.current?.setIsDirty(false);
   };
-  if (error?.data?.httpStatus === 400) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">Service not found</h1>
-        <Link href="/admin/services">
-          <span className="text-primary">Go back to services</span>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-200 scrollbar-thumb-primary scrollbar-track-rounded-lg scrollbar-thumb-rounded-lg">
@@ -119,79 +108,40 @@ export const ServiceEditor = () => {
         <Toaster position="bottom-right" />
         {data && (
           <Breadcrumbs
-            subName="Services Manager"
-            subPath="services"
-            subSubName={data.title}
+            subName="User Management"
+            subPath="user"
+            subSubName={data.name || "User"}
           />
         )}
 
         <div className="my-8">
           <h1 className=" place-self-center text-center font-black  text-2xl">
-            {data?.title}{" "}
+            {data?.name} Profile
             <span className="tooltip tooltip-left">
               <IoMdHelpCircle />
             </span>
           </h1>
-          {data && (
-            <span>
-              Last updated:{" "}
-              {new Intl.DateTimeFormat(undefined, {
-                dateStyle: "long",
-                timeStyle: "short",
-              }).format(data.updatedAt)}
-            </span>
-          )}
+
           {isLoading && <LoadingSpinner />}
         </div>
         {data && (
           <div>
             <div className="mx-auto flex h-full w-full flex-wrap justify-evenly justify-items-stretch gap-4">
-              <Form onSubmit={(values) => handleSubmit(values)} ref={formRef}>
+              <Form
+                onSubmit={(values) => handleSubmit({ ...values, id: data.id })}
+                ref={formRef}
+              >
                 {({ submit, errors }) => (
-                  <React.Fragment>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div className="flex flex-col">
-                      <Field
-                        name="icon"
-                        initialValue={data?.icon}
-                        ref={iconRef}
-                      >
-                        {({ value, setValue, isDirty }) => (
-                          <div className="flex flex-col">
-                            <label
-                              className={`font-bold tracking-wide text-sm ${
-                                isDirty && "text-success"
-                              }`}
-                            >
-                              Icon
-                            </label>
-                            <IconSelectDialog
-                              handleIconChange={handleIconChange}
-                            >
-                              <div className="flex w-52">
-                                <button
-                                  className={`btn-outline btn btn-square ${
-                                    isDirty && "btn-success"
-                                  }`}
-                                >
-                                  <IconDisplay icon={value} />
-                                </button>
-                                <input
-                                  value={value}
-                                  className="input input-disabled ml-2 w-full"
-                                />
-                              </div>
-                            </IconSelectDialog>
-                          </div>
-                        )}
-                      </Field>
                       <Field<string>
-                        name="title"
-                        initialValue={data.title}
+                        name="name"
+                        initialValue={data.name}
                         onChangeValidate={z
                           .string()
                           .min(1, { message: "Required" })
                           .max(50, { message: "Max 50 characters" })
-                          .regex(/^[a-zA-Z0-9 ]*$/, {
+                          .regex(/^[a-zA-Z0-9 ']*$/, {
                             message: "Only letters, numbers and spaces",
                           })}
                       >
@@ -204,7 +154,7 @@ export const ServiceEditor = () => {
                               ${isDirty && "text-success"} 
                             }`}
                             >
-                              Title
+                              Name
                             </label>
                             <input
                               className={`input-bordered input ${
@@ -222,94 +172,49 @@ export const ServiceEditor = () => {
                           </div>
                         )}
                       </Field>
-                    </div>
-                    <Field<string>
-                      name="description"
-                      initialValue={data.shortDescription}
-                      onChangeValidate={z
-                        .string()
-                        .min(1, { message: "Required" })
-                        .max(150, { message: "Max 150 characters" })}
-                    >
-                      {({ value, setValue, isDirty, errors }) => (
-                        <div className="flex flex-col">
-                          <label
-                            className={`font-bold tracking-wide text-sm ${
-                              errors.length > 0 && "!text-error"
-                            } ${isDirty && "text-success"}`}
-                          >
-                            Description
-                          </label>
-                          <textarea
-                            className={`textarea-bordered textarea   w-52 resize-none scrollbar-thin 
-                            ${errors.length > 0 && "!textarea-error"}
-                            ${isDirty && "textarea-success"} 
-                            `}
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            rows={6}
-                            maxLength={150}
-                          />
-                          {errors.length > 0 ? (
-                            errors.map((e) => (
-                              <span className="text-error">{e}</span>
-                            ))
-                          ) : (
-                            <span className={`${isDirty && "text-success"}`}>
-                              {150 - value.length} characters remaining
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </Field>
-                    <Field<string>
-                      name="primaryImage"
-                      initialValue={data.primaryImage.public_id}
-                      ref={primaryImageRef}
-                    >
-                      {({ value, setValue, isDirty }) => (
-                        <div className="flex flex-col">
-                          <label
-                            className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                      <Field<string>
+                        name="email"
+                        initialValue={data.email}
+                        onChangeValidate={z
+                          .string()
+                          .min(1, { message: "Required" })
+                          .max(50, { message: "Max 50 characters" })
+                          .email({ message: "Invalid email" })}
+                      >
+                        {({ value, setValue, isDirty, errors }) => (
+                          <div className="mx-auto flex w-52 flex-col">
+                            <label
+                              className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 && "!text-error"}
+                              
+                              ${isDirty && "text-success"} 
                             }`}
-                          >
-                            Primary Image
-                          </label>
-                          <ImageSelectDialog
-                            position="primary"
-                            handleImageChange={handleImageChange}
-                          >
-                            <button
-                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
-                                isDirty && "btn-success"
-                              }`}
                             >
-                              <div className="overflow-hidden">
-                                <CldImage
-                                  src={
-                                    env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                                    "/" +
-                                    value
-                                  }
-                                  alt="Primary Image"
-                                  width={158}
-                                  height={158}
-                                  className="rounded-xl object-center transition-all hover:scale-110"
-                                  crop="thumb"
-                                  placeholder="blur"
-                                  blurDataURL={data.primaryImage.blur_url}
-                                />
-                              </div>
-                            </button>
-                          </ImageSelectDialog>
-                        </div>
-                      )}
-                    </Field>
+                              Email
+                            </label>
+                            <input
+                              type="email"
+                              className={`input-bordered input ${
+                                isDirty && "input-success"
+                              } ${errors.length > 0 && "input-error"}`}
+                              value={value}
+                              onChange={(e) => setValue(e.target.value)}
+                            />
+                            {errors.length > 0 &&
+                              errors.map((error) => (
+                                <span className="text-error text-xs">
+                                  {error}
+                                </span>
+                              ))}
+                          </div>
+                        )}
+                      </Field>
+                    </div>
+
                     <Field<string>
-                      name="secondaryImage"
-                      initialValue={data.secondaryImage.public_id}
-                      ref={secondaryImageRef}
+                      initialValue={data.avatarImage.public_id}
+                      name="avatarImage"
+                      ref={avatarImageRef}
                     >
                       {({ value, setValue, isDirty }) => (
                         <div className="flex flex-col">
@@ -318,74 +223,56 @@ export const ServiceEditor = () => {
                               isDirty && "text-success"
                             }`}
                           >
-                            Secondary Image
+                            Avatar Image
                           </label>
                           <ImageSelectDialog
-                            position="secondary"
+                            position="avatar"
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >
                               <div className="overflow-hidden rounded-xl">
-                                <CldImage
-                                  src={
-                                    env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                                    "/" +
-                                    value
-                                  }
-                                  alt="Secondary Image"
-                                  width={158}
-                                  height={158}
-                                  className="rounded-xl object-center transition-all hover:scale-110 "
-                                  crop="thumb"
-                                  placeholder="blur"
-                                  blurDataURL={data.secondaryImage.blur_url}
-                                />
+                                {value ? (
+                                  <CldImage
+                                    src={
+                                      env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
+                                      "/" +
+                                      value
+                                    }
+                                    alt="Avatar Image"
+                                    width={158}
+                                    height={158}
+                                    className="rounded-xl object-center transition-all hover:scale-110"
+                                    crop="thumb"
+                                    gravity="face"
+                                    placeholder="empty"
+                                  />
+                                ) : (
+                                  <div className="flex h-40 w-40 flex-col place-content-center rounded-xl bg-base-300 text-center">
+                                    None Selected
+                                  </div>
+                                )}
                               </div>
                             </button>
                           </ImageSelectDialog>
                         </div>
                       )}
                     </Field>
-                    <Field<string>
-                      name="markdown"
-                      initialValue={data.markdown}
-                      ref={contentRef}
-                    >
-                      {({ value, setValue, isDirty }) => (
-                        <div className="flex  w-11/12 flex-col">
-                          <label
-                            className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
-                            }`}
-                          >
-                            Main Content
-                          </label>
-                          <ServiceContentEditor
-                            setContent={handleContentChange}
-                            content={value}
-                            isDirty={isDirty}
-                          />
-                        </div>
-                      )}
-                    </Field>
-                    <div className="place-self-end">
-                      <Link href="/admin/services" className="btn mr-2">
-                        Back to services
-                      </Link>
+
+                    <div className="col-span-full">
                       <button
                         onClick={submit}
-                        className={`btn btn-success ${
+                        className={`btn btn-success btn-block ${
                           errors.length > 0 && "btn-disabled"
                         }`}
                       >
                         Save Changes
                       </button>
                     </div>
-                  </React.Fragment>
+                  </div>
                 )}
               </Form>
             </div>

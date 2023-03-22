@@ -40,7 +40,7 @@ export const AboutUsEditor = () => {
 
   const handleImageChange = (
     value: string,
-    position: "primary" | "secondary" | "hero"
+    position: "primary" | "secondary" | "hero" | "avatar"
   ) => {
     if (position === "primary") {
       primaryImageRef.current?.setValue(value);
@@ -172,7 +172,7 @@ export const AboutUsEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >
@@ -216,7 +216,7 @@ export const AboutUsEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >

@@ -56,7 +56,7 @@ export const ServiceEditor = () => {
   };
   const handleImageChange = (
     value: string,
-    position: "primary" | "secondary" | "hero"
+    position: "primary" | "secondary" | "hero" | "avatar"
   ) => {
     if (position === "primary") {
       primaryImageRef.current?.setValue(value);
@@ -169,7 +169,7 @@ export const ServiceEditor = () => {
                             >
                               <div className="flex w-52">
                                 <button
-                                  className={`btn-outline btn btn-square ${
+                                  className={`btn btn-outline btn-square ${
                                     isDirty && "btn-success"
                                   }`}
                                 >
@@ -281,7 +281,7 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >
@@ -325,7 +325,7 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn btn-square h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty && "btn-success"
                               }`}
                             >
