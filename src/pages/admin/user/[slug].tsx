@@ -18,6 +18,7 @@ import { env } from "../../../env/client.mjs";
 import Link from "next/link";
 import ServiceContentEditor from "../../../components/adminComponents/TextEditor";
 import { z } from "zod";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 export interface ServicePageQuery extends ParsedUrlQuery {
   slug: Services;
@@ -31,6 +32,7 @@ type FormData = {
 };
 
 export const ServiceEditor = () => {
+  const [avatarImageExists, setAvatarImageExists] = useState(false);
   const router = useRouter();
   const session = useSession();
   const queryId = router.query.slug as string;
@@ -58,6 +60,15 @@ export const ServiceEditor = () => {
     );
   }
 
+  useEffect(() => {
+    if (data?.avatarImage.public_id) {
+      setAvatarImageExists(true);
+    }
+    return () => {
+      setAvatarImageExists(false);
+    };
+  }, [data]);
+
   const ctx = api.useContext();
   const iconRef = React.useRef<FieldInstance>(null);
   const avatarImageRef = React.useRef<FieldInstance>(null);
@@ -78,7 +89,7 @@ export const ServiceEditor = () => {
     };
     await toast.promise(
       superAdminMutation.mutateAsync(
-        { ...submission },
+        { ...submission, avatarImageExists },
         {
           onSuccess: async () => {
             await ctx.user.invalidate();
@@ -101,7 +112,7 @@ export const ServiceEditor = () => {
 
     formRef.current?.setIsDirty(false);
   };
-
+  console.log(data);
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-200 scrollbar-thumb-primary scrollbar-track-rounded-lg scrollbar-thumb-rounded-lg">
       <>
@@ -121,6 +132,9 @@ export const ServiceEditor = () => {
               <IoMdHelpCircle />
             </span>
           </h1>
+          <span>
+            avatar image exists: {avatarImageExists ? "true" : "false"}{" "}
+          </span>
 
           {isLoading && <LoadingSpinner />}
         </div>

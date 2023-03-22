@@ -119,12 +119,13 @@ export const userRouter = createTRPCRouter({
       return data;
     }),
   // update
-  update: adminProcedure
+  update: superAdminProcedure
     .input(z.object({
       id: z.string(),
       name: z.string(),
       email: z.string(),
       avatarImage: z.string().optional(),
+      avatarImageExists: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       if (input.avatarImage === "") {
@@ -136,19 +137,42 @@ export const userRouter = createTRPCRouter({
             ...exclude(input, ["id", "avatarImage"]),
             avatarImage: {
               delete: true,
+
+            },
+
+
+          },
+
+        });
+      }
+      if (!input.avatarImageExists) {
+        return await ctx.prisma.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            ...exclude(input, ["id", "avatarImageExists"]),
+            avatarImage: {
+              create: {
+                image: {
+                  connect: {
+                    public_id: input.avatarImage,
+                  }
+                }
+              }
             }
           },
         });
       }
-      const data = await ctx.prisma.user.update({
+
+      return await ctx.prisma.user.update({
         where: {
           id: input.id,
         },
         data: {
-          ...exclude(input, ["id"]),
+          ...exclude(input, ["id", "avatarImageExists"]),
           avatarImage: {
-            delete: true,
-            create: {
+            update: {
               image: {
                 connect: {
                   public_id: input.avatarImage,
@@ -158,37 +182,74 @@ export const userRouter = createTRPCRouter({
           }
         },
       });
-
-
-      return data;
     }),
+
+
 
   // updateSelf
   updateSelf: protectedProcedure
     .input(z.object({
       name: z.string(),
       email: z.string(),
-      avatarImageId: z.string().optional(),
+      avatarImage: z.string().optional(),
+      avatarImageExists: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const data = await ctx.prisma.user.update({
+      const id = ctx.session.user.id;
+      if (input.avatarImage === "") {
+        return await ctx.prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            ...exclude(input, ["avatarImage"]),
+            avatarImage: {
+              delete: true,
+
+            },
+
+
+          },
+
+        });
+      }
+      if (!input.avatarImageExists) {
+        return await ctx.prisma.user.update({
+          where: {
+            id
+          },
+          data: {
+            ...exclude(input, ["avatarImageExists"]),
+            avatarImage: {
+              create: {
+                image: {
+                  connect: {
+                    public_id: input.avatarImage,
+                  }
+                }
+              }
+            }
+          },
+        });
+      }
+
+      return await ctx.prisma.user.update({
         where: {
-          id: ctx.session.user.id,
+          id
         },
         data: {
-          ...input,
+          ...exclude(input, ["avatarImageExists"]),
           avatarImage: {
-            create: {
+            update: {
               image: {
                 connect: {
-                  public_id: input.avatarImageId,
+                  public_id: input.avatarImage,
                 }
               }
             }
           }
         },
       });
-      return data;
     }),
 
 
