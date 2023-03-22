@@ -3,8 +3,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { IoMdCloseCircle } from "react-icons/io";
 import { Form, Field } from "houseform";
 import { z } from "zod";
-import { ImageAdmin } from "../../types/image";
-import InputWrapper from "../InputWrapper";
+import { ImageAdmin } from "../../../types/image";
+import InputWrapper from "../../InputWrapper";
 
 type Props = {
   children: React.ReactNode;
@@ -89,7 +89,7 @@ export default function ImageRenameDialog({
                     onClick={submit}
                     aria-label="rename"
                     type="submit"
-                    className="btn-success btn"
+                    className="btn btn-success"
                   >
                     Confirm Rename
                   </button>
@@ -99,7 +99,7 @@ export default function ImageRenameDialog({
           </Form>
           <Dialog.Close asChild>
             <button
-              className="btn-ghost btn-circle btn absolute top-3 right-3"
+              className="btn btn-ghost btn-circle absolute top-3 right-3"
               aria-label="Close"
             >
               <IoMdCloseCircle className="text-xl" />

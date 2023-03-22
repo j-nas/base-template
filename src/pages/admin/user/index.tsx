@@ -24,7 +24,6 @@ export const UserManager = () => {
   const [isToggling, setIsToggling] = useState(false);
   const router = useRouter();
   const session = useSession();
-  console.log(session);
   if (!session.data?.user?.superAdmin) {
     router.push(`/admin/user/me`);
     return (
@@ -98,10 +97,12 @@ export const UserManager = () => {
       }
     );
   };
-  const handleUserDelete = async (id: string) => {
+  const handleUserDelete = async (user: User) => {
+    if (user.superAdmin) return;
+
     toast.promise(
       deleteUserMutation.mutateAsync(
-        { id },
+        { id: user.id },
         {
           onSuccess: async () => {
             await ctx.user.getAll.refetch();
@@ -121,7 +122,7 @@ export const UserManager = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto pb-12 scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg">
-      <Toaster position="bottom-right" />
+      <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <Breadcrumbs subName="Services Manager" subPath="services" />
       <div>
         <h1 className="my-6 place-self-center text-center font-black  text-2xl">
@@ -200,7 +201,7 @@ export const UserManager = () => {
                           className="checkbox checkbox-sm"
                           disabled={user.superAdmin || isToggling}
                           checked={user.admin}
-                          // onChange={() => handleToggleAdmin(user)}
+                          readOnly
                         ></input>
                         <span className="ml-2 text-xs">Toggle Admin</span>
                       </button>
@@ -216,7 +217,11 @@ export const UserManager = () => {
                       <IoMdConstruct className="mr-2 text-lg" /> Edit Profile
                     </Link>
                   </div>
-                  <div className="flex flex-col">
+                  <div
+                    className={`flex flex-col ${
+                      user.superAdmin && "pointer-events-none"
+                    }`}
+                  >
                     <UserDeleteDialog
                       user={user}
                       handleUserDelete={handleUserDelete}
@@ -235,14 +240,16 @@ export const UserManager = () => {
                 </div>
               </div>
             ))}
-          <div className="flex max-h-20 w-72 flex-col place-content-center rounded-lg bg-base-300 p-4 drop-shadow-2xl">
-            <UserCreateDialog handleUserCreate={handleUserCreate}>
-              <button className="btn btn-xl btn-primary btn-block">
-                <IoMdAdd className="mr-2 text-xl" />
-                Add User
-              </button>
-            </UserCreateDialog>
-          </div>
+          {!isLoading && (
+            <div className="flex max-h-20 w-72 flex-col place-content-center rounded-lg bg-base-300 p-4 drop-shadow-2xl">
+              <UserCreateDialog handleUserCreate={handleUserCreate}>
+                <button className="btn btn-xl btn-primary btn-block">
+                  <IoMdAdd className="mr-2 text-xl" />
+                  Add User
+                </button>
+              </UserCreateDialog>
+            </div>
+          )}
         </div>
       </div>
     </div>
