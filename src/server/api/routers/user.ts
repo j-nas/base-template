@@ -50,6 +50,7 @@ export const userRouter = createTRPCRouter({
               image: {
                 select: {
                   public_id: true,
+                  blur_url: true,
                 }
               }
             }
@@ -63,7 +64,13 @@ export const userRouter = createTRPCRouter({
         }
       });
 
-      return { ...data, avatarImage: data?.avatarImage?.image.public_id };
+      return {
+        ...data,
+        avatarImage: {
+          public_id: data?.avatarImage?.image?.public_id,
+          blur_url: data?.avatarImage?.image?.blur_url
+        }
+      };
 
     }),
 
@@ -106,6 +113,7 @@ export const userRouter = createTRPCRouter({
       const data = await ctx.prisma.user.create({
         data: {
           ...input,
+
         },
       });
       return data;
@@ -116,9 +124,22 @@ export const userRouter = createTRPCRouter({
       id: z.string(),
       name: z.string(),
       email: z.string(),
-      avatarImageId: z.string().optional(),
+      avatarImage: z.string().optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      if (input.avatarImage === "") {
+        return await ctx.prisma.user.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            ...exclude(input, ["id", "avatarImage"]),
+            avatarImage: {
+              delete: true,
+            }
+          },
+        });
+      }
       const data = await ctx.prisma.user.update({
         where: {
           id: input.id,
@@ -126,16 +147,19 @@ export const userRouter = createTRPCRouter({
         data: {
           ...exclude(input, ["id"]),
           avatarImage: {
+            delete: true,
             create: {
               image: {
                 connect: {
-                  public_id: input.avatarImageId,
+                  public_id: input.avatarImage,
                 }
               }
             }
           }
         },
       });
+
+
       return data;
     }),
 
@@ -146,7 +170,7 @@ export const userRouter = createTRPCRouter({
       email: z.string(),
       avatarImageId: z.string().optional(),
     }))
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const data = await ctx.prisma.user.update({
         where: {
           id: ctx.session.user.id,

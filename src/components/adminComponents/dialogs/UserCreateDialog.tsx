@@ -21,13 +21,13 @@ export default function UserCreateDialog({
   const [open, setOpen] = React.useState(false);
 
   return (
-    <Dialog.Root open={open} onOpenChange={() => setOpen(true)}>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className=" fixed inset-0 z-40 h-screen w-screen bg-black/50 backdrop-blur-sm" />
         <Dialog.Content className="glass fixed top-1/2 left-1/2 z-50 max-h-[85vh] w-[80vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg p-6 text-primary-content drop-shadow-xl">
           <Dialog.Title className="font-bold text-lg">
-            Toggle User Role
+            Create new user
           </Dialog.Title>
           <div className="flex flex-col gap-2">
             <span>
@@ -141,10 +141,7 @@ export default function UserCreateDialog({
           </Form>
 
           <Dialog.Close asChild>
-            <button
-              className="btn btn-ghost btn-circle absolute top-3 right-3"
-              aria-label="Close"
-            >
+            <button className="btn btn-ghost btn-circle absolute top-3 right-3">
               <IoMdCloseCircle className="text-xl" />
             </button>
           </Dialog.Close>

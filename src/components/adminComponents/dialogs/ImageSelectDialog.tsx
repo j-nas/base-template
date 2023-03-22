@@ -1,7 +1,7 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { IoMdCloseCircle } from "react-icons/io";
-import * as icons from "react-icons/fa";
+import { MdOutlineHideImage } from "react-icons/md";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { api } from "../../../utils/api";
 import LoadingSpinner from "../../LoadingSpinner";
@@ -10,10 +10,10 @@ import { env } from "../../../env/client.mjs";
 
 type Props = {
   children: React.ReactNode;
-  position: "primary" | "secondary" | "hero";
+  position: "primary" | "secondary" | "hero" | "avatar";
   handleImageChange: (
     value: string,
-    position: "primary" | "secondary" | "hero"
+    position: "primary" | "secondary" | "hero" | "avatar"
   ) => void;
 };
 
@@ -44,7 +44,7 @@ export default function ImageSelectDialog({
               data?.map((image) => (
                 <button
                   key={image.public_id}
-                  className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
+                  className={`btn btn-outline btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
                     selectedImage === image.public_id && "btn-primary"
                   }`}
                   onClick={() => setSelectedImage(image.public_id)}
@@ -68,8 +68,19 @@ export default function ImageSelectDialog({
                 </button>
               ))
             )}
+            {position === "avatar" && (
+              <button
+                className={`btn btn-outline btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
+                  selectedImage === "default" && "btn-primary"
+                }`}
+                onClick={() => setSelectedImage("")}
+              >
+                <MdOutlineHideImage className="text-3xl" />
+                <span>No Image</span>
+              </button>
+            )}
           </div>
-          <span>Selected image: {selectedImage}</span>
+          <span>Selected image: {selectedImage || "none"}</span>
           <div className="mt-6 flex justify-end">
             <Dialog.Close asChild>
               <button aria-label="cancel" className={`btn btn-warning `}>

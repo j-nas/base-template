@@ -9,7 +9,7 @@ import type { User } from "@prisma/client";
 type Props = {
   children: React.ReactNode;
   user: User;
-  handleUserDelete: (id: string) => void;
+  handleUserDelete: (user: User) => void;
 };
 
 export default function UserDeleteDialog({
@@ -29,16 +29,22 @@ export default function UserDeleteDialog({
           <div className="flex flex-col gap-2">
             <span>
               Are you sure? This will log {user.name} out immediatley. All blog
-              posts authored by user will now display "Deleted User"
+              posts authored by user will now display "Deleted User"{" "}
             </span>
+            <span>This action cannot be reversed.</span>
           </div>
           <div className="mt-6 flex justify-end">
+            <Dialog.Close asChild>
+              <button aria-label="cancel" className={`btn mr-2 `}>
+                Cancel
+              </button>
+            </Dialog.Close>
             <Dialog.Close asChild>
               <button
                 aria-label="confirm"
                 className={`btn btn-error `}
                 onClick={() => {
-                  handleUserDelete(user.id);
+                  handleUserDelete(user);
                 }}
               >
                 Confirm Delete

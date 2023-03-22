@@ -145,7 +145,7 @@ export const blogRouter = createTRPCRouter({
         createdAt: data.createdAt.toISOString(),
         updatedAt: data.updatedAt.toISOString(),
         author: {
-          name: data.author?.name || "Unknown",
+          name: data.author?.name || "Deleted User",
           image: data.author?.avatarImage?.image || null,
         }
       }
@@ -188,6 +188,22 @@ export const blogRouter = createTRPCRouter({
         },
       });
     }),
+  getPostsByUser: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.prisma.blog.findMany({
+        where: {
+          userId: input.userId,
+        },
+        select: {
+          id: true,
+          title: true,
+
+        }
+      });
+      return data
+    }),
+
   edit: adminProcedure
     .input(z.object({
       id: z.string(),
