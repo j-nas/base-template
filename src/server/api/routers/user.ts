@@ -134,7 +134,7 @@ export const userRouter = createTRPCRouter({
             id: input.id,
           },
           data: {
-            ...exclude(input, ["id", "avatarImage"]),
+            ...exclude(input, ["id", "avatarImage", "avatarImageExists"]),
             avatarImage: {
               delete: true,
 
@@ -202,7 +202,8 @@ export const userRouter = createTRPCRouter({
             id,
           },
           data: {
-            ...exclude(input, ["avatarImage"]),
+            name: input.name,
+            email: input.email,
             avatarImage: {
               delete: true,
 
