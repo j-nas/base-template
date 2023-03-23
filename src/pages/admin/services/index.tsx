@@ -10,6 +10,7 @@ import IconDisplay from "../../../components/IconDisplay";
 import { Services } from "@prisma/client";
 import Link from "next/link";
 import Tooltip from "../../../components/Tooltip";
+import { useSession } from "next-auth/react";
 
 const servicePositions = [
   { label: "1", value: "SERVICE1", page: "service1" },
@@ -20,6 +21,21 @@ const servicePositions = [
 ];
 
 export const ServiceManager = () => {
+  const session = useSession();
+
+  if (!session.data?.user?.admin) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-bold text-2xl">
+          You are not authorized to view this page
+        </h1>
+        <Link href="/admin/">
+          <span className="text-primary">Go back to dashboard home</span>
+        </Link>
+      </div>
+    );
+  }
+
   const [isSwapping, setIsSwapping] = useState(false);
   const { isLoading, data: services } = api.service.getAllAdmin.useQuery();
   const swapMutation = api.service.swapPosition.useMutation();
@@ -85,7 +101,7 @@ export const ServiceManager = () => {
                         href={`services/${service?.position.toLowerCase()}`}
                       >
                         <span className="link mr-1">{service.title}</span>
-                        <span className="badge-primary badge">
+                        <span className="badge badge-primary">
                           <IoMdConstruct className="mr-2 " /> Edit
                         </span>
                       </Link>
