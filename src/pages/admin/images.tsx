@@ -1,23 +1,20 @@
-import React, { type ReactElement, useState } from "react";
+import React, { type ReactElement, useState, MouseEvent } from "react";
 import { Layout } from "../../components/AdminComponents";
-import { api } from "../../utils/api";
+import { api, RouterInputs, RouterOutputs } from "../../utils/api";
 import { formatBytes } from "../../utils/format";
 import {
   CldImage,
   CldUploadWidget,
   CldUploadWidgetPropsOptions,
-  CldUploadButton,
 } from "next-cloudinary";
 import { env } from "../../env/client.mjs";
 import Tooltip from "../../components/Tooltip";
 import { IoMdAdd } from "react-icons/io";
 import ImageDeleteDialog from "../../components/adminComponents/dialogs/ImageDeleteDialog";
 import ImageRenameDialog from "../../components/adminComponents/dialogs/ImageRenameDialog";
-import ImageUploadDialog from "../../components/adminComponents/dialogs/ImageUploadDialog";
 import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { RouterOutputs } from "../../utils/api";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 type Sorting =
@@ -37,10 +34,20 @@ const sorters = [
   { name: "Date (New-Old)", value: "dateDes" as Sorting },
 ];
 
+interface ImageResult {
+  info: RouterInputs["image"]["uploadImage"];
+}
+
+const cloudinaryOptions: CldUploadWidgetPropsOptions = {
+  maxVideoFileSize: 1,
+  resourceType: "image",
+  clientAllowedFormats: ["png", "jpg", "jpeg"],
+};
+
 export const ImageManager = () => {
   const { data: images, isLoading } = api.image.getAllImages.useQuery();
   const { data: size } = api.image.getTotalSize.useQuery();
-  const [sort, setSort] = useState("dateDes");
+  const [sort, setSort] = useState("dateAsc");
   const [parent, enableAnimations] = useAutoAnimate();
   const renameMutation = api.image.renameImage.useMutation();
   const uploadMutation = api.image.uploadImage.useMutation();
@@ -75,11 +82,10 @@ export const ImageManager = () => {
     console.log({ renameMutation });
     return;
   };
-  const handleUpload = async (base64: string, publicId: string) => {
-    const fileName = publicId.split(".")[0] || `image-${Date.now()}`;
+  const handleUpload = async ({ info }: ImageResult) => {
     toast.promise(
       uploadMutation.mutateAsync(
-        { file: base64, public_id: fileName },
+        { ...info, public_id: info.public_id.split("/")[1] as string },
         {
           onSuccess: () => {
             ctx.image.getAllImages.refetch();
@@ -222,14 +228,44 @@ export const ImageManager = () => {
               </span>
             </div>
           ))}
-        {!isLoading && !maxSizeExceeded && (
+        {!isLoading && !maxSizeExceeded ? (
           <div className="flex flex-col place-self-start">
-            <ImageUploadDialog handleUpload={handleUpload}>
-              <button className="overflow-hidden rounded-lg bg-base-300 drop-shadow-xl transition-all hover:brightness-150">
-                <IoMdAdd className="h-[200px] w-[224px] transition-all hover:scale-125" />
-              </button>
-            </ImageUploadDialog>
+            <CldUploadWidget
+              uploadPreset={env.NEXT_PUBLIC_CLOUDINARY_FOLDER}
+              onUpload={(res: ImageResult) => {
+                handleUpload(res);
+              }}
+              options={cloudinaryOptions}
+            >
+              {({ open }) => {
+                const handleClick = (e: MouseEvent) => {
+                  e.preventDefault();
+                  open();
+                };
+                return (
+                  <button
+                    onClick={handleClick}
+                    className="overflow-hidden rounded-lg bg-base-300 drop-shadow-xl transition-all hover:brightness-150"
+                  >
+                    <IoMdAdd className="h-[200px] w-[224px] transition-all hover:scale-125" />
+                  </button>
+                );
+              }}
+            </CldUploadWidget>
             <span className="text-center">Upload Image</span>
+          </div>
+        ) : (
+          <div className="flex max-w-[224px] flex-col place-self-start">
+            <div className="  h-[200px] w-[224px] cursor-not-allowed overflow-hidden rounded-lg bg-base-300 drop-shadow-xl">
+              <IoMdAdd className="h-[200px] w-[224px] text-base-100" />
+            </div>
+            <span className="text-center">
+              Image storage is at full capacity. Contact{" "}
+              <a className="link" href="mailto:sales@shorecel.com">
+                sales@shorecel.com
+              </a>{" "}
+              to increase image storage.
+            </span>
           </div>
         )}
       </div>
