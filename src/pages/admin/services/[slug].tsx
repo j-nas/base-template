@@ -18,6 +18,7 @@ import { env } from "../../../env/client.mjs";
 import Link from "next/link";
 import ServiceContentEditor from "../../../components/adminComponents/TextEditor";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 export interface ServicePageQuery extends ParsedUrlQuery {
   slug: Services;
 }
@@ -33,6 +34,21 @@ type FormData = {
 
 export const ServiceEditor = () => {
   const router = useRouter();
+  const session = useSession();
+
+  if (!session.data?.user?.admin) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-bold text-2xl">
+          You are not authorized to view this page
+        </h1>
+        <Link href="/admin/">
+          <span className="text-primary">Go back to dashboard home</span>
+        </Link>
+      </div>
+    );
+  }
+
   const servicePage = router.query.slug as string;
   const servicePageFormatted = servicePage.toUpperCase() as Services;
   const submitMutation = api.service.update.useMutation();
