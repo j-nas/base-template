@@ -3,7 +3,6 @@ import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { api } from "../../../utils/api";
 import { IoMdConstruct, IoMdHelpCircle, IoMdTrash } from "react-icons/io";
-import { useRouter } from "next/router";
 import { Services } from "@prisma/client";
 import { ParsedUrlQuery } from "querystring";
 import Layout from "../../../components/adminComponents/Layout";
@@ -13,10 +12,9 @@ import ImageSelectDialog from "../../../components/adminComponents/dialogs/Image
 import React from "react";
 import { CldImage } from "next-cloudinary";
 import { env } from "../../../env/client.mjs";
-import Link from "next/link";
 import { z } from "zod";
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import Link from "next/link";
 export interface ServicePageQuery extends ParsedUrlQuery {
   slug: Services;
 }
@@ -30,25 +28,11 @@ type FormData = {
 
 export const ServiceEditor = () => {
   const [avatarImageExists, setAvatarImageExists] = useState(false);
-  const router = useRouter();
-  const session = useSession();
-  const queryId = router.query.slug as string;
 
   const userUpdateMutation = api.user.update.useMutation();
   const blogDeleteMutation = api.blog.delete.useMutation();
 
-  if (!session.data?.user?.superAdmin) {
-    router.push(`/admin/user/me`);
-    return (
-      <div className="grid h-full w-full place-content-center font-bold text-2xl">
-        Not Authorized, taking you to your profile.
-      </div>
-    );
-  }
-
-  const { isLoading, data, isError, error } = api.user.getById.useQuery({
-    id: queryId,
-  });
+  const { isLoading, data, isError, error } = api.user.getSelf.useQuery();
 
   if (isError) {
     return (
@@ -59,7 +43,7 @@ export const ServiceEditor = () => {
   }
 
   useEffect(() => {
-    if (data?.avatarImage.public_id) {
+    if (data?.avatarImage?.public_id) {
       setAvatarImageExists(true);
     }
     return () => {
@@ -68,9 +52,7 @@ export const ServiceEditor = () => {
   }, [data]);
 
   const ctx = api.useContext();
-  const iconRef = React.useRef<FieldInstance>(null);
   const avatarImageRef = React.useRef<FieldInstance>(null);
-  const contentRef = React.useRef<FieldInstance>(null);
   const formRef = React.useRef<FormInstance>(null);
 
   const handleImageChange = (value: string, _position: string) => {
