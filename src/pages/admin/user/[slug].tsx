@@ -96,8 +96,20 @@ export const ServiceEditor = () => {
             });
           },
           onError: async (error) => {
-            console.log(error);
-            toast.error(error.message);
+            if (
+              error.message.endsWith(
+                "Unique constraint failed on the fields: (`email`)"
+              )
+            ) {
+              toast.error("Email already in use");
+            }
+            if (
+              error.message.endsWith(
+                "Unique constraint failed on the fields: (`name`)"
+              )
+            ) {
+              toast.error("Names must be unique");
+            }
           },
         }
       ),
@@ -173,7 +185,10 @@ export const ServiceEditor = () => {
                             />
                             {errors.length > 0 &&
                               errors.map((error) => (
-                                <span className="text-error text-xs">
+                                <span
+                                  key={error}
+                                  className="text-error text-xs"
+                                >
                                   {error}
                                 </span>
                               ))}
@@ -210,7 +225,10 @@ export const ServiceEditor = () => {
                             />
                             {errors.length > 0 &&
                               errors.map((error) => (
-                                <span className="text-error text-xs">
+                                <span
+                                  key={error}
+                                  className="text-error text-xs"
+                                >
                                   {error}
                                 </span>
                               ))}

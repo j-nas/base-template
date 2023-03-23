@@ -6,6 +6,7 @@ import {
   superAdminProcedure,
 } from "../trpc";
 import { exclude } from "../../../utils/exclude";
+import { TRPCClientError } from "@trpc/client";
 
 export const userRouter = createTRPCRouter({
   // getAll
@@ -139,6 +140,7 @@ export const userRouter = createTRPCRouter({
       avatarImageExists: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
+
       if (input.avatarImage === "") {
         return await ctx.prisma.user.update({
           where: {
@@ -193,12 +195,14 @@ export const userRouter = createTRPCRouter({
           }
         },
       });
+
     }),
 
 
 
   // updateSelf
   updateSelf: protectedProcedure
+
     .input(z.object({
       name: z.string(),
       email: z.string(),
@@ -280,6 +284,7 @@ export const userRouter = createTRPCRouter({
       });
       return data;
     }),
+
 
   // toggleAdmin
   toggleAdmin: superAdminProcedure
