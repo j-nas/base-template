@@ -144,9 +144,9 @@ export const ServiceEditor = () => {
         <div className="my-8">
           <h1 className=" place-self-center text-center font-black  text-2xl">
             {data?.title}{" "}
-            <span className="tooltip tooltip-left">
+            {/* <span className="tooltip tooltip-left">
               <IoMdHelpCircle />
-            </span>
+            </span> */}
           </h1>
           {data && (
             <span>

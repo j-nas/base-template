@@ -1,13 +1,11 @@
 import { toast, Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import IconDisplay from "../../components/IconDisplay";
 import { api } from "../../utils/api";
 import { IoMdHelpCircle } from "react-icons/io";
 import Layout from "../../components/adminComponents/Layout";
 import { ReactElement } from "react";
 import { Form, Field, FieldInstance, FormInstance } from "houseform";
-import IconSelectDialog from "../../components/adminComponents/dialogs/IconSelectDialog";
 import ImageSelectDialog from "../../components/adminComponents/dialogs/ImageSelectDialog";
 import React from "react";
 import { CldImage } from "next-cloudinary";
@@ -15,6 +13,7 @@ import { env } from "../../env/client.mjs";
 import Link from "next/link";
 import ServiceContentEditor from "../../components/adminComponents/TextEditor";
 import { z } from "zod";
+import { useSession } from "next-auth/react";
 
 type FormData = {
   title: string;
@@ -26,6 +25,20 @@ type FormData = {
 };
 
 export const AboutUsEditor = () => {
+  const session = useSession();
+  if (!session.data?.user?.admin) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-bold text-2xl">
+          You are not authorized to view this page
+        </h1>
+        <Link href="/admin/">
+          <span className="text-primary">Go back to dashboard home</span>
+        </Link>
+      </div>
+    );
+  }
+
   const submitMutation = api.aboutUs.update.useMutation();
   const {
     data: data,
@@ -93,9 +106,9 @@ export const AboutUsEditor = () => {
         <div className="my-8">
           <h1 className=" place-self-center text-center font-black  text-2xl">
             About Us Editor{" "}
-            {/* <span className="tooltip tooltip-left">
+            <span className="tooltip tooltip-left">
               <IoMdHelpCircle />
-            </span> */}
+            </span>
           </h1>
           {data && (
             <span>
