@@ -2,16 +2,16 @@ import { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
 import { Layout } from "../../components/AdminComponents";
 import { api } from "../../utils/api";
-import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import InputWrapper from "../../components/adminComponents/InputWrapper";
 import { Field, Form, type FormInstance } from "houseform";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import { IoMdHelpCircle } from "react-icons/io";
 import React from "react";
 import { RouterOutputs } from "../../utils/api";
 import { Toaster, toast } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const provinces = [
   "AB",
@@ -30,6 +30,21 @@ const provinces = [
 ];
 
 export const BusinessProfile: NextPageWithLayout = () => {
+  const session = useSession();
+
+  if (!session.data?.user?.admin) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-bold text-2xl">
+          You are not authorized to view this page
+        </h1>
+        <Link href="/admin/">
+          <span className="text-primary">Go back to dashboard home</span>
+        </Link>
+      </div>
+    );
+  }
+
   const { data, isLoading } = api.businessInfo.getActiveWithDateTime.useQuery();
   const updateMutation = api.businessInfo.update.useMutation();
   const formRef = React.useRef<FormInstance>(null);
