@@ -5,6 +5,7 @@ import { env } from "../../../env/server.mjs";
 import
 getBase64ImageUrl from "../../../utils/generateBlurPlaceholder";
 
+import { exclude } from "../../../utils/exclude";
 const cloudinaryConfig: ConfigOptions = {
   cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
@@ -71,32 +72,24 @@ export const imageRouter = createTRPCRouter({
 
   uploadImage: protectedProcedure
     .input(z.object({
-      file: z.string(),
+      asset_id: z.string(),
       public_id: z.string(),
+      type: z.string(),
+      height: z.number(),
+      width: z.number(),
+      format: z.string(),
+      bytes: z.number(),
+      secure_url: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
 
-      cloudinary.v2.config(cloudinaryConfig);
-      const result = await cloudinary.v2.uploader.upload(input.file, {
-        public_id: env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.public_id,
-        overwrite: false,
-        invalidate: true,
-        resource_type: "image",
 
-      });
-      console.log({ result })
-      const blurData = await getBase64ImageUrl(result.public_id, result.format);
+      const blurData = await getBase64ImageUrl(input.public_id, input.format);
       const data = await ctx.prisma.image.create({
         data: {
-          type: result.resource_type,
-          id: result.asset_id,
+          id: input.asset_id,
+          ...exclude(input, ["asset_id"]),
           blur_url: blurData,
-          public_id: input.public_id,
-          bytes: result.bytes,
-          format: result.format,
-          height: result.height,
-          width: result.width,
-          secure_url: result.secure_url,
         }
       });
 
