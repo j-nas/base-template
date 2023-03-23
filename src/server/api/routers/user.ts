@@ -59,6 +59,8 @@ export const userRouter = createTRPCRouter({
             select: {
               id: true,
               title: true,
+              createdAt: true,
+              updatedAt: true,
             }
           }
         }
@@ -77,7 +79,7 @@ export const userRouter = createTRPCRouter({
   // getSelf
   getSelf: protectedProcedure
     .query(async ({ ctx }) => {
-      const data = await ctx.prisma.user.findUnique({
+      const data = await ctx.prisma.user.findUniqueOrThrow({
         where: {
           id: ctx.session.user.id,
         },
@@ -87,6 +89,7 @@ export const userRouter = createTRPCRouter({
               image: {
                 select: {
                   public_id: true,
+                  blur_url: true,
                 }
               }
             }
@@ -95,12 +98,20 @@ export const userRouter = createTRPCRouter({
             select: {
               id: true,
               title: true,
+              createdAt: true,
+              updatedAt: true,
             }
           }
         }
       });
 
-      return { ...data, avatarImage: data?.avatarImage?.image.public_id };
+      return {
+        ...data,
+        avatarImage: {
+          public_id: data?.avatarImage?.image?.public_id,
+          blur_url: data?.avatarImage?.image?.blur_url
+        }
+      };
     }),
 
   // create
@@ -195,15 +206,13 @@ export const userRouter = createTRPCRouter({
       avatarImageExists: z.boolean().optional(),
     }))
     .mutation(async ({ ctx, input }) => {
-      const id = ctx.session.user.id;
       if (input.avatarImage === "") {
         return await ctx.prisma.user.update({
           where: {
-            id,
+            id: ctx.session.user.id,
           },
           data: {
-            name: input.name,
-            email: input.email,
+            ...exclude(input, ["avatarImage", "avatarImageExists"]),
             avatarImage: {
               delete: true,
 
@@ -217,7 +226,7 @@ export const userRouter = createTRPCRouter({
       if (!input.avatarImageExists) {
         return await ctx.prisma.user.update({
           where: {
-            id
+            id: ctx.session.user.id,
           },
           data: {
             ...exclude(input, ["avatarImageExists"]),
@@ -236,7 +245,7 @@ export const userRouter = createTRPCRouter({
 
       return await ctx.prisma.user.update({
         where: {
-          id
+          id: ctx.session.user.id,
         },
         data: {
           ...exclude(input, ["avatarImageExists"]),
