@@ -8,13 +8,12 @@ import LoadingSpinner from "../../LoadingSpinner";
 import { CldImage } from "next-cloudinary";
 import { env } from "../../../env/client.mjs";
 
+export type ImagePosition = "primary" | "secondary" | "hero" | "avatar";
+
 type Props = {
   children: React.ReactNode;
-  position: "primary" | "secondary" | "hero" | "avatar";
-  handleImageChange: (
-    value: string,
-    position: "primary" | "secondary" | "hero" | "avatar"
-  ) => void;
+  position: ImagePosition;
+  handleImageChange: (value: string, position: ImagePosition) => void;
 };
 
 export default function ImageSelectDialog({
@@ -44,7 +43,7 @@ export default function ImageSelectDialog({
               data?.map((image) => (
                 <button
                   key={image.public_id}
-                  className={`btn btn-outline btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
+                  className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
                     selectedImage === image.public_id && "btn-primary"
                   }`}
                   onClick={() => setSelectedImage(image.public_id)}
@@ -70,7 +69,7 @@ export default function ImageSelectDialog({
             )}
             {position === "avatar" && (
               <button
-                className={`btn btn-outline btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
+                className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
                   selectedImage === "default" && "btn-primary"
                 }`}
                 onClick={() => setSelectedImage("")}
