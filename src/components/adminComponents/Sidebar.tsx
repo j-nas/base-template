@@ -8,7 +8,8 @@ import {
   IoMdHeart,
   IoMdPaper,
 } from "react-icons/io";
-import { HiOutlineUserGroup } from "react-icons/hi";
+import { HiOutlineUser, HiOutlineUserGroup } from "react-icons/hi";
+import { useSession } from "next-auth/react";
 
 type Props = {
   sidebarOpen: boolean;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
+  const { data } = useSession();
   return (
     <div
       className={`${
@@ -30,29 +32,34 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
           </Link>
         </li>
         <li>
-          <Link href="/admin/business">
-            <IoMdBusiness />
-            Business Profile
-          </Link>
-        </li>
-        <li>
           <Link href="/admin/images">
             <IoMdImages />
             Image Management
           </Link>
         </li>
-        <li>
-          <Link href="/admin/services">
-            <IoMdBarcode />
-            Services Management
-          </Link>
-        </li>
-        <li>
-          <Link href="/admin/about">
-            <IoMdHeart />
-            About Us Management
-          </Link>
-        </li>
+        {data?.user?.admin && (
+          <>
+            <li>
+              <Link href="/admin/business">
+                <IoMdBusiness />
+                Business Profile
+              </Link>
+            </li>
+
+            <li>
+              <Link href="/admin/services">
+                <IoMdBarcode />
+                Services Management
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/about">
+                <IoMdHeart />
+                About Us Management
+              </Link>
+            </li>
+          </>
+        )}
         <li>
           <Link href="/admin/blog">
             <IoMdPaper />
@@ -60,10 +67,18 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
           </Link>
         </li>
 
+        {data?.user?.superAdmin && (
+          <li>
+            <Link href="/admin/user">
+              <HiOutlineUserGroup />
+              User Management
+            </Link>
+          </li>
+        )}
         <li>
-          <Link href="/admin/user">
-            <HiOutlineUserGroup />
-            User Management
+          <Link href="/admin/user/me">
+            <HiOutlineUser />
+            My Profile
           </Link>
         </li>
         <li></li>
