@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import Link from "next/link";
 import { ReactElement } from "react";
-import { Layout } from "../../components/AdminComponents";
+import Layout from "../../components/adminComponents/Layout";
 import { NextPageWithLayout } from "../_app";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 

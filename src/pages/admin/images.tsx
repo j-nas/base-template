@@ -1,5 +1,5 @@
 import React, { type ReactElement, useState, MouseEvent } from "react";
-import { Layout } from "../../components/AdminComponents";
+import Layout from "../../components/adminComponents/Layout";
 import { api, RouterInputs, RouterOutputs } from "../../utils/api";
 import { formatBytes } from "../../utils/format";
 import {

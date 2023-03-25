@@ -1,5 +1,5 @@
 import React, { type ReactElement, useState } from "react";
-import { Layout } from "../../../components/AdminComponents";
+import Layout from "../../../components/adminComponents/Layout";
 import { api } from "../../../utils/api";
 import { IoMdAdd, IoMdConstruct, IoMdHelpCircle } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
@@ -190,7 +190,7 @@ export const UserManager = () => {
                       handleToggleAdmin={handleToggleAdmin}
                     >
                       <div
-                        className={`btn btn-outline btn-sm w-full ${
+                        className={`btn-outline btn btn-sm w-full ${
                           user.superAdmin && "btn-disabled "
                         }`}
                       >
@@ -209,7 +209,7 @@ export const UserManager = () => {
                   <div className="flex flex-col">
                     <Link
                       href={`/admin/user/${user?.id}`}
-                      className={`btn btn-outline btn-sm ${
+                      className={`btn-outline btn btn-sm ${
                         canEdit(user) ? "" : "btn-disabled "
                       }`}
                     >
@@ -226,7 +226,7 @@ export const UserManager = () => {
                       handleUserDelete={handleUserDelete}
                     >
                       <div
-                        className={`btn btn-outline btn-error btn-sm btn-block ${
+                        className={`btn-outline btn btn-error btn-block btn-sm ${
                           user.superAdmin && "!btn-disabled "
                         }`}
                       >

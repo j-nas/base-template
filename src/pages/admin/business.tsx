@@ -1,6 +1,6 @@
 import { NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
-import { Layout } from "../../components/AdminComponents";
+import Layout from "../../components/adminComponents/Layout";
 import { api } from "../../utils/api";
 import z from "zod";
 import InputWrapper from "../../components/adminComponents/InputWrapper";
