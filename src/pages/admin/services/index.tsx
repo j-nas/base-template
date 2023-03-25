@@ -1,5 +1,5 @@
 import React, { type ReactElement, useState } from "react";
-import { Layout } from "../../../components/AdminComponents";
+import Layout from "../../../components/adminComponents/Layout";
 import { api } from "../../../utils/api";
 import { IoMdConstruct, IoMdHelpCircle } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
@@ -101,7 +101,7 @@ export const ServiceManager = () => {
                         href={`services/${service?.position.toLowerCase()}`}
                       >
                         <span className="link mr-1">{service.title}</span>
-                        <span className="badge badge-primary">
+                        <span className="badge-primary badge">
                           <IoMdConstruct className="mr-2 " /> Edit
                         </span>
                       </Link>
