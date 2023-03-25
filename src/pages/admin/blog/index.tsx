@@ -1,5 +1,5 @@
 import React, { type ReactElement, useState } from "react";
-import { Layout } from "../../../components/AdminComponents";
+import Layout from "../../../components/adminComponents/Layout";
 import { api } from "../../../utils/api";
 import { IoMdConstruct, IoMdHelpCircle } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
