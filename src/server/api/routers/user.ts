@@ -7,6 +7,119 @@ import {
 } from "../trpc";
 import { exclude } from "../../../utils/exclude";
 import { TRPCClientError } from "@trpc/client";
+import { prisma } from "../../db";
+
+const userGet = async (id: string) => {
+
+  const data = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: id
+    },
+    include: {
+      avatarImage: {
+        select: {
+          image: {
+            select: {
+              public_id: true,
+              blur_url: true,
+            }
+          }
+        }
+      },
+      Blog: {
+        select: {
+          id: true,
+          title: true,
+          createdAt: true,
+          updatedAt: true,
+        }
+      }
+    }
+  });
+
+  return {
+    ...data,
+    avatarImage: {
+      public_id: data?.avatarImage?.image?.public_id,
+      blur_url: data?.avatarImage?.image?.blur_url
+    }
+  };
+
+}
+
+const userUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  avatarImage: z.string().optional(),
+  avatarImageExists: z.boolean().optional(),
+});
+
+const userUpdate = async (input: z.infer<typeof userUpdateSchema>) => {
+  if (input.avatarImage === "" && !input.avatarImageExists) {
+    return await prisma.user.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        ...exclude(input, ["id", "avatarImage", "avatarImageExists"]),
+      },
+    });
+  }
+
+  if (input.avatarImage === "" && input.avatarImageExists) {
+    return await prisma.user.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        ...exclude(input, ["id", "avatarImage", "avatarImageExists"]),
+        avatarImage: {
+          delete: true,
+        },
+      },
+    });
+  }
+  if (!input.avatarImageExists) {
+    return await prisma.user.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        ...exclude(input, ["id", "avatarImageExists"]),
+        avatarImage: {
+          create: {
+            image: {
+              connect: {
+                public_id: input.avatarImage,
+              }
+            }
+          }
+        }
+      },
+    });
+  }
+
+  return await prisma.user.update({
+    where: {
+      id: input.id,
+    },
+    data: {
+      ...exclude(input, ["id", "avatarImageExists"]),
+      avatarImage: {
+        update: {
+          image: {
+            connect: {
+              public_id: input.avatarImage,
+            }
+          }
+        }
+      }
+    },
+  });
+
+}
+
 
 export const userRouter = createTRPCRouter({
   // getAll
@@ -40,79 +153,14 @@ export const userRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
     }))
-    .query(async ({ ctx, input }) => {
-      const data = await ctx.prisma.user.findUniqueOrThrow({
-        where: {
-          id: input.id,
-        },
-        include: {
-          avatarImage: {
-            select: {
-              image: {
-                select: {
-                  public_id: true,
-                  blur_url: true,
-                }
-              }
-            }
-          },
-          Blog: {
-            select: {
-              id: true,
-              title: true,
-              createdAt: true,
-              updatedAt: true,
-            }
-          }
-        }
-      });
-
-      return {
-        ...data,
-        avatarImage: {
-          public_id: data?.avatarImage?.image?.public_id,
-          blur_url: data?.avatarImage?.image?.blur_url
-        }
-      };
-
+    .query(async ({ input }) => {
+      return userGet(input.id)
     }),
 
   // getSelf
   getSelf: protectedProcedure
     .query(async ({ ctx }) => {
-      const data = await ctx.prisma.user.findUniqueOrThrow({
-        where: {
-          id: ctx.session.user.id,
-        },
-        include: {
-          avatarImage: {
-            select: {
-              image: {
-                select: {
-                  public_id: true,
-                  blur_url: true,
-                }
-              }
-            }
-          },
-          Blog: {
-            select: {
-              id: true,
-              title: true,
-              createdAt: true,
-              updatedAt: true,
-            }
-          }
-        }
-      });
-
-      return {
-        ...data,
-        avatarImage: {
-          public_id: data?.avatarImage?.image?.public_id,
-          blur_url: data?.avatarImage?.image?.blur_url
-        }
-      };
+      return userGet(ctx.session.user.id)
     }),
 
   // create
@@ -132,138 +180,18 @@ export const userRouter = createTRPCRouter({
     }),
   // update
   update: superAdminProcedure
-    .input(z.object({
-      id: z.string(),
-      name: z.string(),
-      email: z.string(),
-      avatarImage: z.string().optional(),
-      avatarImageExists: z.boolean().optional(),
-    }))
+    .input(userUpdateSchema)
     .mutation(async ({ ctx, input }) => {
 
-      if (input.avatarImage === "") {
-        return await ctx.prisma.user.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            ...exclude(input, ["id", "avatarImage", "avatarImageExists"]),
-            avatarImage: {
-              delete: true,
-
-            },
-
-
-          },
-
-        });
-      }
-      if (!input.avatarImageExists) {
-        return await ctx.prisma.user.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            ...exclude(input, ["id", "avatarImageExists"]),
-            avatarImage: {
-              create: {
-                image: {
-                  connect: {
-                    public_id: input.avatarImage,
-                  }
-                }
-              }
-            }
-          },
-        });
-      }
-
-      return await ctx.prisma.user.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          ...exclude(input, ["id", "avatarImageExists"]),
-          avatarImage: {
-            update: {
-              image: {
-                connect: {
-                  public_id: input.avatarImage,
-                }
-              }
-            }
-          }
-        },
-      });
-
+      return userUpdate(input);
     }),
-
-
 
   // updateSelf
   updateSelf: protectedProcedure
 
-    .input(z.object({
-      name: z.string(),
-      email: z.string(),
-      avatarImage: z.string().optional(),
-      avatarImageExists: z.boolean().optional(),
-    }))
+    .input(userUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      if (input.avatarImage === "") {
-        return await ctx.prisma.user.update({
-          where: {
-            id: ctx.session.user.id,
-          },
-          data: {
-            ...exclude(input, ["avatarImage", "avatarImageExists"]),
-            avatarImage: {
-              delete: true,
-
-            },
-
-
-          },
-
-        });
-      }
-      if (!input.avatarImageExists) {
-        return await ctx.prisma.user.update({
-          where: {
-            id: ctx.session.user.id,
-          },
-          data: {
-            ...exclude(input, ["avatarImageExists"]),
-            avatarImage: {
-              create: {
-                image: {
-                  connect: {
-                    public_id: input.avatarImage,
-                  }
-                }
-              }
-            }
-          },
-        });
-      }
-
-      return await ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
-        },
-        data: {
-          ...exclude(input, ["avatarImageExists"]),
-          avatarImage: {
-            update: {
-              image: {
-                connect: {
-                  public_id: input.avatarImage,
-                }
-              }
-            }
-          }
-        },
-      });
+      return userUpdate({ ...input, id: ctx.session.user.id });
     }),
 
 
