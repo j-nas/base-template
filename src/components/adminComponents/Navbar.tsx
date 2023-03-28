@@ -31,7 +31,7 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
         <Link
           href="/"
           aria-label="home button logo"
-          className="btn btn-ghost hidden md:block "
+          className="btn-ghost btn hidden md:block "
         >
           <Logo
             className={`z-50 h-auto w-40 fill-base-content stroke-base-content`}
@@ -47,16 +47,13 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
           <>
             <span>
               Logged in as{" "}
-              <Link
-                className="link"
-                href={`/admin/user/${session.data?.user?.id}`}
-              >
+              <Link className="link" href="/admin/user/me">
                 {session.data?.user?.email}
               </Link>
             </span>
             <button
               onClick={() => signOut()}
-              className="btn btn-primary btn-xs ml-2"
+              className="btn-primary btn-xs btn ml-2"
             >
               Log out
             </button>
