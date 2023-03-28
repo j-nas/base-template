@@ -128,7 +128,16 @@ export const UserEditor = () => {
         {data && (
           <UserProfile user={data} handleSubmit={handleSubmit} ref={formRef} />
         )}
-        {data?.Blog && <BlogListing blogs={data?.Blog} />}
+        {data?.Blog && (
+          <BlogListing
+            blogs={data?.Blog}
+            user={{
+              avatar: data.avatarImage.public_id,
+              id: data.id,
+              name: data.name,
+            }}
+          />
+        )}
       </>
     </div>
   );

@@ -16,9 +16,14 @@ type Props = {
       id: string;
     };
   }[];
+  user?: {
+    name: string;
+    avatar?: string;
+    id: string;
+  };
 };
 
-export default function BlogListing({ blogs }: Props) {
+export default function BlogListing({ blogs, user }: Props) {
   const [parent, enableAnimations] = useAutoAnimate();
 
   return (
@@ -32,16 +37,16 @@ export default function BlogListing({ blogs }: Props) {
           {blogs?.map((blog) => (
             <div
               key={blog.id}
-              className="grid grid-cols-7 rounded-lg bg-base-300 p-4 drop-shadow-2xl"
+              className="grid rounded-lg bg-base-300 p-4 drop-shadow-2xl sm:grid-cols-7"
             >
-              <div className=" max-w-20 flex flex-col">
+              <div className="flex scale-125 flex-col place-self-center">
                 <AvatarDisplay
-                  public_id={blog.author?.avatar}
-                  name={blog.author?.name || "Generic Name"}
+                  public_id={blog.author?.avatar || user?.avatar}
+                  name={blog.author?.name || user?.name || "User"}
                   size="10"
                 />
               </div>
-              <div className="col-span-5 mx-4 flex w-5/6 flex-col flex-wrap place-self-stretch bg-red-600 ">
+              <div className="col-span-5 mx-4 flex w-5/6 flex-col flex-wrap place-self-end  sm:place-self-stretch ">
                 <span className="text-md font-medium">
                   <Link href={`/admin/blog/${blog?.id}`}>
                     <span className="link mr-1">{blog.title}</span>
