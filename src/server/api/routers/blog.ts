@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, adminProcedure, protectedProcedure } from "../trpc";
-import { exclude } from "../../../utils/exclude";
+import { prisma } from "../../db";
+import { type Session } from "next-auth";
 
 const blogSchema = z.object({
   id: z.string(),
@@ -31,6 +32,27 @@ const blogSchema = z.object({
   }).nullish(),
 });
 
+const blogOwnerCheck = async (blogId: string, session: Session) => {
+  const authorId = await prisma.blog.findUnique({
+    where: {
+      id: blogId,
+    },
+    select: {
+      userId: true,
+    }
+  });
+
+  if (!authorId) {
+    throw new Error("Blog not found");
+  }
+  if (authorId?.userId !== session?.user?.id) {
+    if (!session?.user?.superAdmin) {
+      throw new Error("You are not the author of this blog");
+    }
+  }
+
+}
+
 
 export const blogRouter = createTRPCRouter({
   getAll: publicProcedure
@@ -44,8 +66,17 @@ export const blogRouter = createTRPCRouter({
           },
           author: {
             select: {
+              id: true,
               name: true,
-              image: true,
+              avatarImage: {
+                select: {
+                  image: {
+                    select: {
+                      public_id: true,
+                    },
+                  }
+                }
+              }
             }
           }
         },
@@ -55,7 +86,11 @@ export const blogRouter = createTRPCRouter({
         return {
           ...blog,
           image: blog.primaryImage?.image,
-          author: blog.author?.name || "Unknown",
+          author: {
+            name: blog.author?.name || "Unknown",
+            image: blog.author?.avatarImage?.image.public_id || undefined,
+            id: blog.author?.id || "DELETED",
+          }
         }
       })
     }),
@@ -158,15 +193,42 @@ export const blogRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-      });
-      return exclude(data, ["createdAt", "updatedAt"])
+        include: {
+          primaryImage: {
+            select: {
+              image: true,
+            }
+          },
+          author: {
+            select: {
+              name: true,
+              avatarImage: {
+                select: {
+                  image: true,
+                }
+              }
+            }
+          }
+
+        },
+      })
+
+      return {
+        ...data,
+        pageName: data.title.toLowerCase().replace(/ /g, "-"),
+        image: data.primaryImage?.image,
+        author: {
+          name: data.author?.name || "Deleted User",
+          image: data.author?.avatarImage?.image || null,
+        }
+      }
     }),
   create: adminProcedure
     .input(z.object({
       title: z.string(),
       summary: z.string(),
       markdown: z.string(),
-      imageUrl: z.string(),
+      primaryImage: z.string(),
 
 
     }))
@@ -179,7 +241,11 @@ export const blogRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           primaryImage: {
             create: {
-              imageId: input.imageUrl
+              image: {
+                connect: {
+                  public_id: input.primaryImage,
+                }
+              }
             }
           },
         },
@@ -201,7 +267,7 @@ export const blogRouter = createTRPCRouter({
       return data
     }),
 
-  edit: adminProcedure
+  update: protectedProcedure
     .input(z.object({
       id: z.string(),
       title: z.string(),
@@ -209,7 +275,8 @@ export const blogRouter = createTRPCRouter({
       markdown: z.string(),
       primaryImage: z.string(),
     }))
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      await blogOwnerCheck(input.id, ctx.session);
       return ctx.prisma.blog.update({
         where: {
           id: input.id,
@@ -219,8 +286,12 @@ export const blogRouter = createTRPCRouter({
           summary: input.summary,
           markdown: input.markdown,
           primaryImage: {
-            create: {
-              imageId: input.primaryImage
+            update: {
+              image: {
+                connect: {
+                  public_id: input.primaryImage,
+                }
+              }
             }
           },
         },
@@ -228,7 +299,8 @@ export const blogRouter = createTRPCRouter({
     }),
   delete: adminProcedure
     .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
+      await blogOwnerCheck(input.id, ctx.session);
       return ctx.prisma.blog.delete({
         where: {
           id: input.id,
@@ -246,5 +318,27 @@ export const blogRouter = createTRPCRouter({
       });
     }
     ),
-
+  toggleFeatured: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const blog = await ctx.prisma.blog.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          featured: true,
+        }
+      });
+      if (!blog) {
+        throw new Error("Blog not found");
+      }
+      return ctx.prisma.blog.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          featured: !blog.featured,
+        }
+      });
+    }),
 });
