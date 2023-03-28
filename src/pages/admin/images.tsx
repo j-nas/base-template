@@ -54,7 +54,8 @@ export const ImageManager = () => {
   const deleteMutation = api.image.deleteImage.useMutation();
   const ctx = api.useContext();
 
-  const maxSizeExceeded = size?._sum.bytes && size._sum.bytes > 100000000;
+  const maxSizeExceeded =
+    size?._sum.bytes && size._sum.bytes > env.NEXT_PUBLIC_IMAGE_STORAGE_LIMIT;
   const handleRename = async (
     imageId: string,
     newName: string,
@@ -220,10 +221,10 @@ export const ImageManager = () => {
               <span className="px-2">{formatBytes(image.bytes)}</span>
               <span className="space-x-2 p-2">
                 <ImageDeleteDialog image={image} handleDelete={handleDelete}>
-                  <button className="btn btn-error btn-sm">Delete</button>
+                  <button className="btn-error btn-sm btn">Delete</button>
                 </ImageDeleteDialog>
                 <ImageRenameDialog renameHandler={handleRename} image={image}>
-                  <button className="btn btn-primary btn-sm">Rename</button>
+                  <button className="btn-primary btn-sm btn">Rename</button>
                 </ImageRenameDialog>
               </span>
             </div>
