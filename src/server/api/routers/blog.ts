@@ -33,35 +33,32 @@ const blogSchema = z.object({
 
 
 export const blogRouter = createTRPCRouter({
-  // getAll: publicProcedure
-  //   .output(z.array(blogSchema))
-  //   .query(async ({ ctx }) => {
-  //     const data = await ctx.prisma.blog.findMany({
-  //       include: {
-  //         primaryImage: {
-  //           select: {
-  //             image: true,
-  //           }
-  //         },
-  //         author: {
-  //           select: {
-  //             name: true,
-  //             image: true,
-  //           }
-  //         }
-  //       },
-  //     });
+  getAll: publicProcedure
+    .query(async ({ ctx }) => {
+      const data = await ctx.prisma.blog.findMany({
+        include: {
+          primaryImage: {
+            select: {
+              image: true,
+            }
+          },
+          author: {
+            select: {
+              name: true,
+              image: true,
+            }
+          }
+        },
+      });
 
-  //     return data.map((blog) => {
-  //       return {
-  //         ...blog,
-  //         image: blog.primaryImage?.image,
-  //         createdAt: blog.createdAt.toISOString(),
-  //         updatedAt: blog.updatedAt.toISOString(),
-  //         author: blog.author?.name || "Unknown",
-  //       }
-  //     })
-  //   }),
+      return data.map((blog) => {
+        return {
+          ...blog,
+          image: blog.primaryImage?.image,
+          author: blog.author?.name || "Unknown",
+        }
+      })
+    }),
   getSummaries: publicProcedure
     .output(z.array(
       blogSchema.omit({ markdown: true }).extend({ pageName: z.string() })
