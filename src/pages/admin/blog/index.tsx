@@ -1,10 +1,10 @@
 import { useState, useEffect, type ReactElement } from "react";
-import Layout from "../../../components/adminComponents/Layout";
-import { api } from "../../../utils/api";
-import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
-import LoadingSpinner from "../../../components/LoadingSpinner";
-import BlogListing from "../../../components/adminComponents/BlogListing";
 import { useSession } from "next-auth/react";
+import Layout from "@/adminComponents/Layout";
+import Breadcrumbs from "@/adminComponents/Breadcrumbs";
+import BlogListing from "@/adminComponents/BlogListing";
+import LoadingSpinner from "@/LoadingSpinner";
+import { api } from "~/utils/api";
 
 type Sorting =
   | "authorAsc"
@@ -122,36 +122,63 @@ export const BlogManager = () => {
         <h1 className="my-6 place-self-center text-center font-black  text-2xl">
           Blog Management
         </h1>
-        <span>current filter: {userFilter}</span>
-        <div className="grid h-1/2 w-full gap-12 bg-red-400">
-          <select
-            value={userFilter}
-            onChange={(e) => setUserFilter(e.target.value)}
-          >
-            <option value={"none"}>none</option>
-            {userList.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-          <input
-            type="checkbox"
-            checked={featuredFilter}
-            onChange={() => setFeaturedFilter(!featuredFilter)}
-          />
-          <select
-            value={sorting}
-            onChange={(e) => setSorting(e.target.value as Sorting)}
-          >
-            {sorters.map((sorter) => (
-              <option key={sorter.value} value={sorter.value}>
-                {sorter.name}
-              </option>
-            ))}
-          </select>
+        <div className="grid auto-cols-max place-content-center gap-2 ">
+          <div className="mx-auto flex w-52 flex-col">
+            <label htmlFor="author" className="font-bold tracking-wide text-sm">
+              Author
+            </label>
+            <select
+              id="author"
+              placeholder="Select an author"
+              value={userFilter}
+              className="select-bordered select select-sm"
+              onChange={(e) => setUserFilter(e.target.value)}
+            >
+              <option value={"none"}>All</option>
+              {userList.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mx-auto flex w-52 flex-col">
+            <label
+              htmlFor="sorting"
+              className="font-bold tracking-wide text-sm"
+            >
+              Sorting
+            </label>
+            <select
+              className="select-bordered select select-sm "
+              id="sorting"
+              value={sorting}
+              onChange={(e) => setSorting(e.target.value as Sorting)}
+            >
+              {sorters.map((sorter) => (
+                <option key={sorter.value} value={sorter.value}>
+                  {sorter.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mx-auto mt-2 flex w-52 ">
+            <input
+              id="featured"
+              type="checkbox"
+              className="checkbox"
+              checked={featuredFilter}
+              onChange={() => setFeaturedFilter(!featuredFilter)}
+            />
+            <label
+              htmlFor="featured"
+              className="ml-2 font-bold tracking-wide text-sm"
+            >
+              Featured posts only
+            </label>
+          </div>
         </div>
-        <span>current sorting: {sorting}</span>
 
         {/* {!isLoading && (
           <div className="form-control ml-8 mt-6 place-self-center lg:place-self-start">

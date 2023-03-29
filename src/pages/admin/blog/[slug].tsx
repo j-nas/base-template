@@ -113,18 +113,23 @@ export const BlogEditor = () => {
           />
         )}
 
-        <div className="my-8">
+        <div className="my-8 flex flex-col">
           <h1 className=" place-self-center text-center font-black  text-2xl">
             {data?.title}{" "}
           </h1>
           {data && (
-            <span>
-              Last updated:{" "}
-              {new Intl.DateTimeFormat(undefined, {
-                dateStyle: "long",
-                timeStyle: "short",
-              }).format(data.updatedAt)}
-            </span>
+            <>
+              <span>
+                Author: <span className="italic">{data.author.name}</span>
+              </span>
+              <span>
+                Last updated:{" "}
+                {new Intl.DateTimeFormat(undefined, {
+                  dateStyle: "long",
+                  timeStyle: "short",
+                }).format(data.updatedAt)}
+              </span>
+            </>
           )}
           {isLoading && <LoadingSpinner />}
         </div>
