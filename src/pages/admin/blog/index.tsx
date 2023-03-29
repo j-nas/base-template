@@ -17,10 +17,10 @@ type Sorting =
   | "dateDes";
 
 const sorters = [
-  { name: "Name (A-Z)", value: "authorAsc" satisfies Sorting },
-  { name: "Name (Z-A)", value: "authorDes" satisfies Sorting },
-  { name: "title (A-Z)", value: "titleAsc" satisfies Sorting },
-  { name: "title (Z-A)", value: "titleDes" satisfies Sorting },
+  { name: "Author (A-Z)", value: "authorAsc" satisfies Sorting },
+  { name: "Author (Z-A)", value: "authorDes" satisfies Sorting },
+  { name: "Title (A-Z)", value: "titleAsc" satisfies Sorting },
+  { name: "Title (Z-A)", value: "titleDes" satisfies Sorting },
   { name: "Last Updated (Old-New)", value: "updatedAsc" satisfies Sorting },
   { name: "Last Updated (New-Old)", value: "updatedDes" satisfies Sorting },
   { name: "Date Published (Old-New)", value: "dateAsc" satisfies Sorting },
@@ -31,22 +31,31 @@ export const BlogManager = () => {
   const { status, data: session } = useSession();
 
   const [sorting, setSorting] = useState<Sorting>("dateAsc");
-  const [featuredFilter, setFeaturedFilter] = useState<boolean | null>(null);
-  const [userFilter, setUserFilter] = useState<string | null>(
+  const [featuredFilter, setFeaturedFilter] = useState(false);
+  const [userFilter, setUserFilter] = useState<string | undefined>(
     session?.user?.id as string
   );
 
-  const { isLoading, data } = api.blog.getAll.useQuery();
+  const { isLoading, data: blogData } = api.blog.getAll.useQuery();
+
+  const userList = [
+    ...new Map(
+      blogData?.map((obj) => [
+        `${obj.author.id}:${obj.author.name}`,
+        obj.author,
+      ])
+    ).values(),
+  ];
 
   useEffect(() => {
     if (status === "authenticated") {
       if (session?.user?.superAdmin) {
-        setUserFilter(null);
+        setUserFilter("none");
       }
     }
   }, [status, session]);
 
-  const blogs = data
+  const blogs = blogData
     ?.map((blog) => {
       return {
         id: blog.id,
@@ -62,39 +71,49 @@ export const BlogManager = () => {
       };
     })
     .filter((blog) => {
-      if (featuredFilter === null) return true;
+      if (featuredFilter === false) return true;
       return blog.featured === featuredFilter;
     })
     .filter((blog) => {
-      if (userFilter === null) return true;
+      if (userFilter === "none") return true;
       return blog.author.id === userFilter;
     });
 
-  // const sortBlogs = (
-  //   images: RouterOutputs["image"]["getAllImages"],
-  //   sort: Sorting
-  // ) => {
-  //   switch (sort) {
-  //     case "nameAsc" satisfies Sorting:
-  //       return images.sort((a: any, b: any) =>
-  //         a.public_id.localeCompare(b.public_id)
-  //       );
-  //     case "nameDes":
-  //       return images.sort((a: any, b: any) =>
-  //         b.public_id.localeCompare(a.public_id)
-  //       );
-  //     case "sizeAsc":
-  //       return images.sort((a: any, b: any) => a.bytes - b.bytes);
-  //     case "sizeDes":
-  //       return images.sort((a: any, b: any) => b.bytes - a.bytes);
-  //     case "dateAsc" satisfies Sorting:
-  //       return images.sort((a: any, b: any) => a.createdAt - b.createdAt);
-  //     case "dateDes" satisfies Sorting:
-  //       return images.sort((a: any, b: any) => b.createdAt - a.createdAt);
-  //     default:
-  //       return images;
-  //   }
-  // };
+  const sortBlogs = (sortedBlogs: typeof blogs, sort: Sorting) => {
+    if (!sortedBlogs) return [];
+    switch (sort) {
+      case "authorAsc":
+        return sortedBlogs.sort((a, b) =>
+          a.author.name.localeCompare(b.author.name)
+        );
+      case "authorDes":
+        return sortedBlogs.sort((a, b) =>
+          b.author.name.localeCompare(a.author.name)
+        );
+      case "titleAsc":
+        return sortedBlogs.sort((a, b) => a.title.localeCompare(b.title));
+      case "titleDes":
+        return sortedBlogs.sort((a, b) => b.title.localeCompare(a.title));
+      case "dateAsc":
+        return sortedBlogs.sort(
+          (a, b) => a.createdAt.valueOf() - b.createdAt.valueOf()
+        );
+      case "dateDes":
+        return sortedBlogs.sort(
+          (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf()
+        );
+      case "updatedAsc":
+        return sortedBlogs.sort(
+          (a, b) => a.updatedAt.valueOf() - b.updatedAt.valueOf()
+        );
+      case "updatedDes":
+        return sortedBlogs.sort(
+          (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
+        );
+      default:
+        return sortedBlogs;
+    }
+  };
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto">
@@ -104,6 +123,36 @@ export const BlogManager = () => {
           Blog Management
         </h1>
         <span>current filter: {userFilter}</span>
+        <div className="grid h-1/2 w-full gap-12 bg-red-400">
+          <select
+            value={userFilter}
+            onChange={(e) => setUserFilter(e.target.value)}
+          >
+            <option value={"none"}>none</option>
+            {userList.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+          <input
+            type="checkbox"
+            checked={featuredFilter}
+            onChange={() => setFeaturedFilter(!featuredFilter)}
+          />
+          <select
+            value={sorting}
+            onChange={(e) => setSorting(e.target.value as Sorting)}
+          >
+            {sorters.map((sorter) => (
+              <option key={sorter.value} value={sorter.value}>
+                {sorter.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <span>current sorting: {sorting}</span>
+
         {/* {!isLoading && (
           <div className="form-control ml-8 mt-6 place-self-center lg:place-self-start">
             <div className="input-group">
@@ -123,7 +172,7 @@ export const BlogManager = () => {
           </div>
         )} */}
         {isLoading && <LoadingSpinner />}
-        {blogs && <BlogListing blogs={blogs} />}
+        {blogs && <BlogListing blogs={sortBlogs(blogs, sorting)} />}
       </div>
     </div>
   );
