@@ -136,7 +136,7 @@ export default function BlogListing({ blogs, user }: Props) {
                   {blog.author?.name || user?.name || "User"}
                 </Link>
               </div>
-              <div className="col-span-6 row-start-2 mt-6 flex gap-2 place-self-center sm:col-auto sm:row-auto sm:mt-0 sm:flex-col  ">
+              <div className="col-span-6 row-start-2 mt-6 grid w-full gap-2 place-self-center sm:col-auto sm:row-auto sm:mt-0 sm:w-auto sm:flex-col  ">
                 {status === "authenticated" && session.user?.admin && (
                   <button
                     className=""
@@ -145,7 +145,7 @@ export default function BlogListing({ blogs, user }: Props) {
                       await handleBlogFeaturedToggle(blog.id);
                     }}
                   >
-                    <div className="btn-outline btn-sm btn h-fit  w-fit">
+                    <div className="btn-outline btn-sm btn h-fit w-full  sm:w-fit">
                       <input
                         type="checkbox"
                         id={blog.id}
