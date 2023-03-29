@@ -14,6 +14,7 @@ specifiers:
   '@tailwindcss/typography': ^0.5.9
   '@tanstack/react-query': ^4.20.0
   '@tiptap/core': 2.0.0-beta.220
+  '@tiptap/extension-image': ^2.0.0
   '@tiptap/extension-link': 2.0.0-beta.220
   '@tiptap/pm': 2.0.0-beta.220
   '@tiptap/react': 2.0.0-beta.220
@@ -87,6 +88,7 @@ dependencies:
   '@radix-ui/react-tooltip': 1.0.4_5ndqzdd6t4rivxsukjv3i3ak2q
   '@tanstack/react-query': 4.22.3_biqbaboplfbrettd7655fr4n2y
   '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
+  '@tiptap/extension-image': 2.0.0_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/extension-link': 2.0.0-beta.220_ohumfzynigfck3hzagxvh2a4ky
   '@tiptap/pm': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
   '@tiptap/react': 2.0.0-beta.220_xig6hpp4glylmgjqbtp4uwsv5e
@@ -1065,6 +1067,14 @@ packages:
     dependencies:
       '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
       '@tiptap/pm': 2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q
+    dev: false
+
+  /@tiptap/extension-image/2.0.0_7w7m52asdh3tod4ocz57yex63q:
+    resolution: {integrity: sha512-ZTozH3lg33Dje+Sc4FAnON+AmhPVbYg2PXkAdCF5SvZwohAscAzvoWsILEXmM/HIR71U+Mx2Ar2soBUyhm1U4w==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
     dev: false
 
   /@tiptap/extension-italic/2.0.0-beta.220_7w7m52asdh3tod4ocz57yex63q:
