@@ -80,7 +80,7 @@ export default function BlogListing({ blogs, user }: Props) {
   };
 
   return (
-    <div className="mt-4 flex flex-col gap-4 px-4">
+    <div className="mt-4 flex flex-col gap-4 px-4 pb-12">
       <Toaster position="bottom-right" />
       {blogs && (
         <div ref={parent} className="flex flex-col gap-4">
@@ -91,22 +91,29 @@ export default function BlogListing({ blogs, user }: Props) {
           {blogs?.map((blog) => (
             <div
               key={blog.id}
-              className="grid rounded-lg bg-base-300 p-4 drop-shadow-2xl sm:grid-cols-7"
+              className="grid rounded-lg bg-base-300 p-4 pr-6 drop-shadow-2xl sm:grid-cols-7"
             >
               <Link
                 href={`/admin/user/${blog.author?.id || user?.id || "me"}`}
-                className="flex scale-125 flex-col place-self-center"
+                className="flex flex-col place-self-center"
               >
-                <AvatarDisplay
-                  public_id={blog.author?.avatar || user?.avatar}
-                  name={blog.author?.name || user?.name || "User"}
-                  size="10"
-                />
+                <div>
+                  <div className="hidden sm:block">
+                    <AvatarDisplay
+                      public_id={blog.author?.avatar || user?.avatar}
+                      name={blog.author?.name || user?.name || "User"}
+                      size="20"
+                    />
+                  </div>
+                  <span className="link italic">
+                    {blog.author?.name || user?.name || "User"}
+                  </span>
+                </div>
               </Link>
-              <div className="col-span-5 mx-4 flex w-5/6 flex-col flex-wrap place-self-end  sm:place-self-stretch ">
+              <div className="col-span-5 mx-4 flex w-5/6 flex-col flex-wrap place-self-center ">
                 <span className="text-md font-medium">
                   <Link href={`/admin/blog/${blog?.id}`}>
-                    <span className="link mr-1">{blog.title}</span>
+                    <h3 className="link mr-1 mb-2 text-xl">{blog.title}</h3>
                     {/* <span className="badge badge-primary">
                           <IoMdConstruct className="mr-2 " /> Edit
                         </span> */}
@@ -129,12 +136,12 @@ export default function BlogListing({ blogs, user }: Props) {
                     timeStyle: "short",
                   }).format(blog.createdAt)}
                 </span>
-                <Link
+                {/* <Link
                   href={`/admin/user/${blog.author?.id || user?.id || "me"}`}
                   className="link place-self-start text-right  italic text-xs"
                 >
                   {blog.author?.name || user?.name || "User"}
-                </Link>
+                </Link> */}
               </div>
               <div className="col-span-6 row-start-2 mt-6 grid w-full gap-2 place-self-center sm:col-auto sm:row-auto sm:mt-0 sm:w-auto sm:flex-col  ">
                 {status === "authenticated" && session.user?.admin && (
@@ -145,7 +152,7 @@ export default function BlogListing({ blogs, user }: Props) {
                       await handleBlogFeaturedToggle(blog.id);
                     }}
                   >
-                    <div className="btn-outline btn-sm btn h-fit w-full  sm:w-fit">
+                    <div className="btn-outline btn btn-sm h-fit w-full  sm:w-fit">
                       <input
                         type="checkbox"
                         id={blog.id}
@@ -159,7 +166,7 @@ export default function BlogListing({ blogs, user }: Props) {
                 )}
                 <Link
                   href={`/admin/blog/${blog.id}`}
-                  className="btn-outline btn-sm btn"
+                  className="btn-outline btn btn-sm"
                 >
                   <IoMdConstruct className="mr-2" />
                   Edit
@@ -168,7 +175,7 @@ export default function BlogListing({ blogs, user }: Props) {
                   blog={blog}
                   handleBlogDelete={handleBlogDelete}
                 >
-                  <div className="btn-outline btn-error btn-sm btn w-full">
+                  <div className="btn-outline btn btn-error btn-sm w-full">
                     <IoMdTrash className="mr-2" />
                     Delete
                   </div>
@@ -178,7 +185,7 @@ export default function BlogListing({ blogs, user }: Props) {
           ))}
           <div className="rounded-lg bg-base-300 p-4 drop-shadow-2xl">
             <Link href="/admin/blog/new">
-              <button className="btn-primary btn-block btn">
+              <button className="btn btn-primary btn-block">
                 Create New Blog Post
               </button>
             </Link>
