@@ -14,13 +14,19 @@ export type ImagePosition = "primary" | "secondary" | "hero" | "avatar";
 type Props = {
   children: React.ReactNode;
   position: ImagePosition;
-  handleImageChange: (value: string, position: ImagePosition) => void;
+  originId?: string;
+  handleImageChange: (
+    value: string,
+    position: ImagePosition,
+    originId?: string
+  ) => void;
 };
 
 export default function ImageSelectDialog({
   children,
   handleImageChange,
   position,
+  originId,
 }: Props) {
   const { isLoading, data } = api.image.getAllImages.useQuery();
   const [selectedImage, setSelectedImage] = React.useState<string>("");
@@ -54,7 +60,7 @@ export default function ImageSelectDialog({
               data?.map((image) => (
                 <button
                   key={image.public_id}
-                  className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
+                  className={`btn-outline btn-square btn  m-2 h-24 w-24 cursor-pointer p-1 ${
                     selectedImage === image.public_id ? "btn-primary" : ""
                   }`}
                   onClick={() => setSelectedImage(image.public_id)}
@@ -80,7 +86,7 @@ export default function ImageSelectDialog({
             )}
             {position === "avatar" && (
               <button
-                className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
+                className={`btn-outline btn-square btn  m-2 h-24 w-24 cursor-pointer p-1 ${
                   selectedImage === "default" ? "btn-primary" : ""
                 }`}
                 onClick={() => setSelectedImage("")}
@@ -93,14 +99,16 @@ export default function ImageSelectDialog({
           <span>Selected image: {selectedImage || "none"}</span>
           <div className="mt-6 flex justify-end">
             <Dialog.Close asChild>
-              <button aria-label="cancel" className={`btn btn-warning `}>
+              <button aria-label="cancel" className={`btn-warning btn `}>
                 Cancel
               </button>
             </Dialog.Close>
             <Dialog.Close asChild>
               <button
-                onClick={() => handleImageChange(selectedImage, position)}
-                className="btn btn-primary ml-2"
+                onClick={() =>
+                  handleImageChange(selectedImage, position, originId)
+                }
+                className="btn-primary btn ml-2"
               >
                 Accept
               </button>
@@ -108,7 +116,7 @@ export default function ImageSelectDialog({
           </div>
           <Dialog.Close asChild>
             <button
-              className="btn btn-ghost btn-circle absolute top-3 right-3"
+              className="btn-ghost btn-circle btn absolute top-3 right-3"
               aria-label="Close"
             >
               <IoMdCloseCircle className="text-xl" />
