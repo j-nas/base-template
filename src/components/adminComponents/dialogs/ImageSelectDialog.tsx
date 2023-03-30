@@ -2,11 +2,12 @@ import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { IoMdCloseCircle } from "react-icons/io";
 import { MdOutlineHideImage } from "react-icons/md";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { api } from "../../../utils/api";
 import LoadingSpinner from "../../LoadingSpinner";
 import { CldImage } from "next-cloudinary";
 import { env } from "../../../env/client.mjs";
+import { ImNewTab } from "react-icons/im";
+import Link from "next/link";
 
 export type ImagePosition = "primary" | "secondary" | "hero" | "avatar";
 
@@ -22,7 +23,6 @@ export default function ImageSelectDialog({
   position,
 }: Props) {
   const { isLoading, data } = api.image.getAllImages.useQuery();
-  const [parent, toggleAnimations] = useAutoAnimate();
   const [selectedImage, setSelectedImage] = React.useState<string>("");
   return (
     <Dialog.Root>
@@ -34,6 +34,17 @@ export default function ImageSelectDialog({
             Select {position} image
           </Dialog.Title>
           {/* <div className="mt-6 w-full place-content-center md:flex">help</div> */}
+          <span>
+            To upload a new image go to{" "}
+            <Link
+              href="/admin/images"
+              target="_blank"
+              className="link inline-flex"
+            >
+              Image Management
+              <ImNewTab className="link ml-2 translate-y-1" />
+            </Link>
+          </span>
           <div className="m-2 flex h-[40vh] flex-wrap place-content-start overflow-auto rounded-lg bg-base-100 text-base-content drop-shadow-2xl scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg md:m-8">
             {isLoading ? (
               <div className="flex justify-center">
@@ -44,7 +55,7 @@ export default function ImageSelectDialog({
                 <button
                   key={image.public_id}
                   className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
-                    selectedImage === image.public_id && "btn-primary"
+                    selectedImage === image.public_id ? "btn-primary" : ""
                   }`}
                   onClick={() => setSelectedImage(image.public_id)}
                 >
@@ -70,7 +81,7 @@ export default function ImageSelectDialog({
             {position === "avatar" && (
               <button
                 className={`btn-outline btn btn-square  m-2 h-24 w-24 cursor-pointer p-1 ${
-                  selectedImage === "default" && "btn-primary"
+                  selectedImage === "default" ? "btn-primary" : ""
                 }`}
                 onClick={() => setSelectedImage("")}
               >
