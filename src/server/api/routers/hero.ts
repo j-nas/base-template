@@ -1,11 +1,29 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
-import { HeroPosition } from "@prisma/client";
+import { HeroPosition, type Image } from "@prisma/client";
 
 
 export const heroRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.hero.findMany();
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    const data = await ctx.prisma.hero.findMany({
+      include: {
+        primaryImage: {
+          select: {
+            image: true,
+          },
+        },
+      },
+    });
+
+    return data.map((item) => {
+      return {
+        ...item,
+        primaryImage: item.primaryImage?.image as Image,
+      };
+    }
+    );
+
+
   }
   ),
   getByPosition: publicProcedure
@@ -46,136 +64,34 @@ export const heroRouter = createTRPCRouter({
     }
     ),
 
-  create: adminProcedure
-    .input(z.object({
-      heading: z.string(),
-      ctaText: z.string(),
-      primaryImage: z.string(),
 
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.hero.create({
-        data: {
-          heading: input.heading,
-          ctaText: input.ctaText,
-          primaryImage: {
-            connect: {
-              id: input.primaryImage,
-            },
-          },
-        },
-      });
-    }
-    ),
-  edit: adminProcedure
+  update: adminProcedure
     .input(z.object({
-      id: z.string(),
       heading: z.string(),
       ctaText: z.string(),
       primaryImage: z.string(),
+      position: z.nativeEnum(HeroPosition)
     }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.hero.update({
         where: {
-          id: input.id,
+          position: input.position
         },
         data: {
           heading: input.heading,
           ctaText: input.ctaText,
           primaryImage: {
-            connect: {
-              id: input.primaryImage,
+            update: {
+              image: {
+                connect: {
+                  public_id: input.primaryImage,
+                },
+              },
             },
           },
         },
       });
     }
     ),
-  delete: adminProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.hero.delete({
-        where: {
-          id: input.id,
-        },
-      });
-    }
-    ),
-  setTop: adminProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.$transaction([
-        ctx.prisma.hero.update({
-          where: {
-            position: "TOP",
-          },
-          data: {
-            position: undefined,
-          },
-        }),
-        ctx.prisma.hero.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            position: "TOP",
-          },
-        }),
-      ]);
-    }
-    ),
-  setBottom: adminProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.$transaction([
-        ctx.prisma.hero.update({
-          where: {
-            position: "BOTTOM",
-          },
-          data: {
-            position: undefined,
-          },
-        }),
-        ctx.prisma.hero.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            position: "BOTTOM",
-          },
-        }),
-      ]);
-    }
-    ),
-  setFront: adminProcedure
-    .input(z.object({
-      id: z.string(),
-    }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.$transaction([
-        ctx.prisma.hero.update({
-          where: {
-            position: "FRONT",
-          },
-          data: {
-            position: undefined,
-          },
-        }),
-        ctx.prisma.hero.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            position: "FRONT",
-          },
-        }),
-      ]);
-    }
-    ),
+
 });
