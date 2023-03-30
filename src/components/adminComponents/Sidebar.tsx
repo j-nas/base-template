@@ -9,6 +9,7 @@ import {
   IoMdPaper,
   IoMdStarOutline,
 } from "react-icons/io";
+import { MdOutlineCallToAction } from "react-icons/md";
 import { HiOutlineUser, HiOutlineUserGroup } from "react-icons/hi";
 import { useSession } from "next-auth/react";
 
@@ -63,6 +64,12 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
               <Link href="/admin/testimonials">
                 <IoMdStarOutline />
                 Testimonials
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/hero">
+                <MdOutlineCallToAction />
+                Hero Banners
               </Link>
             </li>
           </>

@@ -26,12 +26,12 @@ type Sorting =
   | "dateDes";
 
 const sorters = [
-  { name: "Name (A-Z)", value: "nameAsc" as Sorting },
-  { name: "Name (Z-A)", value: "nameDes" as Sorting },
-  { name: "Size (Low-High)", value: "sizeAsc" as Sorting },
-  { name: "Size (High-Low)", value: "sizeDes" as Sorting },
-  { name: "Date (Old-New)", value: "dateAsc" as Sorting },
-  { name: "Date (New-Old)", value: "dateDes" as Sorting },
+  { name: "Name (A-Z)", value: "nameAsc" satisfies Sorting },
+  { name: "Name (Z-A)", value: "nameDes" satisfies Sorting },
+  { name: "Size (Low-High)", value: "sizeAsc" satisfies Sorting },
+  { name: "Size (High-Low)", value: "sizeDes" satisfies Sorting },
+  { name: "Date (Old-New)", value: "dateAsc" satisfies Sorting },
+  { name: "Date (New-Old)", value: "dateDes" satisfies Sorting },
 ];
 
 interface ImageResult {
@@ -47,7 +47,7 @@ const cloudinaryOptions: CldUploadWidgetPropsOptions = {
 export const ImageManager = () => {
   const { data: images, isLoading } = api.image.getAllImages.useQuery();
   const { data: size } = api.image.getTotalSize.useQuery();
-  const [sort, setSort] = useState("dateAsc");
+  const [sort, setSort] = useState<Sorting>("dateAsc");
   const [parent, enableAnimations] = useAutoAnimate();
   const renameMutation = api.image.renameImage.useMutation();
   const uploadMutation = api.image.uploadImage.useMutation();
