@@ -7,6 +7,7 @@ import {
   IoMdBarcode,
   IoMdHeart,
   IoMdPaper,
+  IoMdStarOutline,
 } from "react-icons/io";
 import { HiOutlineUser, HiOutlineUserGroup } from "react-icons/hi";
 import { useSession } from "next-auth/react";
@@ -56,6 +57,12 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
               <Link href="/admin/about">
                 <IoMdHeart />
                 About Us Management
+              </Link>
+            </li>
+            <li>
+              <Link href="/admin/testimonials">
+                <IoMdStarOutline />
+                Testimonials
               </Link>
             </li>
           </>

@@ -8,6 +8,7 @@ const testimonialSchema = z.object({
   title: z.string(),
   company: z.string(),
   highlighted: z.boolean(),
+  createdAt: z.number(),
 
   image: z.object({
     id: z.string(),
@@ -38,6 +39,7 @@ export const testimonialRouter = createTRPCRouter({
         return {
           ...item,
           image: item.avatarImage?.image || null,
+          createdAt: item.createdAt.valueOf(),
         }
       }
       )
@@ -66,6 +68,7 @@ export const testimonialRouter = createTRPCRouter({
       return {
         ...data,
         image: data?.avatarImage?.image || null,
+        createdAt: data.createdAt.valueOf(),
       }
     }
     ),
@@ -88,14 +91,28 @@ export const testimonialRouter = createTRPCRouter({
     }
     ),
 
+  create: adminProcedure
+    .input(z.object({
+      name: z.string(),
+      quote: z.string(),
+      title: z.string(),
+      company: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.testimonial.create({
+        data: {
+          ...input,
+          highlighted: false,
+        },
+      });
+    }
+    ),
 
-
-  edit: adminProcedure
+  update: adminProcedure
     .input(z.object({
       id: z.string(),
       name: z.string(),
       quote: z.string(),
-      avatarImage: z.string(),
       title: z.string(),
     }))
     .mutation(({ ctx, input }) => {
@@ -104,18 +121,79 @@ export const testimonialRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          name: input.name,
-          quote: input.quote,
-          avatarImage: {
-            create: {
-              imageId: input.avatarImage
-            }
-          },
-          title: input.title,
+          ...input,
         },
       });
     }
     ),
+  updateAvatar: adminProcedure
+    .input(z.object({
+      id: z.string(),
+      avatarImage: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const testimonial = await ctx.prisma.testimonial.findUniqueOrThrow({
+        where: {
+          id: input.id,
+        },
+        include: {
+          avatarImage: true,
+        }
+      });
+
+      if (input.avatarImage === "" && !testimonial.avatarImage) return testimonial;
+
+      if (input.avatarImage === "" && testimonial.avatarImage) {
+        return ctx.prisma.testimonial.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            avatarImage: {
+              delete: true,
+            }
+          },
+        });
+      }
+
+      if (!testimonial.avatarImage) {
+        return ctx.prisma.testimonial.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            avatarImage: {
+              create: {
+                image: {
+                  connect: {
+                    public_id: input.avatarImage,
+                  }
+                }
+              }
+            }
+          },
+        });
+      }
+
+      return ctx.prisma.testimonial.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          avatarImage: {
+            update: {
+              image: {
+                connect: {
+                  public_id: input.avatarImage,
+                }
+              }
+            }
+          }
+        },
+      });
+    }
+    ),
+
   delete: adminProcedure
     .input(z.object({
       id: z.string(),
@@ -174,6 +252,7 @@ export const testimonialRouter = createTRPCRouter({
         return {
           ...item,
           image: item.avatarImage?.image || null,
+          createdAt: item.createdAt.valueOf(),
         }
       }
       )
