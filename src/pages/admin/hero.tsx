@@ -102,7 +102,7 @@ export const HeroEditor = () => {
               id="position"
               placeholder="Select an position"
               value={position as string}
-              className="select-bordered select select-sm"
+              className="select-bordered select select-sm mb-12"
               onChange={(e) => {
                 setPosition(e.target.value as HeroPosition);
               }}
