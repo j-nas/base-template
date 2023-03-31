@@ -9,7 +9,12 @@ import { env } from "../../../env/client.mjs";
 import { ImNewTab } from "react-icons/im";
 import Link from "next/link";
 
-export type ImagePosition = "primary" | "secondary" | "hero" | "avatar";
+export type ImagePosition =
+  | "primary"
+  | "secondary"
+  | "hero"
+  | "avatar"
+  | "gallery";
 
 type Props = {
   children: React.ReactNode;

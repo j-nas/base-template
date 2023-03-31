@@ -9,7 +9,10 @@ import {
   IoMdPaper,
   IoMdStarOutline,
 } from "react-icons/io";
-import { MdOutlineCallToAction } from "react-icons/md";
+import {
+  MdOutlineCallToAction,
+  MdOutlinePanoramaPhotosphere,
+} from "react-icons/md";
 import { HiOutlineUser, HiOutlineUserGroup } from "react-icons/hi";
 import { useSession } from "next-auth/react";
 
@@ -51,13 +54,13 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
             <li>
               <Link href="/admin/services">
                 <IoMdBarcode />
-                Services Management
+                Services
               </Link>
             </li>
             <li>
               <Link href="/admin/about">
                 <IoMdHeart />
-                About Us Management
+                About Us
               </Link>
             </li>
             <li>
@@ -78,6 +81,12 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
           <Link href="/admin/blog">
             <IoMdPaper />
             Blog Management
+          </Link>
+        </li>
+        <li>
+          <Link href="/admin/gallery">
+            <MdOutlinePanoramaPhotosphere />
+            Gallery Editor
           </Link>
         </li>
 
