@@ -1,5 +1,4 @@
 import { useTheme } from "next-themes";
-import { useRouter } from "next/router";
 
 import Link from "next/link";
 import Logo from "../Logo";
@@ -14,7 +13,6 @@ type Props = {
 
 export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
   const { theme, setTheme } = useTheme();
-  const router = useRouter();
   const session = useSession();
 
   const toggleTheme = () => {
@@ -45,9 +43,9 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
       <div className="mr-2 w-full justify-end md:navbar-end ">
         {session && (
           <>
-            <span>
+            <span className="text-xs">
               Logged in as{" "}
-              <Link className="link" href="/admin/user/me">
+              <Link className="link " href="/admin/user/me">
                 {session.data?.user?.email}
               </Link>
             </span>

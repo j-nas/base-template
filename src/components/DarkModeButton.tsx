@@ -6,7 +6,7 @@ type Props = {
 export default function DarkModeButton({ theme, toggleTheme }: Props) {
   return (
     <>
-      <label aria-label="theme switch" className="swap swap-rotate pl-2">
+      <label aria-label="theme switch" className="swap-rotate swap pl-2">
         {/* <!-- this hidden checkbox controls the state --> */}
         <input
           type="checkbox"
@@ -16,7 +16,7 @@ export default function DarkModeButton({ theme, toggleTheme }: Props) {
 
         {/* <!-- sun icon --> */}
         <svg
-          className="swap-on h-10 w-10 fill-current"
+          className="swap-on h-8 w-8 fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -25,7 +25,7 @@ export default function DarkModeButton({ theme, toggleTheme }: Props) {
 
         {/* <!-- moon icon --> */}
         <svg
-          className="swap-off h-10 w-10 fill-current"
+          className="swap-off h-8 w-8 fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
