@@ -1,15 +1,14 @@
 import { toast, Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
-import IconDisplay from "../../../components/IconDisplay";
+import IconDisplay, { type IconList } from "../../../components/IconDisplay";
 import { api } from "../../../utils/api";
-import { IoMdHelpCircle } from "react-icons/io";
 import { useRouter } from "next/router";
-import { Services } from "@prisma/client";
-import { ParsedUrlQuery } from "querystring";
+import { type Services } from "@prisma/client";
+import { type ParsedUrlQuery } from "querystring";
 import Layout from "../../../components/adminComponents/Layout";
-import { ReactElement } from "react";
-import { Form, Field, FieldInstance, FormInstance } from "houseform";
+import { type ReactElement } from "react";
+import { Form, Field, type FieldInstance, type FormInstance } from "houseform";
 import IconSelectDialog from "../../../components/adminComponents/dialogs/IconSelectDialog";
 import ImageSelectDialog from "../../../components/adminComponents/dialogs/ImageSelectDialog";
 import React from "react";
@@ -36,19 +35,6 @@ export const ServiceEditor = () => {
   const router = useRouter();
   const session = useSession();
 
-  if (!session.data?.user?.admin) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">
-          You are not authorized to view this page
-        </h1>
-        <Link href="/admin/">
-          <span className="text-primary">Go back to dashboard home</span>
-        </Link>
-      </div>
-    );
-  }
-
   const servicePage = router.query.slug as string;
   const servicePageFormatted = servicePage.toUpperCase() as Services;
   const submitMutation = api.service.update.useMutation();
@@ -67,6 +53,18 @@ export const ServiceEditor = () => {
   const contentRef = React.useRef<FieldInstance>(null);
   const formRef = React.useRef<FormInstance>(null);
 
+  if (!session.data?.user?.admin) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        <h1 className="font-bold text-2xl">
+          You are not authorized to view this page
+        </h1>
+        <Link href="/admin/">
+          <span className="text-primary">Go back to dashboard home</span>
+        </Link>
+      </div>
+    );
+  }
   const handleIconChange = (value: string) => {
     iconRef.current?.setValue(value);
   };
@@ -105,9 +103,8 @@ export const ServiceEditor = () => {
             position: servicePageFormatted,
           });
         },
-        onError: async (error) => {
+        onError: (error) => {
           console.log(error);
-          toast.error(error.message);
         },
       }),
       {
@@ -162,20 +159,23 @@ export const ServiceEditor = () => {
         {data && (
           <div>
             <div className="mx-auto flex h-full w-full flex-wrap justify-evenly justify-items-stretch gap-4">
-              <Form onSubmit={(values) => handleSubmit(values)} ref={formRef}>
+              <Form
+                onSubmit={(values) => handleSubmit(values as FormData)}
+                ref={formRef}
+              >
                 {({ submit, errors }) => (
                   <React.Fragment>
                     <div className="flex flex-col">
-                      <Field
+                      <Field<IconList>
                         name="icon"
-                        initialValue={data?.icon}
+                        initialValue={data?.icon as IconList}
                         ref={iconRef}
                       >
-                        {({ value, setValue, isDirty }) => (
+                        {({ value, isDirty }) => (
                           <div className="flex flex-col">
                             <label
                               className={`font-bold tracking-wide text-sm ${
-                                isDirty && "text-success"
+                                isDirty ? "text-success" : ""
                               }`}
                             >
                               Icon
@@ -185,13 +185,14 @@ export const ServiceEditor = () => {
                             >
                               <div className="flex w-52">
                                 <button
-                                  className={`btn btn-outline btn-square ${
-                                    isDirty && "btn-success"
+                                  className={`btn-outline btn-square btn ${
+                                    isDirty ? "btn-success" : ""
                                   }`}
                                 >
                                   <IconDisplay icon={value} />
                                 </button>
                                 <input
+                                  readOnly
                                   value={value}
                                   className="input input-disabled ml-2 w-full"
                                 />
@@ -215,23 +216,25 @@ export const ServiceEditor = () => {
                           <div className="mx-auto flex w-52 flex-col">
                             <label
                               className={`font-bold tracking-wide text-sm 
-                              ${errors.length > 0 && "!text-error"}
+                              ${errors.length > 0 ? "!text-error" : ""}
                               
-                              ${isDirty && "text-success"} 
-                            }`}
+                              ${isDirty ? "text-success" : ""}`}
                             >
                               Title
                             </label>
                             <input
                               className={`input-bordered input ${
-                                isDirty && "input-success"
-                              } ${errors.length > 0 && "input-error"}`}
+                                isDirty ? "input-success" : ""
+                              } ${errors.length > 0 ? "input-error" : ""}`}
                               value={value}
                               onChange={(e) => setValue(e.target.value)}
                             />
                             {errors.length > 0 &&
                               errors.map((error) => (
-                                <span className="text-error text-xs">
+                                <span
+                                  key={error}
+                                  className="text-error text-xs"
+                                >
                                   {error}
                                 </span>
                               ))}
@@ -251,15 +254,15 @@ export const ServiceEditor = () => {
                         <div className="flex flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              errors.length > 0 && "!text-error"
-                            } ${isDirty && "text-success"}`}
+                              errors.length > 0 ? "!text-error" : ""
+                            } ${isDirty ? "text-success" : ""}`}
                           >
                             Description
                           </label>
                           <textarea
                             className={`textarea-bordered textarea   w-52 resize-none scrollbar-thin 
-                            ${errors.length > 0 && "!textarea-error"}
-                            ${isDirty && "textarea-success"} 
+                            ${errors.length > 0 ? "!textarea-error" : ""}
+                            ${isDirty ? "textarea-success" : ""} 
                             `}
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
@@ -267,11 +270,15 @@ export const ServiceEditor = () => {
                             maxLength={150}
                           />
                           {errors.length > 0 ? (
-                            errors.map((e) => (
-                              <span className="text-error">{e}</span>
+                            errors.map((error) => (
+                              <span key={error} className="text-error">
+                                {error}
+                              </span>
                             ))
                           ) : (
-                            <span className={`${isDirty && "text-success"}`}>
+                            <span
+                              className={`${isDirty ? "text-success" : ""}`}
+                            >
                               {150 - value.length} characters remaining
                             </span>
                           )}
@@ -283,11 +290,11 @@ export const ServiceEditor = () => {
                       initialValue={data.primaryImage.public_id}
                       ref={primaryImageRef}
                     >
-                      {({ value, setValue, isDirty }) => (
+                      {({ value, isDirty }) => (
                         <div className="flex flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                              isDirty ? "text-success" : ""
                             }`}
                           >
                             Primary Image
@@ -297,8 +304,8 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
-                                isDirty && "btn-success"
+                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                                isDirty ? "btn-success" : ""
                               }`}
                             >
                               <div className="overflow-hidden">
@@ -327,11 +334,11 @@ export const ServiceEditor = () => {
                       initialValue={data.secondaryImage.public_id}
                       ref={secondaryImageRef}
                     >
-                      {({ value, setValue, isDirty }) => (
+                      {({ value, isDirty }) => (
                         <div className="flex flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                              isDirty ? "text-success" : ""
                             }`}
                           >
                             Secondary Image
@@ -341,8 +348,8 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
-                                isDirty && "btn-success"
+                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                                isDirty ? "btn-success" : ""
                               }`}
                             >
                               <div className="overflow-hidden rounded-xl">
@@ -371,11 +378,11 @@ export const ServiceEditor = () => {
                       initialValue={data.markdown}
                       ref={contentRef}
                     >
-                      {({ value, setValue, isDirty }) => (
+                      {({ value, isDirty }) => (
                         <div className="flex  w-11/12 flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                              isDirty ? "text-success" : ""
                             }`}
                           >
                             Main Content
@@ -394,8 +401,8 @@ export const ServiceEditor = () => {
                       </Link>
                       <button
                         onClick={submit}
-                        className={`btn btn-success ${
-                          errors.length > 0 && "btn-disabled"
+                        className={`btn-success btn ${
+                          errors.length > 0 ? "btn-disabled" : ""
                         }`}
                       >
                         Save Changes
