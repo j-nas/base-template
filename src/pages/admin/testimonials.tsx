@@ -5,7 +5,7 @@ import Breadcrumbs from "@/adminComponents/Breadcrumbs";
 import LoadingSpinner from "@/LoadingSpinner";
 import { api } from "~/utils/api";
 import TestimonialListing from "@/adminComponents/TestimonialListing";
-import { useRouter } from "next/router";
+import NotAuthorized from "@/adminComponents/NotAuthorized";
 
 type Sorting =
   | "nameAsc"
@@ -26,7 +26,6 @@ const sorters = [
 
 export const BlogManager = () => {
   const { data: session, status } = useSession();
-  const router = useRouter();
   const [sorting, setSorting] = useState<Sorting>("dateAsc");
   const [featuredFilter, setFeaturedFilter] = useState(false);
 
@@ -61,17 +60,7 @@ export const BlogManager = () => {
   };
 
   if (status === "loading" || !session?.user?.admin) {
-    return (
-      <div className="flex flex-col place-items-center">
-        <h1 className="font-bold text-2xl">You are not authorized</h1>
-        <button
-          className="btn-xl btn-primary btn"
-          onClick={() => router.back()}
-        >
-          Go back
-        </button>
-      </div>
-    );
+    return <NotAuthorized />;
   }
 
   return (

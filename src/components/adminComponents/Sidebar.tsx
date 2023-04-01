@@ -31,7 +31,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
     >
       <ul onClick={toggleSidebar} className="menu">
         <li>
-          <Link href="/admin">
+          <Link href="/admin" className="bg-accent text-accent-content">
             <IoMdHome />
             Dashboard Home
           </Link>
@@ -75,18 +75,18 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }: Props) {
                 Hero Banners
               </Link>
             </li>
+            <li>
+              <Link href="/admin/gallery">
+                <MdOutlinePanoramaPhotosphere />
+                Gallery Editor
+              </Link>
+            </li>
           </>
         )}
         <li>
           <Link href="/admin/blog">
             <IoMdPaper />
             Blog Management
-          </Link>
-        </li>
-        <li>
-          <Link href="/admin/gallery">
-            <MdOutlinePanoramaPhotosphere />
-            Gallery Editor
           </Link>
         </li>
 

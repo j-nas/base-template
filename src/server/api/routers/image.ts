@@ -1,4 +1,4 @@
-import { createTRPCRouter, adminProcedure, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import cloudinary, {
   type ConfigOptions,
@@ -46,7 +46,7 @@ export const imageRouter = createTRPCRouter({
       return data;
     }
     ),
-  deleteImage: adminProcedure
+  deleteImage: protectedProcedure
     .input(z.object({
 
       public_id: z.string(),
@@ -100,7 +100,7 @@ export const imageRouter = createTRPCRouter({
     }
     ),
 
-  renameImage: adminProcedure
+  renameImage: protectedProcedure
     .input(z.object({
       id: z.string(),
       name: z.string(),

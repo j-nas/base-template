@@ -11,7 +11,7 @@ import { type RouterOutputs } from "../../utils/api";
 import { Toaster, toast } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import NotAuthorized from "@/adminComponents/NotAuthorized";
 
 const provinces = [
   "AB",
@@ -40,16 +40,7 @@ export const BusinessProfile: NextPageWithLayout = () => {
   const ctx = api.useContext();
 
   if (!session.data?.user?.admin) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">
-          You are not authorized to view this page
-        </h1>
-        <Link href="/admin/">
-          <span className="text-primary">Go back to dashboard home</span>
-        </Link>
-      </div>
-    );
+    return <NotAuthorized />;
   }
 
   const handleSubmit = async (formData: FormData) => {

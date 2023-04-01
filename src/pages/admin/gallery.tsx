@@ -1,6 +1,5 @@
 import React, { type ReactElement, useState } from "react";
 import { type GalleryPosition } from "@prisma/client";
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { CldImage } from "next-cloudinary";
@@ -15,9 +14,9 @@ import LoadingSpinner from "@/LoadingSpinner";
 import Layout from "@/adminComponents/Layout";
 import GalleryAltTextEditDialog from "@/adminComponents/dialogs/GalleryAltTextEditDialog";
 import ImageSelectDialog from "@/adminComponents/dialogs/ImageSelectDialog";
+import NotAuthorized from "@/adminComponents/NotAuthorized";
 
 export const GalleryManager = () => {
-  const router = useRouter();
   const { data: session, status } = useSession();
   const [position, setPosition] = useState<GalleryPosition>("MAIN");
   const { data: gallery, isLoading } = api.gallery.getByPosition.useQuery(
@@ -137,19 +136,7 @@ export const GalleryManager = () => {
   ));
 
   if (status === "loading" || !session?.user?.admin) {
-    return (
-      <div className="flex flex-col place-items-center">
-        <h1 className="font-bold text-2xl">
-          You are not authorized for this page
-        </h1>
-        <button
-          className="btn-xl btn-primary btn"
-          onClick={() => router.back()}
-        >
-          Go back
-        </button>
-      </div>
-    );
+    return <NotAuthorized />;
   }
 
   return (
@@ -222,12 +209,12 @@ export const GalleryManager = () => {
                     handleAltTextEdit={handleAltTextEdit}
                     image={image}
                   >
-                    <button className="btn-primary btn-sm btn">Edit</button>
+                    <button className="btn btn-primary btn-sm">Edit</button>
                   </GalleryAltTextEditDialog>
 
                   <button
                     onClick={() => handleRemove(image.id)}
-                    className="btn-error btn-sm btn"
+                    className="btn btn-error btn-sm"
                   >
                     Remove
                   </button>
