@@ -1,9 +1,15 @@
 import { CldImage } from "next-cloudinary";
 import { env } from "../env/client.mjs";
 
+const sizes = {
+  10: "w-10 h-10",
+  20: "w-20 h-20 text-xl",
+  30: "w-30 h-30 text-2xl",
+};
+
 type Props = {
   public_id?: string;
-  size: "10" | "20";
+  size: keyof typeof sizes;
   name: string;
 };
 
@@ -29,9 +35,7 @@ export default function AvatarDisplay({ public_id, size, name }: Props) {
       ) : (
         <div className="placeholder avatar max-w-fit justify-self-start p-2 ">
           <div
-            className={` relative w-${size} ${
-              size === "20" && "text-xl"
-            } rounded-full bg-neutral-focus text-neutral-content`}
+            className={` relative w-${sizes[size]}  rounded-full bg-neutral-focus text-neutral-content`}
           >
             {name.split(" ").map((n) => n[0] ?? "")}
           </div>

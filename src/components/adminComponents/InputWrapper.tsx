@@ -1,4 +1,4 @@
-import { Field, type FieldInstance, FieldRenderProps } from "houseform";
+import { Field, type FieldRenderProps } from "houseform";
 import React from "react";
 import { IoMdHelpCircle } from "react-icons/io";
 type Props = {
@@ -26,8 +26,8 @@ export default function InputWrapper({
         <div className="form-control place-self-stretch pt-2 md:place-self-auto">
           <label className=" label">
             <span
-              className={`label-text ${isDirty && "text-success"} ${
-                errors.length > 0 && "!text-error"
+              className={`label-text ${isDirty ? "text-success" : ""} ${
+                (errors.length > 0 && "!text-error") || ""
               }`}
             >
               {label}
@@ -48,8 +48,8 @@ export default function InputWrapper({
             onBlur={onBlur}
             type="text"
             className={`input-bordered input place-self-stretch ${
-              isDirty && "input-success"
-            } ${errors.length > 0 && "!input-error"}`}
+              (isDirty && "input-success") || ""
+            } ${(errors.length > 0 && "!input-error") || ""}`}
           ></input>
         </div>
       )}

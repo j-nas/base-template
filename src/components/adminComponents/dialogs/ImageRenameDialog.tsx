@@ -3,7 +3,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { IoMdCloseCircle } from "react-icons/io";
 import { Form, Field } from "houseform";
 import { z } from "zod";
-import { ImageAdmin } from "../../../types/image";
+import { type ImageAdmin } from "../../../types/image";
 import InputWrapper from "../../InputWrapper";
 
 type Props = {
@@ -37,11 +37,13 @@ export default function ImageRenameDialog({
           </Dialog.Description>
           <Form
             onSubmit={(values) => {
-              renameHandler(image.id, values.newName, image.public_id).then(
-                () => {
-                  setOpen(false);
-                }
-              );
+              void renameHandler(
+                image.id,
+                values.newName as string,
+                image.public_id
+              ).then(() => {
+                setOpen(false);
+              });
 
               return;
             }}
@@ -50,7 +52,7 @@ export default function ImageRenameDialog({
               <>
                 <div className="flex flex-col gap-2">
                   <div className=" mx-2 flex   flex-col place-content-center gap-2 place-self-center  px-4 py-2">
-                    <Field
+                    <Field<string>
                       name="newName"
                       initialValue={image.public_id}
                       onChangeValidate={z

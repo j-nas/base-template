@@ -1,9 +1,7 @@
-import { Form, Field, FormInstance, FieldInstance } from "houseform";
-import { RouterOutputs } from "../../utils/api";
+import { Form, Field, type FormInstance, type FieldInstance } from "houseform";
+import { type RouterOutputs } from "../../utils/api";
 import { z } from "zod";
-import ImageSelectDialog, {
-  type ImagePosition,
-} from "./dialogs/ImageSelectDialog";
+import ImageSelectDialog from "./dialogs/ImageSelectDialog";
 import { CldImage } from "next-cloudinary";
 import { env } from "../../env/client.mjs";
 import { type ForwardedRef, forwardRef, useRef } from "react";
@@ -56,17 +54,17 @@ export const UserProfile = forwardRef(function UserProfile(
                     <div className="mx-auto flex w-52 flex-col">
                       <label
                         className={`font-bold tracking-wide text-sm 
-                              ${errors.length > 0 && "!text-error"}
+                              ${(errors.length > 0 && "!text-error") || ""}
                               
-                              ${isDirty && "text-success"} 
+                              ${(isDirty && "text-success") || ""} 
                             }`}
                       >
                         Name
                       </label>
                       <input
                         className={`input-bordered input ${
-                          isDirty && "input-success"
-                        } ${errors.length > 0 && "input-error"}`}
+                          (isDirty && "input-success") || ""
+                        } ${(errors.length > 0 && "input-error") || ""}`}
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                       />
@@ -92,9 +90,9 @@ export const UserProfile = forwardRef(function UserProfile(
                     <div className="mx-auto flex w-52 flex-col">
                       <label
                         className={`font-bold tracking-wide text-sm 
-                              ${errors.length > 0 && "!text-error"}
+                              ${(errors.length > 0 && "!text-error") || ""}
                               
-                              ${isDirty && "text-success"} 
+                              ${(isDirty && "text-success") || ""} 
                             }`}
                       >
                         Email
@@ -102,8 +100,8 @@ export const UserProfile = forwardRef(function UserProfile(
                       <input
                         type="email"
                         className={`input-bordered input ${
-                          isDirty && "input-success"
-                        } ${errors.length > 0 && "input-error"}`}
+                          (isDirty && "input-success") || ""
+                        } ${(errors.length > 0 && "input-error") || ""}`}
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                       />
@@ -123,11 +121,11 @@ export const UserProfile = forwardRef(function UserProfile(
                 name="avatarImage"
                 ref={avatarImageRef}
               >
-                {({ value, setValue, isDirty }) => (
+                {({ value, isDirty }) => (
                   <div className="flex flex-col">
                     <label
                       className={`font-bold tracking-wide text-sm ${
-                        isDirty && "text-success"
+                        (isDirty && "text-success") || ""
                       }`}
                     >
                       Avatar Image
@@ -137,8 +135,8 @@ export const UserProfile = forwardRef(function UserProfile(
                       handleImageChange={handleImageChange}
                     >
                       <button
-                        className={`btn-outline btn btn-square h-fit w-fit p-6 ${
-                          isDirty && "btn-success"
+                        className={`btn btn-outline btn-square h-fit w-fit p-6 ${
+                          (isDirty && "btn-success") || ""
                         }`}
                       >
                         <div className="overflow-hidden rounded-xl">
@@ -171,7 +169,7 @@ export const UserProfile = forwardRef(function UserProfile(
                 <button
                   onClick={submit}
                   className={`btn btn-success btn-block ${
-                    errors.length > 0 && "btn-disabled"
+                    (errors.length > 0 && "btn-disabled") || ""
                   }`}
                 >
                   Save Changes

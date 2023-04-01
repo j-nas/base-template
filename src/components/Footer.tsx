@@ -39,7 +39,7 @@ export default function Footer({ business, services, aboutSummary }: Props) {
         <nav>
           <span className="footer-title text-base-content">Services</span>
           {services
-            ?.sort((a: any, b: any) => a.position.localeCompare(b.position))
+            ?.sort((a, b) => a.position.localeCompare(b.position))
             .map((service) => (
               <Link
                 key={service.id}
@@ -80,7 +80,7 @@ export default function Footer({ business, services, aboutSummary }: Props) {
       <footer className="footer border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
         <div className=" flex grid-flow-col flex-col items-baseline ">
           <Link href="/">
-            <Logo className="btn-ghost btn z-50 h-auto w-[160px] fill-base-content" />
+            <Logo className="btn btn-ghost z-50 h-auto w-[160px] fill-base-content" />
           </Link>
 
           <p className="mx-auto">Copyright © {new Date().getFullYear()}</p>

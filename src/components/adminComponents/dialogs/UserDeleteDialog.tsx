@@ -1,9 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { api, type RouterOutputs } from "../../../utils/api";
 import { IoMdCloseCircle } from "react-icons/io";
-import Link from "next/link";
-import ImageInUseWidget from "../ImageInUseWidget";
 import type { User } from "@prisma/client";
 
 type Props = {
@@ -29,7 +26,7 @@ export default function UserDeleteDialog({
           <div className="flex flex-col gap-2">
             <span>
               Are you sure? This will log {user.name} out immediatley. All blog
-              posts authored by user will now display "Deleted User"{" "}
+              posts authored by user will now display &quot;Deleted User&quot;{" "}
             </span>
             <span>This action cannot be reversed.</span>
           </div>

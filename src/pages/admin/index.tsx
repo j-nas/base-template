@@ -1,8 +1,7 @@
-import { NextPage } from "next";
 import Link from "next/link";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import Layout from "../../components/adminComponents/Layout";
-import { NextPageWithLayout } from "../_app";
+import { type NextPageWithLayout } from "../_app";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 
 export const AdminHome: NextPageWithLayout = () => {
@@ -18,9 +17,10 @@ export const AdminHome: NextPageWithLayout = () => {
           of your site, including <Link href="admin/images">images</Link>,{" "}
           <Link href="admin/blog">blog posts</Link>, and your{" "}
           <Link href="admin/business">business profile.</Link> Choose a section
-          from the menu on the left on desktop, or if you're on mobile, then
-          press the button at the top to access the menu. to edit. Additionally,
-          you can add contributors to the site, and manage your uploaded images.
+          from the menu on the left on desktop, or if you&apos;re on mobile,
+          then press the button at the top to access the menu. to edit.
+          Additionally, you can add contributors to the site, and manage your
+          uploaded images.
         </p>
         <p>
           If you need help or instructions, you can{" "}
@@ -28,7 +28,7 @@ export const AdminHome: NextPageWithLayout = () => {
           support page, or email us at{" "}
           <a href="mailto:support@shorecel.com">support@shorecel.com.</a>
           <br />
-          We're always happy to help!
+          We&apos;re always happy to help!
         </p>
       </div>
     </section>

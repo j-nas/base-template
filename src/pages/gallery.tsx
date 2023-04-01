@@ -13,15 +13,7 @@ const MainGallery = dynamic(() => import("../components/MainGallery"));
 export const Gallery: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
-  const {
-    business,
-    topHero,
-    services,
-    bottomHero,
-    aboutUs,
-    pageTitle,
-    gallery,
-  } = props;
+  const { business, topHero, services, aboutUs, pageTitle, gallery } = props;
 
   return (
     <>

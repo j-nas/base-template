@@ -1,6 +1,9 @@
 import { createTRPCRouter, adminProcedure, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import cloudinary, { type ConfigOptions } from "cloudinary";
+import cloudinary, {
+  type ConfigOptions,
+  type UploadApiResponse
+} from "cloudinary";
 import { env } from "../../../env/server.mjs";
 import
 getBase64ImageUrl from "../../../utils/generateBlurPlaceholder";
@@ -55,7 +58,7 @@ export const imageRouter = createTRPCRouter({
       console.log({ fullPath })
       cloudinary.v2.config(cloudinaryConfig);
 
-      const result = await cloudinary.v2.uploader.destroy(fullPath, { invalidate: true, resource_type: "image", });
+      const result = await cloudinary.v2.uploader.destroy(fullPath, { invalidate: true, resource_type: "image", }) as UploadApiResponse;
       console.log(result)
       if (result.result !== "ok") {
         throw new Error("Image deletion failed");
@@ -110,7 +113,7 @@ export const imageRouter = createTRPCRouter({
         const newPublicId = env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.name;
         const rename = await cloudinary.v2.uploader.rename(oldPublicId, newPublicId, { invalidate: true, }, function (error, result) {
           console.log(result, error)
-        });
+        }) as UploadApiResponse;
         const data = await ctx.prisma.image.update({
           where: {
             id: input.id,
@@ -129,7 +132,7 @@ export const imageRouter = createTRPCRouter({
     ),
   getAllImages: publicProcedure
 
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx }) => {
       const data = await ctx.prisma.image.findMany({
         include: {
           imageForGallery: {

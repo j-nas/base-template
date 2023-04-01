@@ -5,6 +5,7 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../../server/api/trpc";
 import { appRouter } from "../../server/api/root";
 import Link from "next/link";
+import { env } from "~/env/client.mjs";
 const TopHero = dynamic(() => import("../../components/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
@@ -44,7 +45,7 @@ export const Services: NextPage<
                 <CldImage
                   alt={service.shortDescription}
                   format={service.primaryImage.format}
-                  src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_id}`}
+                  src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_id}`}
                   height="1600"
                   width="1600"
                   placeholder="blur"
@@ -61,7 +62,7 @@ export const Services: NextPage<
                 <div className="card-actions justify-end">
                   <Link
                     href={`/services/${service.pageName}`}
-                    className="btn-primary btn"
+                    className="btn btn-primary"
                   >
                     Learn more
                   </Link>

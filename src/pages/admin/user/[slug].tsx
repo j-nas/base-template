@@ -5,7 +5,7 @@ import { api } from "../../../utils/api";
 import { IoMdHelpCircle } from "react-icons/io";
 import { useRouter } from "next/router";
 import Layout from "../../../components/adminComponents/Layout";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { type FormInstance } from "houseform";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -22,29 +22,10 @@ export const UserEditor = () => {
   const queryId = router.query.slug as string;
 
   const userUpdateMutation = api.user.update.useMutation();
-  const blogDeleteMutation = api.blog.delete.useMutation();
 
-  if (!session.data?.user?.superAdmin) {
-    router.push(`/admin/user/me`);
-    return (
-      <div className="grid h-full w-full place-content-center font-bold text-2xl">
-        Not Authorized, taking you to your profile.
-      </div>
-    );
-  }
-
-  const { isLoading, data, isError, error } = api.user.getById.useQuery({
+  const { isLoading, data, isError } = api.user.getById.useQuery({
     id: queryId,
   });
-
-  if (isError) {
-    return (
-      <div className="grid h-full w-full place-content-center font-bold text-2xl">
-        Error loading user. Check the URL and try again.
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (data?.avatarImage.public_id) {
       setAvatarImageExists(true);
@@ -56,6 +37,23 @@ export const UserEditor = () => {
 
   const ctx = api.useContext();
   const formRef = React.useRef<FormInstance>(null);
+
+  if (!session.data?.user?.superAdmin) {
+    void router.push(`/admin/user/me`);
+    return (
+      <div className="grid h-full w-full place-content-center font-bold text-2xl">
+        Not Authorized, taking you to your profile.
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="grid h-full w-full place-content-center font-bold text-2xl">
+        Error loading user. Check the URL and try again.
+      </div>
+    );
+  }
 
   const handleSubmit = async (formData: FormData) => {
     const { name, email, avatarImage, id } = formData;
@@ -75,7 +73,7 @@ export const UserEditor = () => {
               id: id,
             });
           },
-          onError: async (error) => {
+          onError: (error) => {
             if (
               error.message.endsWith(
                 "Unique constraint failed on the fields: (`email`)"

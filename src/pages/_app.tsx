@@ -10,7 +10,7 @@ import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
 
@@ -56,7 +56,7 @@ const MyApp = (({
 }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout || ((page) => page);
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session as Session}>
       <ThemeProvider themes={themes} attribute="data-theme">
         {getLayout(<Component {...pageProps} />)}
       </ThemeProvider>

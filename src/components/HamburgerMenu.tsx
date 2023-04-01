@@ -14,7 +14,7 @@ type Props = {
   services: RouterOutputs["service"]["getActive"];
   business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
 };
-export default function HamburgerButton({ services, business }: Props) {
+export default function HamburgerButton({ business }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 

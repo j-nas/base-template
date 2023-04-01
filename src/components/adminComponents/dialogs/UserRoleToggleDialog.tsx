@@ -1,9 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { api, type RouterOutputs } from "../../../utils/api";
 import { IoMdCloseCircle } from "react-icons/io";
-import Link from "next/link";
-import ImageInUseWidget from "../ImageInUseWidget";
 import type { User } from "@prisma/client";
 
 type Props = {

@@ -6,7 +6,6 @@ import {
   superAdminProcedure,
 } from "../trpc";
 import { exclude } from "../../../utils/exclude";
-import { TRPCClientError } from "@trpc/client";
 import { prisma } from "../../db";
 
 const userGet = async (id: string) => {
@@ -181,7 +180,7 @@ export const userRouter = createTRPCRouter({
   // update
   update: superAdminProcedure
     .input(userUpdateSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
 
       return userUpdate(input);
     }),
