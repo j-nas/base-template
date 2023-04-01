@@ -14,7 +14,7 @@ export default function IconSelectDialog({
   children,
   handleIconChange,
 }: Props) {
-  const [parent, toggleAnimations] = useAutoAnimate();
+  const [parent] = useAutoAnimate();
   const [searchTerm, setSearchTerm] = React.useState<string>("");
   const [selectedIcon, setSelectedIcon] = React.useState<string>("");
 
@@ -41,7 +41,10 @@ export default function IconSelectDialog({
               type="search"
             />
           </div>
-          <div className="m-8 flex h-[40vh] flex-wrap place-content-start overflow-auto rounded-lg bg-base-100 text-base-content scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg">
+          <div
+            ref={parent}
+            className="m-8 flex h-[40vh] flex-wrap place-content-start overflow-auto rounded-lg bg-base-100 text-base-content scrollbar-thin scrollbar-track-base-100 scrollbar-thumb-primary scrollbar-track-rounded-lg"
+          >
             {Object.keys(icons)
               .filter((icon) =>
                 icon.toLowerCase().includes(searchTerm.toLowerCase())
@@ -55,8 +58,8 @@ export default function IconSelectDialog({
                       console.log(icon);
                       setSelectedIcon(icon);
                     }}
-                    className={`btn-outline btn btn-square m-2 ${
-                      selectedIcon === icon && "btn-primary"
+                    className={`btn btn-outline btn-square m-2 ${
+                      (selectedIcon === icon && "btn-primary") || ""
                     }`}
                   >
                     <Icon className="h-8 w-8" />

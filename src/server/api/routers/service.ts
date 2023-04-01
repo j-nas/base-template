@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
 import { Services } from "@prisma/client";
-import { exclude } from "../../../utils/exclude";
 import * as icons from "react-icons/fa"
+import { type IconList } from "~/components/IconDisplay";
 
 const IconKeys = Object.keys(icons) as (keyof typeof icons)[];
 
@@ -16,7 +16,7 @@ const serviceSchema = z.object({
   shortDescription: z.string(),
   markdown: z.string(),
   icon: z.custom((value) => {
-    if (IconKeys.includes(value as any)) {
+    if (IconKeys.includes(value as typeof IconKeys[number])) {
       return value;
     } else {
       return z.ZodIssueCode.custom;
@@ -24,7 +24,7 @@ const serviceSchema = z.object({
     }
   }),
 
-  position: z.nativeEnum(Services).nullable(),
+  position: z.nativeEnum(Services),
 
   primaryImage: z.object({
     id: z.string(),
@@ -70,13 +70,7 @@ export const serviceRouter = createTRPCRouter({
       .omit({ primaryImage: true, secondaryImage: true })
       .array())
     .query(async ({ ctx }) => {
-      return await ctx.prisma.service.findMany({
-        where: {
-          position: {
-            not: null,
-          }
-        }
-      });
+      return await ctx.prisma.service.findMany();
     }
     ),
   getByPageName: publicProcedure
@@ -119,13 +113,7 @@ export const serviceRouter = createTRPCRouter({
   getActive: publicProcedure
     .output(serviceSchema.array())
     .query(async ({ ctx }) => {
-      const data = await ctx.prisma.service.findMany({
-        where: {
-          position: {
-            not: null,
-          },
-        },
-      });
+      const data = await ctx.prisma.service.findMany();
 
       const services = data.map(async (service) => {
         return {
@@ -202,7 +190,7 @@ export const serviceRouter = createTRPCRouter({
           position: input.requestedPosition,
         },
         data: {
-          position: null,
+          position: Services.TEMP,
         },
       });
       const newPosition = await ctx.prisma.service.update({
@@ -232,7 +220,7 @@ export const serviceRouter = createTRPCRouter({
       shortDescription: z.string(),
       markdown: z.string(),
       icon: z.custom((value) => {
-        if (IconKeys.includes(value as any)) {
+        if (IconKeys.includes(value as IconList)) {
           return value;
         } else {
           return z.ZodIssueCode.custom;
@@ -257,7 +245,7 @@ export const serviceRouter = createTRPCRouter({
           pageName: pageName,
           shortDescription: input.shortDescription,
           markdown: input.markdown,
-          icon: input.icon,
+          icon: input.icon as string,
           primaryImage: {
             update: {
               image: {

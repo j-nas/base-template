@@ -1,12 +1,12 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
 import Link from "next/link";
+import { type IconList } from "~/components/IconDisplay";
 
 const ServiceSummaryCard = dynamic(import("../components/ServiceSummaryCard"), {
   loading: () => <span>O</span>,
@@ -94,12 +94,12 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         <section className=" mx-auto flex w-10/12 justify-center lg:w-5/6">
           <div className="z-30 -mt-32 grid w-fit justify-center gap-0 rounded-t-md border-t-8 border-primary shadow-lg lg:w-11/12 lg:grid-cols-3">
             {services
-              .sort((a: any, b: any) => a.position.localeCompare(b.position))
+              .sort((a, b) => a.position.localeCompare(b.position))
               .slice(0, 3)
               .map((service) => (
                 <ServiceSummaryCard
                   key={service.id}
-                  icon={service.icon}
+                  icon={service.icon as IconList}
                   summary={service.shortDescription}
                   title={service.title}
                 />
@@ -189,7 +189,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               content={mainService?.markdown}
             />
 
-            <Link href={`/${mainService?.pageName}`} className="w-fit">
+            <Link href={`/${mainService?.pageName || ""}`} className="w-fit">
               More about {mainService?.title}
             </Link>
           </div>

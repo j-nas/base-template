@@ -4,9 +4,11 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import { api } from "../../utils/api";
 import { IoMdHelpCircle } from "react-icons/io";
 import Layout from "../../components/adminComponents/Layout";
-import { ReactElement } from "react";
-import { Form, Field, FieldInstance, FormInstance } from "houseform";
-import ImageSelectDialog from "../../components/adminComponents/dialogs/ImageSelectDialog";
+import { type ReactElement } from "react";
+import { Form, Field, type FieldInstance, type FormInstance } from "houseform";
+import ImageSelectDialog, {
+  type ImagePosition,
+} from "../../components/adminComponents/dialogs/ImageSelectDialog";
 import React from "react";
 import { CldImage } from "next-cloudinary";
 import { env } from "../../env/client.mjs";
@@ -26,6 +28,15 @@ type FormData = {
 
 export const AboutUsEditor = () => {
   const session = useSession();
+
+  const submitMutation = api.aboutUs.update.useMutation();
+  const { data: data, isLoading } = api.aboutUs.getCurrentWithDate.useQuery();
+  const ctx = api.useContext();
+  const primaryImageRef = React.useRef<FieldInstance>(null);
+  const secondaryImageRef = React.useRef<FieldInstance>(null);
+  const contentRef = React.useRef<FieldInstance>(null);
+  const formRef = React.useRef<FormInstance>(null);
+
   if (!session.data?.user?.admin) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
@@ -38,23 +49,7 @@ export const AboutUsEditor = () => {
       </div>
     );
   }
-
-  const submitMutation = api.aboutUs.update.useMutation();
-  const {
-    data: data,
-    isLoading,
-    error,
-  } = api.aboutUs.getCurrentWithDate.useQuery();
-  const ctx = api.useContext();
-  const primaryImageRef = React.useRef<FieldInstance>(null);
-  const secondaryImageRef = React.useRef<FieldInstance>(null);
-  const contentRef = React.useRef<FieldInstance>(null);
-  const formRef = React.useRef<FormInstance>(null);
-
-  const handleImageChange = (
-    value: string,
-    position: "primary" | "secondary" | "hero" | "avatar"
-  ) => {
+  const handleImageChange = (value: string, position: ImagePosition) => {
     if (position === "primary") {
       primaryImageRef.current?.setValue(value);
     } else {
@@ -80,10 +75,10 @@ export const AboutUsEditor = () => {
     await toast.promise(
       submitMutation.mutateAsync(submission, {
         onSuccess: async () => {
-          ctx.aboutUs.invalidate();
-          ctx.aboutUs.getCurrentWithDate.refetch();
+          await ctx.aboutUs.invalidate();
+          await ctx.aboutUs.getCurrentWithDate.refetch();
         },
-        onError: async (error) => {
+        onError: (error) => {
           console.log(error);
           toast.error(error.message);
         },
@@ -124,7 +119,10 @@ export const AboutUsEditor = () => {
         {data && (
           <div>
             <div className="mx-auto flex h-full w-full flex-wrap justify-evenly justify-items-stretch gap-4">
-              <Form onSubmit={(values) => handleSubmit(values)} ref={formRef}>
+              <Form
+                onSubmit={(values) => handleSubmit(values as FormData)}
+                ref={formRef}
+              >
                 {({ submit, errors }) => (
                   <React.Fragment>
                     <Field<string>
@@ -139,15 +137,15 @@ export const AboutUsEditor = () => {
                         <div className="flex flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              errors.length > 0 && "!text-error"
-                            } ${isDirty && "text-success"}`}
+                              (errors.length > 0 && "!text-error") || ""
+                            } ${(isDirty && "text-success") || ""}`}
                           >
                             Summary
                           </label>
                           <textarea
                             className={`textarea-bordered textarea   w-52 resize-none scrollbar-thin 
-                            ${errors.length > 0 && "!textarea-error"}
-                            ${isDirty && "textarea-success"} 
+                            ${(errors.length > 0 && "!textarea-error") || ""}
+                            ${(isDirty && "textarea-success") || ""} 
                             `}
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
@@ -155,11 +153,15 @@ export const AboutUsEditor = () => {
                             maxLength={150}
                           />
                           {errors.length > 0 ? (
-                            errors.map((e) => (
-                              <span className="text-error">{e}</span>
+                            errors.map((error) => (
+                              <span key={error} className="text-error">
+                                {error}
+                              </span>
                             ))
                           ) : (
-                            <span className={`${isDirty && "text-success"}`}>
+                            <span
+                              className={`${(isDirty && "text-success") || ""}`}
+                            >
                               {150 - value.length} characters remaining
                             </span>
                           )}
@@ -171,11 +173,11 @@ export const AboutUsEditor = () => {
                       initialValue={data.primaryImage.public_id}
                       ref={primaryImageRef}
                     >
-                      {({ value, setValue, isDirty }) => (
+                      {({ value, isDirty }) => (
                         <div className="flex flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                              (isDirty && "text-success") || ""
                             }`}
                           >
                             Primary Image
@@ -186,7 +188,7 @@ export const AboutUsEditor = () => {
                           >
                             <button
                               className={`btn btn-outline btn-square h-fit w-fit p-6 ${
-                                isDirty && "btn-success"
+                                (isDirty && "btn-success") || ""
                               }`}
                             >
                               <div className="overflow-hidden">
@@ -215,11 +217,11 @@ export const AboutUsEditor = () => {
                       initialValue={data.secondaryImage.public_id}
                       ref={secondaryImageRef}
                     >
-                      {({ value, setValue, isDirty }) => (
+                      {({ value, isDirty }) => (
                         <div className="flex flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                              (isDirty && "text-success") || ""
                             }`}
                           >
                             Secondary Image
@@ -230,7 +232,7 @@ export const AboutUsEditor = () => {
                           >
                             <button
                               className={`btn btn-outline btn-square h-fit w-fit p-6 ${
-                                isDirty && "btn-success"
+                                (isDirty && "btn-success") || ""
                               }`}
                             >
                               <div className="overflow-hidden rounded-xl">
@@ -259,11 +261,11 @@ export const AboutUsEditor = () => {
                       initialValue={data.markdown}
                       ref={contentRef}
                     >
-                      {({ value, setValue, isDirty }) => (
+                      {({ value, isDirty }) => (
                         <div className="flex  w-11/12 flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm ${
-                              isDirty && "text-success"
+                              (isDirty && "text-success") || ""
                             }`}
                           >
                             Main Content
@@ -280,7 +282,7 @@ export const AboutUsEditor = () => {
                       <button
                         onClick={submit}
                         className={`btn btn-success ${
-                          errors.length > 0 && "btn-disabled"
+                          (errors.length > 0 && "btn-disabled") || ""
                         }`}
                       >
                         Save Changes

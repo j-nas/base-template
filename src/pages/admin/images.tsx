@@ -1,11 +1,11 @@
-import React, { type ReactElement, useState, MouseEvent } from "react";
+import React, { type ReactElement, useState, type MouseEvent } from "react";
 import Layout from "../../components/adminComponents/Layout";
-import { api, RouterInputs, RouterOutputs } from "../../utils/api";
+import { api, type RouterInputs, type RouterOutputs } from "../../utils/api";
 import { formatBytes } from "../../utils/format";
 import {
   CldImage,
   CldUploadWidget,
-  CldUploadWidgetPropsOptions,
+  type CldUploadWidgetPropsOptions,
 } from "next-cloudinary";
 import { env } from "../../env/client.mjs";
 import Tooltip from "../../components/Tooltip";
@@ -48,7 +48,7 @@ export const ImageManager = () => {
   const { data: images, isLoading } = api.image.getAllImages.useQuery();
   const { data: size } = api.image.getTotalSize.useQuery();
   const [sort, setSort] = useState<Sorting>("dateAsc");
-  const [parent, enableAnimations] = useAutoAnimate();
+  const [parent] = useAutoAnimate();
   const renameMutation = api.image.renameImage.useMutation();
   const uploadMutation = api.image.uploadImage.useMutation();
   const deleteMutation = api.image.deleteImage.useMutation();
@@ -61,16 +61,16 @@ export const ImageManager = () => {
     newName: string,
     public_id: string
   ) => {
-    toast.promise(
+    await toast.promise(
       renameMutation.mutateAsync(
         { id: imageId, name: newName, public_id: public_id },
         {
-          onSuccess: () => {
-            ctx.image.getAllImages.refetch();
-            ctx.image.getTotalSize.refetch();
+          onSuccess: async () => {
+            await ctx.image.getAllImages.refetch();
+            await ctx.image.getTotalSize.refetch();
           },
           onError: (error) => {
-            toast.error(error.message);
+            console.error(error.message);
           },
         }
       ),
@@ -84,19 +84,19 @@ export const ImageManager = () => {
     return;
   };
   const handleUpload = async ({ info }: ImageResult) => {
-    toast.promise(
+    await toast.promise(
       uploadMutation.mutateAsync(
         { ...info, public_id: info.public_id.split("/")[1] as string },
         {
-          onSuccess: () => {
-            ctx.image.getAllImages.refetch();
-            ctx.image.getTotalSize.refetch();
+          onSuccess: async () => {
+            await ctx.image.getAllImages.refetch();
+            await ctx.image.getTotalSize.refetch();
           },
           onError: (error) => {
             if (error.message.includes("Unique constraint failed")) {
               toast.error("Image already exists");
             } else {
-              toast.error(error.message);
+              console.error(error.message);
             }
           },
         }
@@ -111,16 +111,16 @@ export const ImageManager = () => {
     return;
   };
   const handleDelete = async (public_id: string) => {
-    toast.promise(
+    await toast.promise(
       deleteMutation.mutateAsync(
         { public_id: public_id },
         {
-          onSuccess: () => {
-            ctx.image.getAllImages.refetch();
-            ctx.image.getTotalSize.refetch();
+          onSuccess: async () => {
+            await ctx.image.getAllImages.refetch();
+            await ctx.image.getTotalSize.refetch();
           },
           onError: (error) => {
-            toast.error(error.message);
+            console.error(error.message);
           },
         }
       ),
@@ -140,21 +140,21 @@ export const ImageManager = () => {
   ) => {
     switch (sort) {
       case "nameAsc":
-        return images.sort((a: any, b: any) =>
-          a.public_id.localeCompare(b.public_id)
-        );
+        return images.sort((a, b) => a.public_id.localeCompare(b.public_id));
       case "nameDes":
-        return images.sort((a: any, b: any) =>
-          b.public_id.localeCompare(a.public_id)
-        );
+        return images.sort((a, b) => b.public_id.localeCompare(a.public_id));
       case "sizeAsc":
-        return images.sort((a: any, b: any) => a.bytes - b.bytes);
+        return images.sort((a, b) => a.bytes - b.bytes);
       case "sizeDes":
-        return images.sort((a: any, b: any) => b.bytes - a.bytes);
+        return images.sort((a, b) => b.bytes - a.bytes);
       case "dateAsc":
-        return images.sort((a: any, b: any) => a.createdAt - b.createdAt);
+        return images.sort(
+          (a, b) => a.createdAt.valueOf() - b.createdAt.valueOf()
+        );
       case "dateDes":
-        return images.sort((a: any, b: any) => b.createdAt - a.createdAt);
+        return images.sort(
+          (a, b) => b.createdAt.valueOf() - a.createdAt.valueOf()
+        );
       default:
         return images;
     }
@@ -176,7 +176,7 @@ export const ImageManager = () => {
             <span className="text-md font-bold uppercase">Sort</span>
             <select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              onChange={(e) => setSort(e.target.value as Sorting)}
               className="select-bordered select"
             >
               {sorters.map((sorter) => (
@@ -221,10 +221,10 @@ export const ImageManager = () => {
               <span className="px-2">{formatBytes(image.bytes)}</span>
               <span className="space-x-2 p-2">
                 <ImageDeleteDialog image={image} handleDelete={handleDelete}>
-                  <button className="btn-error btn-sm btn">Delete</button>
+                  <button className="btn btn-error btn-sm">Delete</button>
                 </ImageDeleteDialog>
                 <ImageRenameDialog renameHandler={handleRename} image={image}>
-                  <button className="btn-primary btn-sm btn">Rename</button>
+                  <button className="btn btn-primary btn-sm">Rename</button>
                 </ImageRenameDialog>
               </span>
             </div>
@@ -234,7 +234,7 @@ export const ImageManager = () => {
             <CldUploadWidget
               uploadPreset={env.NEXT_PUBLIC_CLOUDINARY_FOLDER}
               onUpload={(res: ImageResult) => {
-                handleUpload(res);
+                void handleUpload(res);
               }}
               options={cloudinaryOptions}
             >

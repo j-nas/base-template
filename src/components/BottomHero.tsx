@@ -10,7 +10,7 @@ type Props = {
 
 export const HeroBanner = ({
   hero: {
-    primaryImage: { blur_url, format, public_id, id },
+    primaryImage: { blur_url, public_id, id },
     heading,
     ctaText,
   },
@@ -21,6 +21,7 @@ export const HeroBanner = ({
       <div className={`hero`}>
         <CldImage
           src={env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + public_id}
+          format="auto"
           alt="hero image"
           placeholder="blur"
           blurDataURL={blur_url}
@@ -37,7 +38,7 @@ export const HeroBanner = ({
             </h1>
             <h2 className="mb-5 font-bold text-5xl md:text-7xl">{heading}</h2>
             <p className="mb-5 text-xl">{ctaText}</p>
-            <Link href="/contact" className="btn-primary btn rounded-none">
+            <Link href="/contact" className="btn btn-primary rounded-none">
               Get Started
             </Link>
           </div>

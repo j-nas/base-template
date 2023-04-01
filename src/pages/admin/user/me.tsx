@@ -4,7 +4,7 @@ import LoadingSpinner from "../../../components/LoadingSpinner";
 import { api } from "../../../utils/api";
 import { IoMdHelpCircle } from "react-icons/io";
 import Layout from "../../../components/adminComponents/Layout";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { type FormInstance } from "houseform";
 import React from "react";
 import { useState, useEffect } from "react";
@@ -17,17 +17,8 @@ export const UserEditor = () => {
   const [avatarImageExists, setAvatarImageExists] = useState(false);
 
   const userUpdateMutation = api.user.update.useMutation();
-  const blogDeleteMutation = api.blog.delete.useMutation();
 
-  const { isLoading, data, isError, error } = api.user.getSelf.useQuery();
-
-  if (isError) {
-    return (
-      <div className="grid h-full w-full place-content-center font-bold text-2xl">
-        Error loading user. Check the URL and try again.
-      </div>
-    );
-  }
+  const { isLoading, data, isError } = api.user.getSelf.useQuery();
 
   useEffect(() => {
     if (data?.avatarImage?.public_id) {
@@ -40,6 +31,14 @@ export const UserEditor = () => {
 
   const ctx = api.useContext();
   const formRef = React.useRef<FormInstance>(null);
+
+  if (isError) {
+    return (
+      <div className="grid h-full w-full place-content-center font-bold text-2xl">
+        Error loading user. Check the URL and try again.
+      </div>
+    );
+  }
 
   const handleSubmit = async (formData: FormData) => {
     const { name, email, avatarImage, id } = formData;
@@ -59,7 +58,8 @@ export const UserEditor = () => {
               id: id,
             });
           },
-          onError: async (error) => {
+          onError: (error) => {
+            console.error(error);
             if (
               error.message.endsWith(
                 "Unique constraint failed on the fields: (`email`)"

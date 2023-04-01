@@ -1,8 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { api, type RouterOutputs } from "../../../utils/api";
 import { IoMdCloseCircle } from "react-icons/io";
-import Link from "next/link";
 import ImageInUseWidget from "../ImageInUseWidget";
 import type { ImageAdmin } from "../../../types/image";
 
@@ -51,10 +49,12 @@ export default function ImageDeleteDialog({
             <Dialog.Close asChild>
               <button
                 aria-label="delete"
-                className={`btn btn-error ${isImageInuse && "btn-disabled"}`}
+                className={`btn btn-error ${
+                  (isImageInuse && "btn-disabled") || ""
+                }`}
                 onClick={() => {
                   if (!isImageInuse) {
-                    handleDelete(image.public_id);
+                    void handleDelete(image.public_id);
                   }
                 }}
               >

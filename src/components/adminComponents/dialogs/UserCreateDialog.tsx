@@ -1,12 +1,7 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { api, type RouterOutputs } from "../../../utils/api";
 import { IoMdCloseCircle } from "react-icons/io";
-import Link from "next/link";
-import ImageInUseWidget from "../ImageInUseWidget";
-import type { User } from "@prisma/client";
 import { Form, Field } from "houseform";
-import InputWrapper from "../InputWrapper";
 import z from "zod";
 
 type Props = {
@@ -31,13 +26,13 @@ export default function UserCreateDialog({
           </Dialog.Title>
           <div className="flex flex-col gap-2">
             <span>
-              Enter user's name and email. Email address must be valid, as it is
-              used for authentication.
+              Enter user&apos;s name and email. Email address must be valid, as
+              it is used for authentication.
             </span>
           </div>
           <Form
             onSubmit={(values) => {
-              handleUserCreate(values.name, values.email);
+              handleUserCreate(values.name as string, values.email as string);
               setOpen(false);
             }}
           >
@@ -45,7 +40,7 @@ export default function UserCreateDialog({
               <>
                 <div className="flex flex-col gap-2">
                   <div className=" mx-2 flex   flex-col place-content-center gap-2 place-self-center  px-4 py-2">
-                    <Field
+                    <Field<string>
                       name="name"
                       onChangeValidate={z
                         .string()
@@ -59,9 +54,9 @@ export default function UserCreateDialog({
                         <div className="mx-auto flex w-52 flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm 
-                          ${errors.length > 0 && "!text-error"}
+                          ${(errors.length > 0 && "!text-error") || ""}
                           
-                          ${isDirty && "text-success"} 
+                          ${(isDirty && "text-success") || ""} 
                         }`}
                           >
                             Name
@@ -69,21 +64,21 @@ export default function UserCreateDialog({
                           <input
                             onBlur={onBlur}
                             className={`input-bordered input ${
-                              isDirty && "input-success"
-                            } ${errors.length > 0 && "input-error"}`}
+                              (isDirty && "input-success") || ""
+                            } ${(errors.length > 0 && "input-error") || ""}`}
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
                           />
                           {errors.length > 0 &&
                             errors.map((error) => (
-                              <span className="text-error text-xs">
+                              <span key={error} className="text-error text-xs">
                                 {error}
                               </span>
                             ))}
                         </div>
                       )}
                     </Field>
-                    <Field
+                    <Field<string>
                       name="email"
                       onChangeValidate={z
                         .string()
@@ -94,9 +89,9 @@ export default function UserCreateDialog({
                         <div className="mx-auto flex w-52 flex-col">
                           <label
                             className={`font-bold tracking-wide text-sm 
-                          ${errors.length > 0 && "!text-error"}
+                          ${(errors.length > 0 && "!text-error") || ""}
                           
-                          ${isDirty && "text-success"} 
+                          ${(isDirty && "text-success") || ""} 
                         }`}
                           >
                             Email
@@ -105,14 +100,14 @@ export default function UserCreateDialog({
                             onBlur={onBlur}
                             type="email"
                             className={`input-bordered input ${
-                              isDirty && "input-success"
-                            } ${errors.length > 0 && "input-error"}`}
+                              (isDirty && "input-success") || ""
+                            } ${(errors.length > 0 && "input-error") || ""}`}
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
                           />
                           {errors.length > 0 &&
                             errors.map((error) => (
-                              <span className="text-error text-xs">
+                              <span key={error} className="text-error text-xs">
                                 {error}
                               </span>
                             ))}
@@ -130,7 +125,7 @@ export default function UserCreateDialog({
                     aria-label="rename"
                     type="submit"
                     className={`btn btn-success ${
-                      errors.length > 0 && "btn-disabled"
+                      (errors.length > 0 && "btn-disabled") || ""
                     }`}
                   >
                     Add User

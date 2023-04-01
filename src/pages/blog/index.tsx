@@ -58,7 +58,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     src={
                       env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
                       "/" +
-                      blog.image?.public_id
+                      (blog.image?.public_id || "")
                     }
                     placeholder="blur"
                     blurDataURL={blog.image?.blur_url}
@@ -111,7 +111,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   </div>
                   <div className="">
                     <Link
-                      className="btn-primary btn"
+                      className="btn btn-primary"
                       href={`/blog/${blog.pageName}`}
                     >
                       Read More

@@ -1,17 +1,16 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
-
+import { env } from "~/env/client.mjs";
 import { contactFormValidationSchema } from "../utils/validationSchema";
 import { api } from "../utils/api";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { z } from "zod";
+import { type z } from "zod";
 
 const TopHero = dynamic(() => import("../components/TopHero"));
 const InputWrapper = dynamic(() => import("../components/InputWrapper"));
@@ -26,10 +25,8 @@ export const Contact: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
   const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
-  const { blur_url, format, height, width, public_id, id } =
-    bottomHero.primaryImage;
+  const { blur_url, format, public_id, id } = bottomHero.primaryImage;
   const [submitted, setSubmitted] = useState(false);
-  const router = useRouter();
   const mutation = api.contactForm.sendContactForm.useMutation({
     onSuccess: () => {
       setSubmitted(true);
@@ -121,7 +118,7 @@ export const Contact: NextPage<
               </InputWrapper>
 
               {!submitted && (
-                <button type="submit" className="btn-primary btn-block btn">
+                <button type="submit" className="btn btn-primary btn-block">
                   Submit
                 </button>
               )}
@@ -157,7 +154,7 @@ export const Contact: NextPage<
                 blurDataURL={blur_url}
                 format={format}
                 height={1200}
-                src={`${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_id}`}
+                src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_id}`}
                 width={1200}
                 crop="fill"
                 id={id}

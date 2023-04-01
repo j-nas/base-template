@@ -6,10 +6,9 @@ import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import IconDisplay from "../../../components/IconDisplay";
-import { Services } from "@prisma/client";
+import IconDisplay, { type IconList } from "../../../components/IconDisplay";
+import { type Services } from "@prisma/client";
 import Link from "next/link";
-import Tooltip from "../../../components/Tooltip";
 import { useSession } from "next-auth/react";
 
 const servicePositions = [
@@ -23,6 +22,12 @@ const servicePositions = [
 export const ServiceManager = () => {
   const session = useSession();
 
+  const [isSwapping, setIsSwapping] = useState(false);
+  const { isLoading, data: services } = api.service.getAllAdmin.useQuery();
+  const swapMutation = api.service.swapPosition.useMutation();
+  const [parent] = useAutoAnimate();
+  const ctx = api.useContext();
+
   if (!session.data?.user?.admin) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center">
@@ -35,16 +40,9 @@ export const ServiceManager = () => {
       </div>
     );
   }
-
-  const [isSwapping, setIsSwapping] = useState(false);
-  const { isLoading, data: services } = api.service.getAllAdmin.useQuery();
-  const swapMutation = api.service.swapPosition.useMutation();
-  const [parent, enableAnimations] = useAutoAnimate();
-  const ctx = api.useContext();
-
   const handleSwap = async (oldPosition: Services, newPosition: Services) => {
     setIsSwapping(true),
-      toast.promise(
+      await toast.promise(
         swapMutation.mutateAsync(
           {
             existingPosition: oldPosition,
@@ -85,14 +83,14 @@ export const ServiceManager = () => {
           className="flex w-full flex-col items-center justify-center gap-6"
         >
           {services
-            ?.sort((a: any, b: any) => a.position.localeCompare(b.position))
+            ?.sort((a, b) => a.position.localeCompare(b.position))
             .map((service) => (
               <div
                 key={service.id}
                 className="flex  rounded-lg bg-base-300 p-4 drop-shadow-2xl"
               >
                 <div className=" flex place-items-center">
-                  <IconDisplay icon={service.icon} />
+                  <IconDisplay icon={service.icon as IconList} />
                 </div>
                 <div className="mx-4 flex min-w-fit flex-col place-self-center">
                   <span className="text-md font-medium">

@@ -15,9 +15,11 @@ export default function InputWrapper({
   error,
 }: Props) {
   return (
-    <div className={""}>
+    <div className={className}>
       <label className="uppercase" htmlFor={htmlFor}>
-        <span className={`label-text ${error && "text-error"}`}>{label}</span>
+        <span className={`label-text ${error ? "text-error" : ""}`}>
+          {label}
+        </span>
       </label>
       <div
         className={`tooltip ${

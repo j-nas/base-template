@@ -1,4 +1,4 @@
-import { NextPageWithLayout } from "../_app";
+import { type NextPageWithLayout } from "../_app";
 import type { ReactElement } from "react";
 import Layout from "../../components/adminComponents/Layout";
 import { api } from "../../utils/api";
@@ -7,7 +7,7 @@ import InputWrapper from "../../components/adminComponents/InputWrapper";
 import { Field, Form, type FormInstance } from "houseform";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import React from "react";
-import { RouterOutputs } from "../../utils/api";
+import { type RouterOutputs } from "../../utils/api";
 import { Toaster, toast } from "react-hot-toast";
 import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
 import { useSession } from "next-auth/react";
@@ -29,8 +29,15 @@ const provinces = [
   "YT",
 ];
 
+type FormData = RouterOutputs["businessInfo"]["getActiveWithDateTime"];
+
 export const BusinessProfile: NextPageWithLayout = () => {
   const session = useSession();
+
+  const { data, isLoading } = api.businessInfo.getActiveWithDateTime.useQuery();
+  const updateMutation = api.businessInfo.update.useMutation();
+  const formRef = React.useRef<FormInstance>(null);
+  const ctx = api.useContext();
 
   if (!session.data?.user?.admin) {
     return (
@@ -45,27 +52,18 @@ export const BusinessProfile: NextPageWithLayout = () => {
     );
   }
 
-  const { data, isLoading } = api.businessInfo.getActiveWithDateTime.useQuery();
-  const updateMutation = api.businessInfo.update.useMutation();
-  const formRef = React.useRef<FormInstance>(null);
-  const ctx = api.useContext();
-  console.log(formRef.current?.errors);
-
-  const handleSubmit = async (
-    formData: RouterOutputs["businessInfo"]["getActiveWithDateTime"]
-  ) => {
+  const handleSubmit = async (formData: FormData) => {
     console.log(formData);
-    toast.promise(
+    await toast.promise(
       updateMutation.mutateAsync(
         { ...formData, id: data?.id ?? "" },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
             formRef.current?.setIsDirty(false);
-            ctx.businessInfo.getActiveWithDateTime.refetch();
+            await ctx.businessInfo.getActiveWithDateTime.refetch();
           },
           onError: (error) => {
             console.log(error);
-            toast.error(error.message);
           },
         }
       ),
@@ -89,7 +87,7 @@ export const BusinessProfile: NextPageWithLayout = () => {
           <Form
             ref={formRef}
             onSubmit={(values) => {
-              handleSubmit(values);
+              void handleSubmit(values as FormData);
             }}
           >
             {({ submit, errors }) => (
@@ -306,7 +304,7 @@ export const BusinessProfile: NextPageWithLayout = () => {
                 <div className="col-span-full row-start-2">
                   <button
                     className={`btn btn-success btn-block mt-6 mb-2 ${
-                      errors.length > 0 && "btn-disabled"
+                      (errors.length > 0 && "btn-disabled") || ""
                     }`}
                     onClick={submit}
                     type="button"
@@ -316,8 +314,8 @@ export const BusinessProfile: NextPageWithLayout = () => {
                   <div>
                     {errors && (
                       <div className="mb-12 text-red-500 text-xs">
-                        {errors.map((error, i) => (
-                          <div key={error + i}>{error}</div>
+                        {errors.map((error) => (
+                          <div key={error}>{error}</div>
                         ))}
                       </div>
                     )}

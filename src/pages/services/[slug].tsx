@@ -1,15 +1,9 @@
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import type {
-  GetStaticPaths,
-  GetStaticPropsContext,
-  InferGetStaticPropsType,
-  NextPage,
-} from "next";
+import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import superjson from "superjson";
 import { prisma } from "../../server/db";
 import { appRouter } from "../../server/api/root";
 import { createInnerTRPCContext } from "../../server/api/trpc";
-import { api } from "../../utils/api";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
@@ -128,11 +122,6 @@ export async function getStaticPaths() {
     select: {
       pageName: true,
     },
-    where: {
-      position: {
-        not: null,
-      },
-    },
   });
 
   return {
@@ -148,7 +137,7 @@ export async function getStaticPaths() {
 export async function getStaticProps(
   context: GetStaticPropsContext<{ slug: string }>
 ) {
-  const ssg = await createProxySSGHelpers({
+  const ssg = createProxySSGHelpers({
     router: appRouter,
     ctx: createInnerTRPCContext({ session: null }),
     transformer: superjson,

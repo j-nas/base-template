@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { CldImage } from "next-cloudinary";
 import type { RouterOutputs } from "../utils/api";
 import { env } from "../env/client.mjs";
 import Image from "next/image";
@@ -22,7 +22,7 @@ export default function MainGallery({ gallery }: Props) {
           gallery.map((photo) => {
             return (
               <div key={photo.id} className="">
-                <Image
+                <CldImage
                   width={720}
                   height={720}
                   src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${photo.public_id}.${photo.format}`}
@@ -126,9 +126,9 @@ export default function MainGallery({ gallery }: Props) {
                   height,
                 }}
               >
-                <Image
+                <CldImage
                   fill
-                  src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${slide.src}`}
+                  src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${slide.src}`}
                   loading="eager"
                   placeholder="blur"
                   className="border-none"

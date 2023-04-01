@@ -8,9 +8,7 @@ import { appRouter } from "../server/api/root";
 const TopHero = dynamic(() => import("../components/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
-const CldImg = dynamic(() => import("../components/CldImg"), {
-  loading: () => <p>Loading...</p>,
-});
+
 const Footer = dynamic(() => import("../components/Footer"), {
   loading: () => <p>Loading...</p>,
 });

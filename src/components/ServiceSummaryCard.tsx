@@ -15,7 +15,7 @@ export default function ServiceSummaryCard({
   summary,
   key,
 }: Props) {
-  const Icon = icon ? icons[icon as IconList] : null;
+  const Icon = icon ? icons[icon] : null;
 
   return (
     <div className="card rounded-none bg-base-300 " key={key}>

@@ -7,15 +7,11 @@ import toast, { Toaster } from "react-hot-toast";
 import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import IconDisplay from "../../../components/IconDisplay";
-import { User } from "@prisma/client";
+import { type User } from "@prisma/client";
 import Link from "next/link";
-import Tooltip from "../../../components/Tooltip";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import AvatarDisplay from "../../../components/AvatarDisplay";
-import type { Session } from "next-auth";
-import { NextPage } from "next";
 import UserRoleToggleDialog from "../../../components/adminComponents/dialogs/UserRoleToggleDialog";
 import UserCreateDialog from "../../../components/adminComponents/dialogs/UserCreateDialog";
 import UserDeleteDialog from "../../../components/adminComponents/dialogs/UserDeleteDialog";
@@ -24,21 +20,23 @@ export const UserManager = () => {
   const [isToggling, setIsToggling] = useState(false);
   const router = useRouter();
   const session = useSession();
+
+  const { isLoading, data: users } = api.user.getAll.useQuery();
+  const [parent] = useAutoAnimate();
+  const ctx = api.useContext();
+
+  const toggleAdminMutation = api.user.toggleAdmin.useMutation();
+  const createUserMutation = api.user.create.useMutation();
+  const deleteUserMutation = api.user.delete.useMutation();
+
   if (!session.data?.user?.superAdmin) {
-    router.push(`/admin/user/me`);
+    void router.push(`/admin/user/me`);
     return (
       <div className="grid h-full w-full place-content-center font-bold text-2xl">
         Not Authorized
       </div>
     );
   }
-  const { isLoading, data: users } = api.user.getAll.useQuery();
-  const [parent, enableAnimations] = useAutoAnimate();
-  const ctx = api.useContext();
-
-  const toggleAdminMutation = api.user.toggleAdmin.useMutation();
-  const createUserMutation = api.user.create.useMutation();
-  const deleteUserMutation = api.user.delete.useMutation();
 
   const canEdit = (user: User) => {
     if (user.id === session.data?.user?.id) return true;
@@ -49,7 +47,7 @@ export const UserManager = () => {
   const handleToggleAdmin = async (user: User) => {
     if (user.superAdmin) return;
     setIsToggling(true);
-    toast.promise(
+    await toast.promise(
       toggleAdminMutation.mutateAsync(
         {
           id: user.id,
@@ -61,7 +59,8 @@ export const UserManager = () => {
 
             await ctx.user.getAll.refetch();
           },
-          onError: () => {
+          onError: (error) => {
+            console.error(error);
             setIsToggling(false);
             return "Error updating user";
           },
@@ -70,12 +69,12 @@ export const UserManager = () => {
       {
         loading: "Updating user",
         success: "User's role changed. User will be logged out.",
-        error: ({ data }) => data,
+        error: "Error updating user",
       }
     );
   };
   const handleUserCreate = async (name: string, email: string) => {
-    toast.promise(
+    await toast.promise(
       createUserMutation.mutateAsync(
         {
           name,
@@ -85,7 +84,8 @@ export const UserManager = () => {
           onSuccess: async () => {
             await ctx.user.getAll.refetch();
           },
-          onError: () => {
+          onError: (error) => {
+            console.error(error);
             return "Error adding user";
           },
         }
@@ -93,29 +93,28 @@ export const UserManager = () => {
       {
         loading: "Creating user",
         success: `User ${name} created.`,
-        error: ({ data }) => data,
+        error: "Error adding user",
       }
     );
   };
   const handleUserDelete = async (user: User) => {
     if (user.superAdmin) return;
-
-    toast.promise(
+    await toast.promise(
       deleteUserMutation.mutateAsync(
         { id: user.id },
         {
           onSuccess: async () => {
             await ctx.user.getAll.refetch();
           },
-          onError: () => {
-            return "Error deleting user";
+          onError: (error) => {
+            console.error(error);
           },
         }
       ),
       {
         loading: "Deleting user",
         success: `User deleted.`,
-        error: ({ data }) => data,
+        error: "Error deleting user",
       }
     );
   };
@@ -140,13 +139,14 @@ export const UserManager = () => {
           className="ml-6 flex w-auto flex-wrap place-content-stretch  gap-6"
         >
           {users
-            ?.sort((a: any, b: any) => a.name?.localeCompare(b.name))
+            ?.sort((a, b) => a.name?.localeCompare(b.name))
             .map((user) => (
               <div
                 key={user.id}
                 className={`flex w-72 flex-col rounded-lg bg-base-300 p-4 drop-shadow-2xl ${
-                  user.id === session.data?.user?.id &&
-                  "shadow-lg shadow-primary outline outline-2 outline-primary"
+                  (user.id === session.data?.user?.id &&
+                    "shadow-lg shadow-primary outline outline-2 outline-primary") ||
+                  ""
                 }`}
               >
                 <div className="mb-6 flex">
@@ -154,7 +154,7 @@ export const UserManager = () => {
                     <AvatarDisplay
                       name={user.name || ""}
                       public_id={user.avatarImage}
-                      size={"10"}
+                      size={10}
                     />
                   </div>
                   <div className="mx-4 flex min-w-fit flex-col place-self-center">
@@ -182,7 +182,7 @@ export const UserManager = () => {
                 <div className="p btn-group btn-group-vertical gap-1">
                   <div
                     className={`${
-                      user.superAdmin && "pointer-events-none"
+                      (user.superAdmin && "pointer-events-none") || ""
                     } flex flex-col`}
                   >
                     <UserRoleToggleDialog
@@ -190,8 +190,8 @@ export const UserManager = () => {
                       handleToggleAdmin={handleToggleAdmin}
                     >
                       <div
-                        className={`btn-outline btn btn-sm w-full ${
-                          user.superAdmin && "btn-disabled "
+                        className={`btn btn-outline btn-sm w-full ${
+                          (user.superAdmin && "btn-disabled ") || ""
                         }`}
                       >
                         <input
@@ -209,7 +209,7 @@ export const UserManager = () => {
                   <div className="flex flex-col">
                     <Link
                       href={`/admin/user/${user?.id}`}
-                      className={`btn-outline btn btn-sm ${
+                      className={`btn btn-outline btn-sm ${
                         canEdit(user) ? "" : "btn-disabled "
                       }`}
                     >
@@ -218,7 +218,7 @@ export const UserManager = () => {
                   </div>
                   <div
                     className={`flex flex-col ${
-                      user.superAdmin && "pointer-events-none"
+                      (user.superAdmin && "pointer-events-none") || ""
                     }`}
                   >
                     <UserDeleteDialog
@@ -226,8 +226,8 @@ export const UserManager = () => {
                       handleUserDelete={handleUserDelete}
                     >
                       <div
-                        className={`btn-outline btn btn-error btn-block btn-sm ${
-                          user.superAdmin && "!btn-disabled "
+                        className={`btn btn-outline btn-error btn-block btn-sm ${
+                          (user.superAdmin && "!btn-disabled ") || ""
                         }`}
                       >
                         <MdDeleteOutline className="mr-2 text-lg" />

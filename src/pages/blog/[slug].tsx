@@ -63,7 +63,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   src={
                     env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
                     "/" +
-                    blog.image?.public_id
+                    (blog.image?.public_id || "")
                   }
                   placeholder="blur"
                   blurDataURL={blog.image?.blur_url}
@@ -111,7 +111,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   <Markdown content={blog.markdown} />
                 </div>
                 <div className="">
-                  <Link className="btn-primary btn" href={`/blog`}>
+                  <Link className="btn btn-primary" href={`/blog`}>
                     Back to blogs
                   </Link>
                 </div>

@@ -69,7 +69,7 @@ export default function Navbar({ services, business }: Props) {
         <Link
           href="/"
           aria-label="home button logo"
-          className="btn-ghost btn fill-white stroke-white lowercase text-xl"
+          className="btn btn-ghost fill-white stroke-white lowercase text-xl"
         >
           <Logo
             className={`z-50 h-auto w-40 ${
@@ -85,7 +85,7 @@ export default function Navbar({ services, business }: Props) {
             <Link
               href="/"
               className={`${
-                router.pathname === "/" ? "btn-accent  btn" : "btn-ghost  btn"
+                router.pathname === "/" ? "btn  btn-accent" : "btn  btn-ghost"
               } rounded-l-lg border-none `}
             >
               Home
@@ -96,8 +96,8 @@ export default function Navbar({ services, business }: Props) {
               href="/about"
               className={`${
                 router.pathname === "/about"
-                  ? "btn-accent  btn"
-                  : "btn-ghost  btn"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
               } rounded-none`}
             >
               About
@@ -108,8 +108,8 @@ export default function Navbar({ services, business }: Props) {
               href="/contact"
               className={`${
                 router.pathname === "/contact"
-                  ? "btn-accent  btn"
-                  : "btn-ghost  btn"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
               } rounded-none `}
             >
               Contact
@@ -120,8 +120,8 @@ export default function Navbar({ services, business }: Props) {
               href="/services"
               className={`${
                 router.pathname.startsWith("/services")
-                  ? "btn-accent  btn"
-                  : "btn-ghost  btn"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
               } rounded-none `}
             >
               Services
@@ -137,15 +137,15 @@ export default function Navbar({ services, business }: Props) {
             </Link>
             <ul className="bg-base-300 p-2">
               {services
-                .sort((a: any, b: any) => a.position.localeCompare(b.position))
+                .sort((a, b) => a.position.localeCompare(b.position))
                 .map((service) => (
                   <li key={service.id}>
                     <Link
                       href={`/services/${service.pageName}`}
                       className={`rounded-none ${
                         router.asPath.includes(service.pageName)
-                          ? "btn-accent  btn"
-                          : "btn-ghost btn text-base-content"
+                          ? "btn  btn-accent"
+                          : "btn btn-ghost text-base-content"
                       }`}
                     >
                       {service.title}
@@ -159,8 +159,8 @@ export default function Navbar({ services, business }: Props) {
               href="/gallery"
               className={`${
                 router.pathname === "/gallery"
-                  ? "btn-accent  btn"
-                  : "btn-ghost  btn"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
               } rounded-none `}
             >
               Gallery
@@ -171,8 +171,8 @@ export default function Navbar({ services, business }: Props) {
               href="/testimonials"
               className={`${
                 router.pathname === "/testimonials"
-                  ? "btn-accent  btn"
-                  : "btn-ghost  btn"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
               } rounded-none `}
             >
               testimonials
@@ -183,8 +183,8 @@ export default function Navbar({ services, business }: Props) {
               href="/blog"
               className={`${
                 router.pathname === "/blog"
-                  ? "btn-accent  btn"
-                  : "btn-ghost  btn"
+                  ? "btn  btn-accent"
+                  : "btn  btn-ghost"
               } rounded-r-lg`}
             >
               Blog

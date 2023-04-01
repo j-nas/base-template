@@ -1,4 +1,3 @@
-import { RouterOutputs } from "../../utils/api";
 import Link from "next/link";
 import type { ImageAdmin } from "../../types/image";
 
@@ -31,8 +30,11 @@ export default function ImageInUseWidget({ image }: Props) {
         {imageUsage.testimonialAvatars.map((testimonial) => (
           <span key={testimonial.id} className="">
             Image in use as{" "}
-            <Link className="link" href={`admin/testimonial/${testimonial.id}`}>
-              {testimonial.name}'s avatar
+            <Link
+              className="link"
+              href={`admin/testimonial/${testimonial.id || ""}`}
+            >
+              {testimonial.name}&apos;s avatar
             </Link>{" "}
             (Testimonial)
           </span>
@@ -40,8 +42,8 @@ export default function ImageInUseWidget({ image }: Props) {
         {imageUsage.userAvatars.map((user) => (
           <span key={user.id} className="">
             Image in use as{" "}
-            <Link className="link" href={`admin/user/${user.id}`}>
-              {user.name}'s avatar
+            <Link className="link" href={`admin/user/${user.id || ""}`}>
+              {user.name}&apos;s avatar
             </Link>{" "}
             (User)
           </span>
@@ -49,8 +51,8 @@ export default function ImageInUseWidget({ image }: Props) {
         {imageUsage.blogPrimaryImages.map((blog) => (
           <span key={blog.id} className="">
             Image in use as blog post{" "}
-            <Link className="link" href={`admin/blog/${blog.id}`}>
-              {blog.title}'s primary image
+            <Link className="link" href={`admin/blog/${blog.id || ""}`}>
+              {blog.title}&apos;s primary image
             </Link>
           </span>
         ))}
@@ -70,7 +72,7 @@ export default function ImageInUseWidget({ image }: Props) {
             Image in use as the{" "}
             <Link
               className="link"
-              href={`admin/hero/${hero.position?.toLowerCase()}`}
+              href={`admin/hero/${hero.position?.toLowerCase() || ""}`}
             >
               {hero.position?.toLowerCase()} hero banner image
             </Link>
@@ -81,9 +83,9 @@ export default function ImageInUseWidget({ image }: Props) {
             Image in use as{" "}
             <Link
               className="link"
-              href={`admin/service/${service.position?.toLowerCase()}`}
+              href={`admin/service/${service.position?.toLowerCase() || ""}`}
             >
-              {service.title}'s primary image
+              {service.title}&apos;s primary image
             </Link>{" "}
             (Service)
           </span>
@@ -93,9 +95,9 @@ export default function ImageInUseWidget({ image }: Props) {
             Image in use as{" "}
             <Link
               className="link"
-              href={`admin/service/${service.position?.toLowerCase()}`}
+              href={`admin/service/${service.position?.toLowerCase() || ""}`}
             >
-              {service.title}'s secondary image
+              {service.title}&apos;s secondary image
             </Link>{" "}
             (Service)
           </span>
