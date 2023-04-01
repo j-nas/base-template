@@ -204,22 +204,15 @@ export const GalleryManager = () => {
                 </div>
 
                 <span className="px-2 italic">&quot;{image.altText}&quot;</span>
-                <span className="space-x-2 p-2">
+                <span className="flex space-x-2 p-2">
                   <GalleryAltTextEditDialog
                     handleAltTextEdit={handleAltTextEdit}
                     image={image}
                   >
-                    <button className="btn btn-primary btn-sm">Edit</button>
+                    <button className="btn btn-outline  btn-sm">Edit</button>
                   </GalleryAltTextEditDialog>
-
-                  <button
-                    onClick={() => handleRemove(image.id)}
-                    className="btn btn-error btn-sm"
-                  >
-                    Remove
-                  </button>
                   <select
-                    className=" h-8 place-self-center rounded-lg bg-base-100 p-1"
+                    className=" h-8 rounded-lg bg-primary p-1 font-bold text-primary-content"
                     defaultValue={image.index || 1}
                     value={image.index || 1}
                     onChange={(e) => {
@@ -233,6 +226,12 @@ export const GalleryManager = () => {
                   >
                     {options}
                   </select>
+                  <button
+                    onClick={() => handleRemove(image.id)}
+                    className="btn btn-error btn-sm"
+                  >
+                    Remove
+                  </button>
                 </span>
               </div>
             ))}

@@ -171,21 +171,22 @@ export const ImageManager = () => {
       </div>
       {isLoading && <LoadingSpinner />}
       {!isLoading && (
-        <div className="form-control ml-8 mt-6 place-self-center lg:place-self-start">
-          <div className="input-group">
-            <span className="text-md font-bold uppercase">Sort</span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as Sorting)}
-              className="select-bordered select"
-            >
-              {sorters.map((sorter) => (
-                <option key={sorter.value} value={sorter.value}>
-                  {sorter.name}
-                </option>
-              ))}
-            </select>
-          </div>
+        <div className="mx-auto mt-6 flex w-52 flex-col">
+          <label htmlFor="sort" className="font-bold tracking-wide text-sm">
+            Sort
+          </label>
+          <select
+            value={sort}
+            id="sort"
+            onChange={(e) => setSort(e.target.value as Sorting)}
+            className="select-bordered select select-sm mb-12"
+          >
+            {sorters.map((sorter) => (
+              <option key={sorter.value} value={sorter.value}>
+                {sorter.name}
+              </option>
+            ))}
+          </select>
         </div>
       )}
       <div
