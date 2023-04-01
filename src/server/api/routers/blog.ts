@@ -223,7 +223,7 @@ export const blogRouter = createTRPCRouter({
         }
       }
     }),
-  create: adminProcedure
+  create: protectedProcedure
     .input(z.object({
       title: z.string(),
       summary: z.string(),
@@ -297,7 +297,7 @@ export const blogRouter = createTRPCRouter({
         },
       });
     }),
-  delete: adminProcedure
+  delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await blogOwnerCheck(input.id, ctx.session);

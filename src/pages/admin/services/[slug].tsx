@@ -1,23 +1,26 @@
 import { toast, Toaster } from "react-hot-toast";
-import Breadcrumbs from "../../../components/adminComponents/Breadcrumbs";
-import LoadingSpinner from "../../../components/LoadingSpinner";
-import IconDisplay, { type IconList } from "../../../components/IconDisplay";
-import { api } from "../../../utils/api";
+import Breadcrumbs from "@/adminComponents/Breadcrumbs";
+import LoadingSpinner from "@/LoadingSpinner";
+import IconDisplay, { type IconList } from "@/IconDisplay";
+import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { type Services } from "@prisma/client";
 import { type ParsedUrlQuery } from "querystring";
-import Layout from "../../../components/adminComponents/Layout";
+import Layout from "@/adminComponents/Layout";
 import { type ReactElement } from "react";
 import { Form, Field, type FieldInstance, type FormInstance } from "houseform";
-import IconSelectDialog from "../../../components/adminComponents/dialogs/IconSelectDialog";
-import ImageSelectDialog from "../../../components/adminComponents/dialogs/ImageSelectDialog";
+import IconSelectDialog from "@/adminComponents/dialogs/IconSelectDialog";
+import ImageSelectDialog, {
+  type ImagePosition,
+} from "@/adminComponents/dialogs/ImageSelectDialog";
 import React from "react";
 import { CldImage } from "next-cloudinary";
-import { env } from "../../../env/client.mjs";
+import { env } from "~/env/client.mjs";
 import Link from "next/link";
-import ServiceContentEditor from "../../../components/adminComponents/TextEditor";
+import ServiceContentEditor from "@/adminComponents/TextEditor";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
+import NotAuthorized from "@/adminComponents/NotAuthorized";
 export interface ServicePageQuery extends ParsedUrlQuery {
   slug: Services;
 }
@@ -54,24 +57,12 @@ export const ServiceEditor = () => {
   const formRef = React.useRef<FormInstance>(null);
 
   if (!session.data?.user?.admin) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">
-          You are not authorized to view this page
-        </h1>
-        <Link href="/admin/">
-          <span className="text-primary">Go back to dashboard home</span>
-        </Link>
-      </div>
-    );
+    return <NotAuthorized />;
   }
   const handleIconChange = (value: string) => {
     iconRef.current?.setValue(value);
   };
-  const handleImageChange = (
-    value: string,
-    position: "primary" | "secondary" | "hero" | "avatar"
-  ) => {
+  const handleImageChange = (value: string, position: ImagePosition) => {
     if (position === "primary") {
       primaryImageRef.current?.setValue(value);
     } else {
@@ -185,7 +176,7 @@ export const ServiceEditor = () => {
                             >
                               <div className="flex w-52">
                                 <button
-                                  className={`btn-outline btn-square btn ${
+                                  className={`btn btn-outline btn-square ${
                                     isDirty ? "btn-success" : ""
                                   }`}
                                 >
@@ -304,7 +295,7 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty ? "btn-success" : ""
                               }`}
                             >
@@ -348,7 +339,7 @@ export const ServiceEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty ? "btn-success" : ""
                               }`}
                             >
@@ -401,7 +392,7 @@ export const ServiceEditor = () => {
                       </Link>
                       <button
                         onClick={submit}
-                        className={`btn-success btn ${
+                        className={`btn btn-success ${
                           errors.length > 0 ? "btn-disabled" : ""
                         }`}
                       >

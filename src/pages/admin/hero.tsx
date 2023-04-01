@@ -8,11 +8,11 @@ import { Form, Field, type FieldInstance, type FormInstance } from "houseform";
 import ImageSelectDialog from "../../components/adminComponents/dialogs/ImageSelectDialog";
 import { CldImage } from "next-cloudinary";
 import { env } from "../../env/client.mjs";
-import Link from "next/link";
 import { z } from "zod";
 import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { type HeroPosition } from "@prisma/client";
+import NotAuthorized from "@/adminComponents/NotAuthorized";
 
 type FormData = {
   primaryImage: string;
@@ -37,16 +37,7 @@ export const HeroEditor = () => {
   const ctx = api.useContext();
 
   if (!session.data?.user?.admin) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">
-          You are not authorized to view this page
-        </h1>
-        <Link href="/admin/">
-          <span className="text-primary">Go back to dashboard home</span>
-        </Link>
-      </div>
-    );
+    return <NotAuthorized />;
   }
 
   const handleImageChange = (value: string) => {
@@ -229,7 +220,7 @@ export const HeroEditor = () => {
                               handleImageChange={handleImageChange}
                             >
                               <button
-                                className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                                className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                   isDirty ? "btn-success" : ""
                                 }`}
                               >
@@ -258,7 +249,7 @@ export const HeroEditor = () => {
                     <div className=" mt-6 place-self-center sm:w-auto  ">
                       <button
                         onClick={submit}
-                        className={`btn-success btn w-[80vw] md:w-auto ${
+                        className={`btn btn-success w-[80vw] md:w-auto ${
                           errors.length > 0 ? "btn-disabled" : ""
                         }`}
                       >

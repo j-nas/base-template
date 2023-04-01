@@ -10,6 +10,7 @@ import IconDisplay, { type IconList } from "../../../components/IconDisplay";
 import { type Services } from "@prisma/client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import NotAuthorized from "@/adminComponents/NotAuthorized";
 
 const servicePositions = [
   { label: "1", value: "SERVICE1", page: "service1" },
@@ -29,16 +30,7 @@ export const ServiceManager = () => {
   const ctx = api.useContext();
 
   if (!session.data?.user?.admin) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        <h1 className="font-bold text-2xl">
-          You are not authorized to view this page
-        </h1>
-        <Link href="/admin/">
-          <span className="text-primary">Go back to dashboard home</span>
-        </Link>
-      </div>
-    );
+    return <NotAuthorized />;
   }
   const handleSwap = async (oldPosition: Services, newPosition: Services) => {
     setIsSwapping(true),
