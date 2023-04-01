@@ -2,9 +2,7 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Login from "./Login";
 import { api } from "../../utils/api";
-import { ThemeProvider } from "next-themes";
-import { themes } from "../../pages/_app";
-import { SessionProvider, useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useState } from "react";
 
@@ -46,14 +44,7 @@ export default function Layout({ children }: Props) {
           </main>
         </div>
       ) : (
-        <div className="relative flex h-screen w-screen flex-col place-content-center">
-          <button
-            className="btn btn-primary"
-            onClick={() => signIn("email", {})}
-          >
-            Login
-          </button>
-        </div>
+        <Login />
       )}
     </>
   );
