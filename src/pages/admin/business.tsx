@@ -70,7 +70,9 @@ export const BusinessProfile: NextPageWithLayout = () => {
       <Toaster position="bottom-right" />
       <Breadcrumbs subName="Business Profile" subPath="business" />
       <div className="">
-        <h1 className="p-8 text-4xl">Business Profile</h1>
+        <h1 className="my-6 place-self-center text-center font-black  text-2xl">
+          Business Profile
+        </h1>
       </div>
       {isLoading && <LoadingSpinner />}
       {data && (
@@ -117,7 +119,7 @@ export const BusinessProfile: NextPageWithLayout = () => {
                         message: "Please limit city name to 30 characters",
                       })}
                   />
-                  <Field name="province" initialValue={data.province}>
+                  <Field<string> name="province" initialValue={data.province}>
                     {({ value, setValue, onBlur }) => (
                       <div className="form-control place-self-stretch md:place-self-auto">
                         <label className="label">

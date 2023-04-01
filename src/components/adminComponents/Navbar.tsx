@@ -29,7 +29,7 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
         <Link
           href="/"
           aria-label="home button logo"
-          className="btn-ghost btn hidden md:block "
+          className="btn btn-ghost hidden md:block "
         >
           <Logo
             className={`z-50 h-auto w-40 fill-base-content stroke-base-content`}
@@ -37,7 +37,7 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <span className="font-bold  text-lg">Your Dashboard</span>
+        <span className="font-bold  text-lg">Site Dashboard</span>
       </div>
 
       <div className="mr-2 w-full justify-end md:navbar-end ">
@@ -51,7 +51,7 @@ export default function Navbar({ sidebarOpen, toggleSidebar }: Props) {
             </span>
             <button
               onClick={() => signOut()}
-              className="btn-primary btn-xs btn ml-2"
+              className="btn btn-primary btn-xs ml-2"
             >
               Log out
             </button>

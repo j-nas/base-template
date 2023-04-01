@@ -91,7 +91,7 @@ export const ServiceManager = () => {
                         href={`services/${service?.position.toLowerCase()}`}
                       >
                         <span className="link mr-1">{service.title}</span>
-                        <span className="badge-primary badge">
+                        <span className="btn btn-outline btn-xs">
                           <IoMdConstruct className="mr-2 " /> Edit
                         </span>
                       </Link>

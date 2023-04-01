@@ -171,9 +171,9 @@ export const UserManager = () => {
                     </span>
                     <span className="text-xs">
                       {user.superAdmin
-                        ? "Super Admin"
+                        ? "Site Administrator"
                         : user.admin
-                        ? "Admininstrator"
+                        ? "Content Administrator"
                         : "Contributor"}
                     </span>
                   </div>
