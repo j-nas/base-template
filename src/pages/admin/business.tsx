@@ -1,16 +1,14 @@
-import { type NextPageWithLayout } from "../_app";
-import type { ReactElement } from "react";
-import Layout from "../../components/adminComponents/Layout";
-import { api } from "../../utils/api";
-import z from "zod";
-import InputWrapper from "../../components/adminComponents/InputWrapper";
-import { Field, Form, type FormInstance } from "houseform";
-import LoadingSpinner from "../../components/LoadingSpinner";
-import React from "react";
-import { type RouterOutputs } from "../../utils/api";
-import { Toaster, toast } from "react-hot-toast";
-import Breadcrumbs from "../../components/adminComponents/Breadcrumbs";
+import React, { type ReactElement } from "react";
 import { useSession } from "next-auth/react";
+import { Field, Form, type FormInstance } from "houseform";
+import { Toaster, toast } from "react-hot-toast";
+import { IoMdHelpCircle } from "react-icons/io";
+import z from "zod";
+import { type NextPageWithLayout } from "../_app";
+import { api, type RouterOutputs } from "~/utils/api";
+import LoadingSpinner from "@/LoadingSpinner";
+import Layout from "@/adminComponents/Layout";
+import Breadcrumbs from "@/adminComponents/Breadcrumbs";
 import NotAuthorized from "@/adminComponents/NotAuthorized";
 
 const provinces = [
@@ -86,44 +84,119 @@ export const BusinessProfile: NextPageWithLayout = () => {
             {({ submit, errors }) => (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="flex w-full flex-col place-items-stretch">
-                  <InputWrapper
-                    label="Business Name"
+                  <Field<string>
                     name="title"
                     initialValue={data.title}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your business name" })
                       .max(30, {
                         message: "Please limit business name to 30 characters",
                       })}
-                  />
-                  <InputWrapper
-                    label="Address"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Business Name
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="address"
                     initialValue={data.address}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your address" })
                       .max(100, {
                         message: "Please limit adress to 100 characters",
                       })}
-                  />
-                  <InputWrapper
-                    label="City"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Address
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="city"
                     initialValue={data.city}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your city" })
                       .max(30, {
                         message: "Please limit city name to 30 characters",
                       })}
-                  />
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          City
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
                   <Field<string> name="province" initialValue={data.province}>
                     {({ value, setValue, onBlur }) => (
                       <div className="form-control place-self-stretch md:place-self-auto">
-                        <label className="label">
-                          <span className="label-text">Province</span>
+                        <label className="font-bold tracking-wide text-sm">
+                          Province
                         </label>
                         <select
                           className="select-bordered select  "
@@ -140,159 +213,627 @@ export const BusinessProfile: NextPageWithLayout = () => {
                       </div>
                     )}
                   </Field>
-                  <InputWrapper
-                    label="Postal Code"
+                  <Field<string>
                     name="postalCode"
                     initialValue={data.postalCode}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your postal code" })
                       .max(7, {
                         message: "Please enter a valid postal code",
                       })}
-                  />
-                  <InputWrapper
-                    label="Phone"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Postal Code
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="telephone"
                     initialValue={data.telephone}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your phone number" })
                       .max(12, {
                         message: "Please enter a valid phone number",
                       })}
-                  />
-                  <InputWrapper
-                    label="Email"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Telephone
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="email"
                     initialValue={data.email}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your email" })
                       .email({ message: "Please enter a valid email" })}
-                  />
-                  <InputWrapper
-                    label="Holidays"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Email
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="holidays"
                     initialValue={data.holidays}
-                    tooltip='Enter the holidays for your business, as they would appear on the site. For example: "Closed on all statutory holidays"'
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your holidays" })
                       .max(50, {
                         message: "Please limit holidays to 50 characters",
                       })}
-                  />
-                  <InputWrapper
-                    label="Hours of operation"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Holidays
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="hours"
                     initialValue={data.hours}
-                    tooltip='Enter the hours of operation for your business, as they would appear on the site. For example: "Monday to Friday 9:00am to 5:00pm"'
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your hours" })
                       .max(50, {
                         message: "Please limit hours to 50 characters",
                       })}
-                  />
-                  <InputWrapper
-                    label="Owner Name"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Hours
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="ownerName"
                     initialValue={data.ownerName}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your name" })
                       .max(30, {
                         message: "Please limit name to 30 characters",
                       })}
-                  />
-                  <InputWrapper
-                    label="Owner Quote"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Owner Name
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="ownerQuote"
                     initialValue={data.ownerQuote}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your quote" })
                       .max(100, {
                         message: "Please limit quote to 100 characters",
                       })}
-                  />
-                  <InputWrapper
-                    label="Owner Title"
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Owner Quote
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="ownerTitle"
                     initialValue={data.ownerTitle}
-                    zodValidate={z
+                    onChangeValidate={z
                       .string()
                       .min(1, { message: "Please enter your title" })
                       .max(30, {
                         message: "Please limit title to 30 characters",
                       })}
-                  />
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Owner Title
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
                 </div>
                 <div className="flex w-full flex-col place-items-stretch">
-                  <InputWrapper
-                    label="Facebook Page URL"
+                  <Field<string>
                     name="facebookUrl"
                     initialValue={data.facebookUrl ?? undefined}
-                    tooltip="Enter the URL of your Facebook page. For example: https://www.facebook.com/yourbusiness. Leave blank if you do not have a Facebook page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="Instagram Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Facebook URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your Facebook page. For example: https://www.facebook.com/yourbusiness. Leave blank if you do not have a Facebook page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="instagramUrl"
                     initialValue={data.instagramUrl ?? undefined}
-                    tooltip="Enter the URL of your Instagram page. For example: https://www.instagram.com/yourbusiness. Leave blank if you do not have an Instagram page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="Twitter Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Instagram URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your Instagram page. For example: https://www.instagram.com/yourbusiness. Leave blank if you do not have an Instagram page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="twitterUrl"
                     initialValue={data.twitterUrl ?? undefined}
-                    tooltip="Enter the URL of your Twitter page. For example: https://www.twitter.com/yourbusiness. Leave blank if you do not have a Twitter page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="LinkedIn Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Twitter URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your Twitter page. For example: https://www.twitter.com/yourbusiness. Leave blank if you do not have a Twitter page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="linkedInUrl"
                     initialValue={data.linkedInUrl ?? undefined}
-                    tooltip="Enter the URL of your LinkedIn page. For example: https://www.linkedin.com/yourbusiness. Leave blank if you do not have a LinkedIn page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="YouTube Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          LinkedIn URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your LinkedIn page. For example: https://www.linkedIn.com/yourbusiness. Leave blank if you do not have a LinkedIn page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="youtubeUrl"
                     initialValue={data.youtubeUrl ?? undefined}
-                    tooltip="Enter the URL of your YouTube page. For example: https://www.youtube.com/yourbusiness. Leave blank if you do not have a YouTube page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="Pinterest Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          YouTube URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your YouTube page. For example: https://www.youtube.com/yourbusiness. Leave blank if you do not have a YouTube page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="pinterestUrl"
                     initialValue={data.pinterestUrl ?? undefined}
-                    tooltip="Enter the URL of your Pinterest page. For example: https://www.pinterest.com/yourbusiness. Leave blank if you do not have a Pinterest page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="TikTok Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Pintrest URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your Pintrest page. For example: https://www.pintrest.com/yourbusiness. Leave blank if you do not have a Pintrest page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="tiktokUrl"
                     initialValue={data.tiktokUrl ?? undefined}
-                    tooltip="Enter the URL of your TikTok page. For example: https://www.tiktok.com/yourbusiness. Leave blank if you do not have a TikTok page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="Snapchat Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Tiktok URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your Tiktok page. For example: https://www.tiktok.com/yourbusiness. Leave blank if you do not have a Tiktok page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="snapchatUrl"
                     initialValue={data.snapchatUrl ?? undefined}
-                    tooltip="Enter the URL of your Snapchat page. For example: https://www.snapchat.com/yourbusiness. Leave blank if you do not have a Snapchat page."
-                    zodValidate={z.string().optional()}
-                  />
-                  <InputWrapper
-                    label="WhatsApp Page URL"
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          Snapchat URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your Snapchat page. For example: https://www.snapchat.com/yourbusiness. Leave blank if you do not have a Snapchat page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
+                  <Field<string>
                     name="whatsappUrl"
                     initialValue={data.whatsappUrl ?? undefined}
-                    tooltip="Enter the URL of your WhatsApp page. For example: https://www.whatsapp.com/yourbusiness. Leave blank if you do not have a WhatsApp page."
-                    zodValidate={z.string().optional()}
-                  />
+                    onChangeValidate={z.string().optional()}
+                  >
+                    {({ value, setValue, isDirty, errors }) => (
+                      <div className="mx-auto flex w-52 flex-col">
+                        <label
+                          className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                        >
+                          WhatsApp URL
+                          <span
+                            className="tooltip"
+                            data-tip="Enter the URL of your WhatsApp page. For example: https://www.whatsapp.com/yourbusiness. Leave blank if you do not have a WhatsApp page."
+                          >
+                            <IoMdHelpCircle />
+                          </span>
+                        </label>
+                        <input
+                          className={`input-bordered input ${
+                            isDirty ? "input-success" : ""
+                          } ${errors.length > 0 ? "input-error" : ""}`}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                        />
+                        {errors.length > 0 &&
+                          errors.map((error) => (
+                            <span key={error} className="text-error text-xs">
+                              {error}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+                  </Field>
                 </div>
                 <div className="col-span-full row-start-2">
                   <button
