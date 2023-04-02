@@ -46,11 +46,17 @@ export default function Login() {
                           className="input input-primary"
                           onBlur={onBlur}
                           onChange={(e) => setValue(e.target.value)}
+                          onKeyUp={(e) => {
+                            if (e.key === "Enter") {
+                              void submit();
+                            }
+                          }}
                         ></input>
                       </div>
                     )}
                   </Field>
                   <button
+                    type="submit"
                     className={`btn ${
                       errors.length > 0
                         ? "btn-disabled btn-error"
