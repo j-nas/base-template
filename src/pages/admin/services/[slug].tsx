@@ -30,7 +30,7 @@ type FormData = {
   icon: string;
   primaryImage: string;
   secondaryImage: string;
-  markdown: string;
+  content: string;
   description: string;
 };
 
@@ -75,7 +75,7 @@ export const ServiceEditor = () => {
   };
 
   const handleSubmit = async (formData: FormData) => {
-    const { title, icon, primaryImage, secondaryImage, markdown, description } =
+    const { title, icon, primaryImage, secondaryImage, content, description } =
       formData;
     const submission = {
       id: data?.id || "",
@@ -83,8 +83,8 @@ export const ServiceEditor = () => {
       icon,
       primaryImage,
       secondaryImage,
-      markdown: markdown,
-      shortDescription: description,
+      content: content,
+      summary: description,
     };
     await toast.promise(
       submitMutation.mutateAsync(submission, {
@@ -235,7 +235,7 @@ export const ServiceEditor = () => {
                     </div>
                     <Field<string>
                       name="description"
-                      initialValue={data.shortDescription}
+                      initialValue={data.summary}
                       onChangeValidate={z
                         .string()
                         .min(1, { message: "Required" })
@@ -365,8 +365,8 @@ export const ServiceEditor = () => {
                       )}
                     </Field>
                     <Field<string>
-                      name="markdown"
-                      initialValue={data.markdown}
+                      name="content"
+                      initialValue={data.content}
                       ref={contentRef}
                     >
                       {({ value, isDirty }) => (

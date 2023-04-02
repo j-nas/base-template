@@ -16,7 +16,7 @@ import { z } from "zod";
 type FormData = {
   title: string;
   primaryImage: string;
-  markdown: string;
+  content: string;
   summary: string;
 };
 
@@ -188,7 +188,7 @@ export const BlogEditor = () => {
                           handleImageChange={handleImageChange}
                         >
                           <button
-                            className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                            className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                               isDirty ? "btn-success" : ""
                             }`}
                           >
@@ -233,7 +233,7 @@ export const BlogEditor = () => {
                   </Field>
 
                   <Field<string>
-                    name="markdown"
+                    name="content"
                     initialValue=""
                     ref={contentRef}
                     onChangeValidate={z
@@ -269,7 +269,7 @@ export const BlogEditor = () => {
                     </Link>
                     <button
                       onClick={submit}
-                      className={`btn-success btn ${
+                      className={`btn btn-success ${
                         errors.length > 0 ? "btn-disabled" : ""
                       }`}
                     >

@@ -109,24 +109,24 @@ model Hero {
 }
 
 model Service {
-    id               String          @id @default(cuid())
-    pageName         String          @unique
-    title            String
-    shortDescription String
-    markdown         String
-    icon             String
-    createdAt        DateTime        @default(now())
-    updatedAt        DateTime        @updatedAt
-    position         Services        @unique
-    primaryImage     PrimaryImage?
-    secondaryImage   SecondaryImage?
+    id             String          @id @default(cuid())
+    pageName       String          @unique
+    title          String
+    summary        String
+    content        String
+    icon           String
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    position       Services        @unique
+    primaryImage   PrimaryImage?
+    secondaryImage SecondaryImage?
 }
 
 model AboutUs {
     id             String          @id @default(cuid())
     title          String
     summary        String
-    markdown       String
+    content        String
     createdAt      DateTime        @default(now())
     updatedAt      DateTime        @updatedAt
     inUse          Boolean         @default(false)
@@ -149,7 +149,7 @@ model Blog {
     id           String        @id @default(cuid())
     title        String        @unique
     summary      String
-    markdown     String
+    content      String
     featured     Boolean       @default(false)
     createdAt    DateTime      @default(now())
     updatedAt    DateTime      @updatedAt

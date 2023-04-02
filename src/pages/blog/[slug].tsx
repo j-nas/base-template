@@ -6,27 +6,27 @@ import type {
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import superjson from "superjson";
-import { prisma } from "../../server/db";
+import { prisma } from "~/server/db";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "../../server/api/trpc";
-import { appRouter } from "../../server/api/root";
-import { env } from "../../env/client.mjs";
+import { createInnerTRPCContext } from "~/server/api/trpc";
+import { appRouter } from "~/server/api/root";
+import { env } from "~/env/client.mjs";
 import Link from "next/link";
 
-const TopHero = dynamic(() => import("../../components/TopHero"), {
+const TopHero = dynamic(() => import("@/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
 const CldImage = dynamic(() =>
   import("next-cloudinary").then((mod) => mod.CldImage)
 );
-const Footer = dynamic(() => import("../../components/Footer"));
-const HeroBanner = dynamic(() => import("../../components/BottomHero"), {
+const Footer = dynamic(() => import("@/Footer"));
+const HeroBanner = dynamic(() => import("@/BottomHero"), {
   loading: () => <p>Loading...</p>,
 });
-const Navbar = dynamic(() => import("../../components/Navbar"), {
+const Navbar = dynamic(() => import("@/Navbar"), {
   loading: () => <p>Loading...</p>,
 });
-const Markdown = dynamic(() => import("../../components/Markdown"), {
+const InlineHTML = dynamic(() => import("@/InlineHTML"), {
   loading: () => <p>Loading...</p>,
 });
 
@@ -108,7 +108,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   </span>
                 </div>
                 <div className="prose mb-8">
-                  <Markdown content={blog.markdown} />
+                  <InlineHTML allowImages content={blog.content} />
                 </div>
                 <div className="">
                   <Link className="btn btn-primary" href={`/blog`}>

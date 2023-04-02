@@ -6,36 +6,65 @@ import { createInnerTRPCContext } from "../server/api/trpc";
 import { appRouter } from "../server/api/root";
 import { cloudinaryUrlGenerator } from "../utils/cloudinaryApi";
 import Link from "next/link";
-import { type IconList } from "~/components/IconDisplay";
+import { type IconList } from "@/IconDisplay";
+import LoadingSpinner from "@/LoadingSpinner";
 
-const ServiceSummaryCard = dynamic(import("../components/ServiceSummaryCard"), {
-  loading: () => <span>O</span>,
+const ServiceSummaryCard = dynamic(import("@/ServiceSummaryCard"), {
+  loading: () => (
+    <span>
+      <LoadingSpinner />
+    </span>
+  ),
 });
 
-const DynamicGallery = dynamic(() => import("../components/FrontGallery"), {
-  loading: () => <p>Loading...</p>,
+const DynamicGallery = dynamic(() => import("@/FrontGallery"), {
+  loading: () => (
+    <p>
+      <LoadingSpinner />
+    </p>
+  ),
 });
 
-const CldImg = dynamic(() => import("../components/CldImg"), {
-  loading: () => <p>Loading...</p>,
+const CldImg = dynamic(() => import("@/CldImg"), {
+  loading: () => (
+    <p>
+      <LoadingSpinner />
+    </p>
+  ),
 });
 
-const DynamicTestimonial = dynamic(() => import("../components/Testimonial"), {
-  loading: () => <p>Loading...</p>,
+const DynamicTestimonial = dynamic(() => import("@/Testimonial"), {
+  loading: () => (
+    <p>
+      <LoadingSpinner />
+    </p>
+  ),
 });
 
-const DynamicFooter = dynamic(() => import("../components/Footer"), {
-  loading: () => <p>Loading...</p>,
+const DynamicFooter = dynamic(() => import("@/Footer"), {
+  loading: () => (
+    <p>
+      <LoadingSpinner />
+    </p>
+  ),
 });
-const DynamicNavbar = dynamic(() => import("../components/Navbar"), {
+const DynamicNavbar = dynamic(() => import("@/Navbar"), {
   loading: () => null,
 });
-const InlineMarkdown = dynamic(() => import("../components/InlineMarkdown"), {
-  loading: () => <p>Loading...</p>,
+const InlineHTML = dynamic(() => import("@/InlineHTML"), {
+  loading: () => (
+    <p>
+      <LoadingSpinner />
+    </p>
+  ),
 });
 
-const HeroBanner = dynamic(() => import("../components/BottomHero"), {
-  loading: () => <p>Loading...</p>,
+const HeroBanner = dynamic(() => import("@/BottomHero"), {
+  loading: () => (
+    <p>
+      <LoadingSpinner />
+    </p>
+  ),
 });
 
 const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
@@ -100,7 +129,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <ServiceSummaryCard
                   key={service.id}
                   icon={service.icon as IconList}
-                  summary={service.shortDescription}
+                  summary={service.summary}
                   title={service.title}
                 />
                 // <div className="card rounded-none bg-base-300 " key={service.id}>
@@ -116,7 +145,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 //     <h2 className=" text-center font-medium text-xl">
                 //       {service.title}
                 //     </h2>
-                //     <p className="text-center">{service.shortDescription}</p>
+                //     <p className="text-center">{service.summary}</p>
                 //   </div>
                 // </div>
               ))}
@@ -160,7 +189,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <div className="prose flex flex-col justify-center prose-a:btn-primary prose-a:btn">
             <span className="font-medium uppercase text-accent">About Us</span>
             <h2 className="mt-0 font-bold text-4xl">About {business?.title}</h2>
-            <InlineMarkdown className="text-lg" content={aboutUs.markdown} />
+            <InlineHTML className="text-lg" content={aboutUs.content} />
             <blockquote className=" rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
               <p className="mb-4 text-lg">{business?.ownerQuote}</p>
               <div className="grid w-1/2">
@@ -181,13 +210,10 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           {/* text */}
           <div className="prose order-last flex flex-col justify-center prose-a:btn-primary prose-a:btn lg:order-first ">
             <span className="mt-12 font-medium uppercase text-accent">
-              {mainService?.shortDescription}
+              {mainService?.summary}
             </span>
             <h2 className="mt-0 font-bold text-4xl">{mainService?.title}</h2>
-            <InlineMarkdown
-              className="text-lg"
-              content={mainService?.markdown}
-            />
+            <InlineHTML className="text-lg" content={mainService?.content} />
 
             <Link href={`/${mainService?.pageName || ""}`} className="w-fit">
               More about {mainService?.title}
@@ -292,7 +318,7 @@ export async function getStaticProps() {
   const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
   const testimonials = await ssg.testimonial.getFirstTwoHighlighted.fetch();
   const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  aboutUs.markdown = truncateMarkdown(aboutUs.markdown, 700);
+  aboutUs.content = truncateContent(aboutUs.content, 700);
   const gallery = await ssg.gallery.getFrontPageGallery.fetch();
 
   const frontHeroImageUrl = cloudinaryUrlGenerator(
@@ -303,7 +329,7 @@ export async function getStaticProps() {
   const mainService =
     services.find((service) => service.position === "SERVICE1") ?? null;
   if (mainService)
-    mainService.markdown = truncateMarkdown(mainService.markdown, 700);
+    mainService.content = truncateContent(mainService.content, 700);
   const pageTitle = !mainService
     ? "Home"
     : business.title +
@@ -330,10 +356,10 @@ export async function getStaticProps() {
   };
 }
 
-function truncateMarkdown(markdown: string, length: number) {
-  if (markdown.length > length) {
-    return markdown.slice(0, length) + "...";
+function truncateContent(content: string, length: number) {
+  if (content.length > length) {
+    return content.slice(0, length) + "...";
   } else {
-    return markdown;
+    return content;
   }
 }
