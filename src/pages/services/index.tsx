@@ -43,7 +43,7 @@ export const Services: NextPage<
             >
               <figure className="w-full md:max-w-xs">
                 <CldImage
-                  alt={service.shortDescription}
+                  alt={service.summary}
                   format={service.primaryImage.format}
                   src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_id}`}
                   height="1600"
@@ -58,7 +58,7 @@ export const Services: NextPage<
               </figure>
               <div className="card-body ">
                 <h2 className="card-title">{service.title}</h2>
-                <p>{service.shortDescription}</p>
+                <p>{service.summary}</p>
                 <div className="card-actions justify-end">
                   <Link
                     href={`/services/${service.pageName}`}

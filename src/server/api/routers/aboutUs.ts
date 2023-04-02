@@ -5,7 +5,7 @@ const aboutUsOutputSchema = z.object({
   id: z.string(),
   title: z.string(),
   summary: z.string(),
-  markdown: z.string(),
+  content: z.string(),
   inUse: z.boolean(),
   primaryImage: z.object({
     format: z.string(),
@@ -144,7 +144,7 @@ export const aboutUsRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
       summary: z.string(),
-      markdown: z.string(),
+      content: z.string(),
       primaryImage: z.string(),
       secondaryImage: z.string(),
 
@@ -156,7 +156,7 @@ export const aboutUsRouter = createTRPCRouter({
         },
         data: {
           summary: input.summary,
-          markdown: input.markdown,
+          content: input.content,
           primaryImage: {
             update: {
               image: {

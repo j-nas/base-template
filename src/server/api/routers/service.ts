@@ -13,8 +13,8 @@ const serviceSchema = z.object({
   id: z.string(),
   pageName: z.string(),
   title: z.string(),
-  shortDescription: z.string(),
-  markdown: z.string(),
+  summary: z.string(),
+  content: z.string(),
   icon: z.custom((value) => {
     if (IconKeys.includes(value as typeof IconKeys[number])) {
       return value;
@@ -217,8 +217,8 @@ export const serviceRouter = createTRPCRouter({
     .input(z.object({
       id: z.string(),
       title: z.string(),
-      shortDescription: z.string(),
-      markdown: z.string(),
+      summary: z.string(),
+      content: z.string(),
       icon: z.custom((value) => {
         if (IconKeys.includes(value as IconList)) {
           return value;
@@ -243,8 +243,8 @@ export const serviceRouter = createTRPCRouter({
         data: {
           title: input.title,
           pageName: pageName,
-          shortDescription: input.shortDescription,
-          markdown: input.markdown,
+          summary: input.summary,
+          content: input.content,
           icon: input.icon as string,
           primaryImage: {
             update: {

@@ -1,30 +1,30 @@
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import superjson from "superjson";
-import { prisma } from "../../server/db";
-import { appRouter } from "../../server/api/root";
-import { createInnerTRPCContext } from "../../server/api/trpc";
+import { prisma } from "~/server/db";
+import { appRouter } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
 import { FaPhone } from "react-icons/fa";
 
-const TopHero = dynamic(() => import("../../components/TopHero"), {
+const TopHero = dynamic(() => import("@/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
-const CldImg = dynamic(() => import("../../components/CldImg"), {
+const CldImg = dynamic(() => import("@/CldImg"), {
   loading: () => <p>Loading...</p>,
 });
-const Footer = dynamic(() => import("../../components/Footer"), {
+const Footer = dynamic(() => import("@/Footer"), {
   loading: () => <p>Loading...</p>,
 });
-const HeroBanner = dynamic(() => import("../../components/BottomHero"), {
+const HeroBanner = dynamic(() => import("@/BottomHero"), {
   loading: () => <p>Loading...</p>,
 });
-const Navbar = dynamic(() => import("../../components/Navbar"), {
+const Navbar = dynamic(() => import("@/Navbar"), {
   loading: () => <p>Loading...</p>,
 });
-const Markdown = dynamic(() => import("../../components/Markdown"), {
+const InlineHTML = dynamic(() => import("@/InlineHTML"), {
   loading: () => <p>Loading...</p>,
 });
 
@@ -86,10 +86,14 @@ export const ServicePage = (
           {/* text */}
           <div className="prose flex flex-col justify-center">
             <span className="font-medium uppercase text-accent">
-              {service.shortDescription}
+              {service.summary}
             </span>
             <h2 className="mt-0 font-bold text-4xl">About {service.title}</h2>
-            <Markdown className="text-lg" content={service.markdown} />
+            <InlineHTML
+              allowImages
+              className="text-lg"
+              content={service.content}
+            />
 
             <div className="flex">
               <div className="tooltip" data-tip={business.telephone}>

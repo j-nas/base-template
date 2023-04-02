@@ -7,7 +7,7 @@ const blogSchema = z.object({
   id: z.string(),
   title: z.string(),
   summary: z.string(),
-  markdown: z.string(),
+  content: z.string(),
   featured: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -96,7 +96,7 @@ export const blogRouter = createTRPCRouter({
     }),
   getSummaries: publicProcedure
     .output(z.array(
-      blogSchema.omit({ markdown: true }).extend({ pageName: z.string() })
+      blogSchema.omit({ content: true }).extend({ pageName: z.string() })
     ))
     .query(async ({ ctx }) => {
       const data = await ctx.prisma.blog.findMany({
@@ -227,7 +227,7 @@ export const blogRouter = createTRPCRouter({
     .input(z.object({
       title: z.string(),
       summary: z.string(),
-      markdown: z.string(),
+      content: z.string(),
       primaryImage: z.string(),
 
 
@@ -237,7 +237,7 @@ export const blogRouter = createTRPCRouter({
         data: {
           title: input.title,
           summary: input.summary,
-          markdown: input.markdown,
+          content: input.content,
           userId: ctx.session.user.id,
           primaryImage: {
             create: {
@@ -272,7 +272,7 @@ export const blogRouter = createTRPCRouter({
       id: z.string(),
       title: z.string(),
       summary: z.string(),
-      markdown: z.string(),
+      content: z.string(),
       primaryImage: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
@@ -284,7 +284,7 @@ export const blogRouter = createTRPCRouter({
         data: {
           title: input.title,
           summary: input.summary,
-          markdown: input.markdown,
+          content: input.content,
           primaryImage: {
             update: {
               image: {

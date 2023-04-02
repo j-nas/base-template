@@ -18,7 +18,7 @@ import { useSession } from "next-auth/react";
 type FormData = {
   title: string;
   primaryImage: string;
-  markdown: string;
+  content: string;
   summary: string;
 };
 
@@ -47,12 +47,12 @@ export const BlogEditor = () => {
   };
 
   const handleSubmit = async (formData: FormData) => {
-    const { title, primaryImage, markdown, summary } = formData;
+    const { title, primaryImage, content, summary } = formData;
     const submission = {
       id: data?.id || "",
       title,
       primaryImage,
-      markdown: markdown,
+      content: content,
       summary: summary,
     };
     await toast.promise(
@@ -247,7 +247,7 @@ export const BlogEditor = () => {
                             handleImageChange={handleImageChange}
                           >
                             <button
-                              className={`btn-outline btn-square btn h-fit w-fit p-6 ${
+                              className={`btn btn-outline btn-square h-fit w-fit p-6 ${
                                 isDirty ? "btn-success" : ""
                               }`}
                             >
@@ -276,8 +276,8 @@ export const BlogEditor = () => {
                     </Field>
 
                     <Field<string>
-                      name="markdown"
-                      initialValue={data.markdown}
+                      name="content"
+                      initialValue={data.content}
                       ref={contentRef}
                     >
                       {({ value, isDirty }) => (
@@ -303,7 +303,7 @@ export const BlogEditor = () => {
                       </Link>
                       <button
                         onClick={submit}
-                        className={`btn-success btn ${
+                        className={`btn btn-success ${
                           errors.length > 0 ? "btn-disabled" : ""
                         }`}
                       >

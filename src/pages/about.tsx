@@ -7,22 +7,22 @@ import { appRouter } from "../server/api/root";
 import Link from "next/link";
 import { FaPhone } from "react-icons/fa";
 
-const TopHero = dynamic(() => import("../components/TopHero"), {
+const TopHero = dynamic(() => import("@/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
-const CldImg = dynamic(() => import("../components/CldImg"), {
+const CldImg = dynamic(() => import("@/CldImg"), {
   loading: () => <p>Loading...</p>,
 });
-const Footer = dynamic(() => import("../components/Footer"), {
+const Footer = dynamic(() => import("@/Footer"), {
   loading: () => <p>Loading...</p>,
 });
-const HeroBanner = dynamic(() => import("../components/BottomHero"), {
+const HeroBanner = dynamic(() => import("@/BottomHero"), {
   loading: () => <p>Loading...</p>,
 });
-const Navbar = dynamic(() => import("../components/Navbar"), {
+const Navbar = dynamic(() => import("@/Navbar"), {
   loading: () => <p>Loading...</p>,
 });
-const Markdown = dynamic(() => import("../components/Markdown"), {
+const InlineHTML = dynamic(() => import("@/InlineHTML"), {
   loading: () => <p>Loading...</p>,
 });
 export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
@@ -76,7 +76,11 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           <div className="prose flex flex-col justify-center">
             <span className="font-medium uppercase text-accent">About Us</span>
             <h2 className="mt-0 font-bold text-4xl">About {business?.title}</h2>
-            <Markdown className="text-lg" content={aboutUs.markdown} />
+            <InlineHTML
+              allowImages
+              className="text-lg"
+              content={aboutUs.content}
+            />
             <blockquote className=" rounded-xl bg-base-300  bg-[url(/quote-white.svg)] bg-[right_135%] bg-no-repeat p-4">
               <p className="mb-4 text-lg">{business?.ownerQuote}</p>
               <div className="grid w-1/2">
