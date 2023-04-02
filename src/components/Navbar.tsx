@@ -61,7 +61,7 @@ export default function Navbar({ services, business }: Props) {
     `}
     >
       <div
-        className={` absolute inset-0 -z-10 h-full w-full -translate-y-full bg-base-100 transition-all duration-300 ease-in-out ${
+        className={` absolute inset-0 -z-10 h-full w-full -translate-y-full bg-base-100/95 backdrop-blur-sm transition-all duration-300 ease-in-out ${
           scrollPosition ? "translate-y-0 shadow-2xl" : ""
         }`}
       ></div>
