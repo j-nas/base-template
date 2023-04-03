@@ -22,8 +22,8 @@ type FormData = {
   icon: string;
   primaryImage: string;
   secondaryImage: string;
-  markdown: string;
-  description: string;
+  content: string;
+  summary: string;
 };
 
 export const AboutUsEditor = () => {
@@ -62,15 +62,14 @@ export const AboutUsEditor = () => {
   };
 
   const handleSubmit = async (formData: FormData) => {
-    const { title, primaryImage, secondaryImage, markdown, description } =
-      formData;
+    const { title, primaryImage, secondaryImage, content, summary } = formData;
     const submission = {
       id: data?.id || "",
       title,
       primaryImage,
       secondaryImage,
-      markdown: markdown,
-      summary: description,
+      content,
+      summary,
     };
     await toast.promise(
       submitMutation.mutateAsync(submission, {
@@ -126,7 +125,7 @@ export const AboutUsEditor = () => {
                 {({ submit, errors }) => (
                   <React.Fragment>
                     <Field<string>
-                      name="description"
+                      name="summary"
                       initialValue={data.summary}
                       onChangeValidate={z
                         .string()
@@ -257,8 +256,8 @@ export const AboutUsEditor = () => {
                       )}
                     </Field>
                     <Field<string>
-                      name="markdown"
-                      initialValue={data.markdown}
+                      name="content"
+                      initialValue={data.content}
                       ref={contentRef}
                     >
                       {({ value, isDirty }) => (
