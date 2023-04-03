@@ -5,13 +5,14 @@ import Link from "next/link";
 import Logo from "./Logo";
 import dynamic from "next/dynamic";
 import DarkModeButton from "./DarkModeButton";
-// import HamburgerMenu from "./HamburgerMenu";
 import { type BusinessInfo } from "@prisma/client";
-import { type RouterOutputs } from "../utils/api";
 
 type Props = {
-  services: RouterOutputs["service"]["getActive"];
-  business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
+  services: {
+    title: string;
+    pageName: string;
+  }[];
+  business: BusinessInfo;
 };
 
 const DynamicHamburgerMenu = dynamic(() => import("./HamburgerMenu"), {
@@ -69,7 +70,7 @@ export default function Navbar({ services, business }: Props) {
         <Link
           href="/"
           aria-label="home button logo"
-          className="btn btn-ghost fill-white stroke-white lowercase text-xl"
+          className="btn-ghost btn fill-white stroke-white lowercase text-xl"
         >
           <Logo
             className={`z-50 h-auto w-40 ${
@@ -85,7 +86,7 @@ export default function Navbar({ services, business }: Props) {
             <Link
               href="/"
               className={`${
-                router.pathname === "/" ? "btn  btn-accent" : "btn  btn-ghost"
+                router.pathname === "/" ? "btn-accent  btn" : "btn-ghost  btn"
               } rounded-l-lg border-none `}
             >
               Home
@@ -96,8 +97,8 @@ export default function Navbar({ services, business }: Props) {
               href="/about"
               className={`${
                 router.pathname === "/about"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none`}
             >
               About
@@ -108,8 +109,8 @@ export default function Navbar({ services, business }: Props) {
               href="/contact"
               className={`${
                 router.pathname === "/contact"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               Contact
@@ -120,8 +121,8 @@ export default function Navbar({ services, business }: Props) {
               href="/services"
               className={`${
                 router.pathname.startsWith("/services")
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               Services
@@ -136,22 +137,20 @@ export default function Navbar({ services, business }: Props) {
               </svg>
             </Link>
             <ul className="bg-base-300 p-2">
-              {services
-                .sort((a, b) => a.position.localeCompare(b.position))
-                .map((service) => (
-                  <li key={service.id}>
-                    <Link
-                      href={`/services/${service.pageName}`}
-                      className={`rounded-none ${
-                        router.asPath.includes(service.pageName)
-                          ? "btn  btn-accent"
-                          : "btn btn-ghost text-base-content"
-                      }`}
-                    >
-                      {service.title}
-                    </Link>
-                  </li>
-                ))}
+              {services.map((service) => (
+                <li key={service.title}>
+                  <Link
+                    href={`/services/${service.pageName}`}
+                    className={`rounded-none ${
+                      router.asPath.includes(service.pageName)
+                        ? "btn-accent  btn"
+                        : "btn-ghost btn text-base-content"
+                    }`}
+                  >
+                    {service.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </li>
           <li>
@@ -159,8 +158,8 @@ export default function Navbar({ services, business }: Props) {
               href="/gallery"
               className={`${
                 router.pathname === "/gallery"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               Gallery
@@ -171,8 +170,8 @@ export default function Navbar({ services, business }: Props) {
               href="/testimonials"
               className={`${
                 router.pathname === "/testimonials"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-none `}
             >
               testimonials
@@ -183,8 +182,8 @@ export default function Navbar({ services, business }: Props) {
               href="/blog"
               className={`${
                 router.pathname === "/blog"
-                  ? "btn  btn-accent"
-                  : "btn  btn-ghost"
+                  ? "btn-accent  btn"
+                  : "btn-ghost  btn"
               } rounded-r-lg`}
             >
               Blog
@@ -192,7 +191,7 @@ export default function Navbar({ services, business }: Props) {
           </li>
         </ul>
         <DarkModeButton theme={theme} toggleTheme={toggleTheme} />
-        <DynamicHamburgerMenu services={services} business={business} />
+        <DynamicHamburgerMenu business={business} />
       </div>
     </div>
   );

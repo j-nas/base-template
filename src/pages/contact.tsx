@@ -1,9 +1,6 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "../server/api/trpc";
-import { appRouter } from "../server/api/root";
 import { env } from "~/env/client.mjs";
 import { contactFormValidationSchema } from "../utils/validationSchema";
 import { api } from "../utils/api";
@@ -11,21 +8,38 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { type z } from "zod";
+import { prisma } from "~/server/db";
+import LoadingSpinner from "@/LoadingSpinner";
 
-const TopHero = dynamic(() => import("../components/TopHero"));
-const InputWrapper = dynamic(() => import("../components/InputWrapper"));
-const Link = dynamic(() => import("next/link"));
-const CldImg = dynamic(() =>
-  import("next-cloudinary").then((mod) => mod.CldImage)
+const TopHero = dynamic(() => import("../components/TopHero"), {
+  loading: () => <LoadingSpinner />,
+});
+const InputWrapper = dynamic(() => import("../components/InputWrapper"), {
+  loading: () => <LoadingSpinner />,
+});
+const Link = dynamic(() => import("next/link"), {
+  loading: () => <LoadingSpinner />,
+});
+const CldImage = dynamic(
+  () =>
+    import("next-cloudinary").then((mod) => {
+      return mod.CldImage;
+    }),
+  {
+    loading: () => <LoadingSpinner />,
+  }
 );
-const Footer = dynamic(() => import("../components/Footer"));
-const Navbar = dynamic(() => import("../components/Navbar"));
+const Footer = dynamic(() => import("../components/Footer"), {
+  loading: () => <LoadingSpinner />,
+});
+const Navbar = dynamic(() => import("../components/Navbar"), {
+  loading: () => <LoadingSpinner />,
+});
 
 export const Contact: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
-  const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
-  const { blur_url, format, public_id, id } = bottomHero.primaryImage;
+  const { business, topHero, services, pageTitle, contactPageHero } = props;
   const [submitted, setSubmitted] = useState(false);
   const mutation = api.contactForm.sendContactForm.useMutation({
     onSuccess: () => {
@@ -35,7 +49,6 @@ export const Contact: NextPage<
       alert("Error sending message");
     },
   });
-
   const {
     register,
     handleSubmit,
@@ -70,8 +83,8 @@ export const Contact: NextPage<
               <span className="font-medium uppercase text-accent">Contact</span>
               <h2 className="mb-8 mt-2 font-bold text-5xl">Get in touch</h2>
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Quisquam
+                We will get back to you as soon as possible. Please fill out the
+                form below.
               </p>
             </div>
 
@@ -118,7 +131,7 @@ export const Contact: NextPage<
               </InputWrapper>
 
               {!submitted && (
-                <button type="submit" className="btn btn-primary btn-block">
+                <button type="submit" className="btn-primary btn-block btn">
                   Submit
                 </button>
               )}
@@ -149,63 +162,111 @@ export const Contact: NextPage<
                 <span> {business.city + ", " + business.province}</span>
                 <span> {business.postalCode}</span>
               </div>
-              <CldImg
+              <CldImage
                 alt="hero image"
-                blurDataURL={blur_url}
-                format={format}
+                blurDataURL={contactPageHero.primaryImage.blur_url}
                 height={1200}
-                src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${public_id}`}
+                src={contactPageHero.primaryImage.public_id}
                 width={1200}
                 crop="fill"
-                id={id}
                 className={`z-10  object-none object-top transition-all duration-300 ease-in-out peer-hover:scale-125 hover:scale-125`}
               />
             </div>
           </div>
         </section>
 
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
 };
 
 export async function getStaticProps() {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
   });
 
-  const business = await ssg.businessInfo.getActive.fetch();
-  const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  const mainService =
-    services.find((service) => service.position === "SERVICE1") ?? null;
-  const pageTitle = !mainService
-    ? "About Us"
-    : business.title +
+  const serviceData = await prisma.service.findMany({
+    select: {
+      title: true,
+      pageName: true,
+      position: true,
+    },
+  });
+  const mainService = serviceData.find(
+    (service) => service.position === "SERVICE1"
+  ) as (typeof serviceData)[0];
+
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+  const contactPageHero = heroData.find(
+    (hero) => hero.position === "CONTACT"
+  ) as (typeof heroData)[0];
+
+  const aboutUsData = await prisma.aboutUs.findFirst({
+    where: { inUse: true },
+    select: {
+      summary: true,
+    },
+  });
+
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        pageName: service.pageName,
+        title: service.title,
+      })),
+
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    contactPageHero: {
+      ...contactPageHero,
+      primaryImage: {
+        ...contactPageHero.primaryImage?.image,
+        public_id: `${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${
+          contactPageHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+
+    pageTitle:
+      businessData.title +
+      " | Contact Us" +
       " | " +
       mainService.title +
       " | " +
-      business.city +
-      ", " +
-      business.province;
-
+      businessData.city +
+      " | " +
+      businessData.province,
+  };
   return {
     props: {
-      business,
-      services,
-      bottomHero,
-      topHero,
-      aboutUs,
-      pageTitle,
+      ...pageData,
     },
+    revalidate: 1,
   };
 }
 

@@ -1,18 +1,24 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "../server/api/trpc";
-import { appRouter } from "../server/api/root";
 import Link from "next/link";
 import { FaPhone } from "react-icons/fa";
+import LoadingSpinner from "@/LoadingSpinner";
+import { prisma } from "~/server/db";
+import { env } from "~/env/client.mjs";
 
 const TopHero = dynamic(() => import("@/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
-const CldImg = dynamic(() => import("@/CldImg"), {
-  loading: () => <p>Loading...</p>,
-});
+const CldImage = dynamic(
+  () =>
+    import("next-cloudinary").then((mod) => {
+      return mod.CldImage;
+    }),
+  {
+    loading: () => <LoadingSpinner />,
+  }
+);
 const Footer = dynamic(() => import("@/Footer"), {
   loading: () => <p>Loading...</p>,
 });
@@ -46,26 +52,24 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             {aboutUs && (
               <>
                 <div className="col-span-10 col-start-1 row-start-1 h-full ">
-                  <CldImg
+                  <CldImage
                     alt="About us"
-                    format={aboutUs.primaryImage.format}
                     height={600}
                     width={800}
-                    public_id={aboutUs.primaryImage.public_id}
-                    id={aboutUs.primaryImage.id}
-                    blur={aboutUs.primaryImage.blur_url}
+                    src={aboutUs.primaryImage.public_id}
+                    blurDataURL={aboutUs.primaryImage.blur_url}
+                    placeholder="blur"
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-3 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
-                  <CldImg
+                  <CldImage
                     alt="About us"
-                    format={aboutUs.secondaryImage.format}
                     height={600}
                     width={800}
-                    public_id={aboutUs.secondaryImage.public_id}
-                    id={aboutUs.secondaryImage.id}
-                    blur={aboutUs.secondaryImage.blur_url}
+                    src={aboutUs.secondaryImage.public_id}
+                    blurDataURL={aboutUs.secondaryImage.blur_url}
+                    placeholder="blur"
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
@@ -94,7 +98,7 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               <div className="tooltip" data-tip={business.telephone}>
                 <Link
                   href={`tel:${business.telephone}`}
-                  className="btn btn-primary w-fit no-underline"
+                  className="btn-primary btn w-fit no-underline"
                 >
                   <FaPhone className="mr-2" />
                   Give us a call
@@ -104,49 +108,126 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </div>
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
 };
 
 export async function getStaticProps() {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
+  const cldFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
+
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
   });
 
-  const business = await ssg.businessInfo.getActive.fetch();
-  const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
+  const serviceData = await prisma.service.findMany({
+    select: {
+      title: true,
+      summary: true,
+      content: true,
+      pageName: true,
+      position: true,
+      icon: true,
+    },
+  });
+  const mainService = serviceData.find(
+    (service) => service.position === "SERVICE1"
+  ) as (typeof serviceData)[0];
 
-  const mainService =
-    services.find((service) => service.position === "SERVICE1") ?? null;
-  const pageTitle = !mainService
-    ? "About Us"
-    : business.title +
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+  const bottomHero = heroData.find(
+    (hero) => hero.position === "BOTTOM"
+  ) as (typeof heroData)[0];
+
+  const aboutUsData = await prisma.aboutUs.findFirst({
+    where: { inUse: true },
+    select: {
+      summary: true,
+      content: true,
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      secondaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+    },
+  });
+
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        pageName: service.pageName,
+        title: service.title,
+      })),
+
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    bottomHero: {
+      ...bottomHero,
+      primaryImage: {
+        ...bottomHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          bottomHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+
+    aboutUs: {
+      ...aboutUsData,
+      primaryImage: {
+        ...aboutUsData?.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          aboutUsData?.primaryImage?.image?.public_id as string
+        }`,
+      },
+      secondaryImage: {
+        ...aboutUsData?.secondaryImage?.image,
+        public_id: `${cldFolder}/${
+          aboutUsData?.secondaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+
+    pageTitle:
+      businessData.title +
+      " | About" +
       " | " +
       mainService.title +
       " | " +
-      business.city +
-      ", " +
-      business.province;
-
+      businessData.city +
+      " | " +
+      businessData.province,
+  };
   return {
     props: {
-      business,
-      services,
-      bottomHero,
-      topHero,
-      aboutUs,
-      pageTitle,
+      ...pageData,
     },
+    revalidate: 1,
   };
 }
 

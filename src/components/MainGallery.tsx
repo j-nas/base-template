@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { CldImage } from "next-cloudinary";
-import type { RouterOutputs } from "../utils/api";
-import { env } from "../env/client.mjs";
-import Image from "next/image";
 
 import Lightbox from "yet-another-react-lightbox";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
@@ -13,7 +10,14 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/plugins/captions.css";
 type Props = {
-  gallery: RouterOutputs["gallery"]["getMainGallery"];
+  gallery: {
+    public_id: string;
+    altText: string;
+    blur_url: string;
+    index: number;
+    height: number;
+    width: number;
+  }[];
 };
 export default function MainGallery({ gallery }: Props) {
   const [index, setIndex] = useState(-1);
@@ -23,13 +27,11 @@ export default function MainGallery({ gallery }: Props) {
         {gallery &&
           gallery.map((photo) => {
             return (
-              <div key={photo.id} className="">
+              <div key={photo.index} className="">
                 <CldImage
                   width={720}
                   height={720}
-                  src={
-                    env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + photo.public_id
-                  }
+                  src={photo.public_id}
                   alt={photo.altText || ""}
                   className="mb-4 aspect-auto max-h-72 object-cover shadow-2xl hover:brightness-125"
                   placeholder="blur"
@@ -51,17 +53,23 @@ export default function MainGallery({ gallery }: Props) {
         index={index}
         close={() => setIndex(-1)}
         slides={gallery.map((image) => ({
-          src: image.public_id + "." + image.format,
-          key: image.id,
+          src: image.public_id,
+          key: image.index,
           height: image.height,
           width: image.width,
           title: image.altText,
+          description: image.altText,
         }))}
         styles={{
           container: {
             backgroundColor: "rgba(0, 0, 0, .8)",
             backdropFilter: "blur(10px)",
             position: "fixed",
+          },
+          captionsDescriptionContainer: {
+            bottom: "7em",
+            // backgroundColor: "red",
+            position: "absolute",
           },
         }}
         thumbnails={{
@@ -72,7 +80,7 @@ export default function MainGallery({ gallery }: Props) {
           width: 50,
         }}
         render={{
-          slide: (image, offset, rect) => {
+          slide: (image, _offset, rect) => {
             const width = Math.round(
               Math.min(
                 rect.width,
@@ -88,9 +96,9 @@ export default function MainGallery({ gallery }: Props) {
 
             return (
               <div style={{ position: "relative", width, height }}>
-                <Image
+                <CldImage
                   fill
-                  src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${image.src}`}
+                  src={image.src}
                   loading="eager"
                   placeholder="blur"
                   blurDataURL={
@@ -132,10 +140,9 @@ export default function MainGallery({ gallery }: Props) {
                 }}
               >
                 <CldImage
-                  fill
-                  src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${
-                    slide.src.split(".")[0] as string
-                  }`}
+                  width={100}
+                  height={100}
+                  src={`${slide.src}`}
                   loading="eager"
                   placeholder="blur"
                   className="border-none"

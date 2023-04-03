@@ -4,15 +4,13 @@ import Link from "next/link";
 import router from "next/router";
 import dynamic from "next/dynamic";
 import { type BusinessInfo } from "@prisma/client";
-import { type RouterOutputs } from "../utils/api";
 
 const DynamicSocials = dynamic(() => import("./Socials"), {
   loading: () => <p>Loading...</p>,
 });
 
 type Props = {
-  services: RouterOutputs["service"]["getActive"];
-  business: Omit<BusinessInfo, "createdAt" | "updatedAt">;
+  business: BusinessInfo;
 };
 export default function HamburgerButton({ business }: Props) {
   const [isOpen, setIsOpen] = useState(false);

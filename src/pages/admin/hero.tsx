@@ -98,9 +98,10 @@ export const HeroEditor = () => {
                 setPosition(e.target.value as HeroPosition);
               }}
             >
-              <option value={"FRONT"}>Front</option>
+              <option value={"FRONT"}>Front Page</option>
               <option value={"TOP"}>Top</option>
               <option value={"BOTTOM"}>Bottom</option>
+              <option value={"CONTACT"}>Contact Page</option>
             </select>
           </div>
           {isLoading && <LoadingSpinner />}

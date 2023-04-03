@@ -1,9 +1,11 @@
-import type { RouterOutputs } from "../utils/api";
-import { env } from "../env/client.mjs";
 import { CldImage } from "next-cloudinary";
 
 type Props = {
-  gallery: RouterOutputs["gallery"]["getFrontPageGallery"];
+  gallery: {
+    public_id: string;
+    altText: string;
+    blur_url: string;
+  }[];
 };
 export default function FrontGallery({ gallery }: Props) {
   return (
@@ -11,15 +13,15 @@ export default function FrontGallery({ gallery }: Props) {
       {gallery &&
         gallery.map((photo) => {
           return (
-            <div key={photo.id} className="">
+            <div key={photo.public_id} className="">
               <CldImage
                 width={720}
                 height={720}
-                src={env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + photo.public_id}
-                alt={photo.altText || ""}
+                src={photo.public_id}
+                alt={photo.altText}
                 className="mb-4 aspect-auto max-h-72 object-cover "
                 placeholder="blur"
-                blurDataURL={photo.blur_url || ""}
+                blurDataURL={photo.blur_url}
               />
             </div>
           );

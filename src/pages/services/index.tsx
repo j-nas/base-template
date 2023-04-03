@@ -1,9 +1,7 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "../../server/api/trpc";
-import { appRouter } from "../../server/api/root";
+import { prisma } from "~/server/db";
 import Link from "next/link";
 import { env } from "~/env/client.mjs";
 const TopHero = dynamic(() => import("../../components/TopHero"), {
@@ -23,7 +21,7 @@ const Navbar = dynamic(() => import("../../components/Navbar"), {
 export const Services: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
-  const { business, topHero, services, bottomHero, aboutUs, pageTitle } = props;
+  const { business, topHero, services, bottomHero, pageTitle } = props;
   return (
     <>
       <Head>
@@ -38,14 +36,13 @@ export const Services: NextPage<
         <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 ">
           {services.map((service) => (
             <div
-              key={service.id}
+              key={service.pageName}
               className="card bg-base-300 shadow-2xl md:card-side"
             >
               <figure className="w-full md:max-w-xs">
                 <CldImage
                   alt={service.summary}
-                  format={service.primaryImage.format}
-                  src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${service.primaryImage.public_id}`}
+                  src={service.primaryImage.public_id}
                   height="1600"
                   width="1600"
                   placeholder="blur"
@@ -62,7 +59,7 @@ export const Services: NextPage<
                 <div className="card-actions justify-end">
                   <Link
                     href={`/services/${service.pageName}`}
-                    className="btn btn-primary"
+                    className="btn-primary btn"
                   >
                     Learn more
                   </Link>
@@ -72,49 +69,128 @@ export const Services: NextPage<
           ))}
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
 };
 
 export async function getStaticProps() {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
+  const cldFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
+
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
   });
 
-  const business = await ssg.businessInfo.getActive.fetch();
-  const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
+  const serviceData = await prisma.service.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
 
-  const mainService =
-    services.find((service) => service.position === "SERVICE1") ?? null;
-  const pageTitle = !mainService
-    ? "About Us"
-    : business.title +
+      title: true,
+      summary: true,
+      content: true,
+      pageName: true,
+      position: true,
+      icon: true,
+    },
+  });
+  const mainService = serviceData.find(
+    (service) => service.position === "SERVICE1"
+  ) as (typeof serviceData)[0];
+
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+  const bottomHero = heroData.find(
+    (hero) => hero.position === "BOTTOM"
+  ) as (typeof heroData)[0];
+
+  const aboutUsData = await prisma.aboutUs.findFirst({
+    where: { inUse: true },
+    select: {
+      summary: true,
+    },
+  });
+  const galleryData = await prisma.gallery.findFirstOrThrow({
+    where: { position: "FRONT" },
+    include: {
+      imageForGallery: {
+        select: {
+          image: { select: { public_id: true, blur_url: true } },
+          altText: true,
+        },
+      },
+    },
+  });
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        ...service,
+        primaryImage: {
+          blur_url: service.primaryImage?.image?.blur_url as string,
+          public_id: `${cldFolder}/${
+            service.primaryImage?.image?.public_id as string
+          }`,
+        },
+      })),
+
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    bottomHero: {
+      ...bottomHero,
+      primaryImage: {
+        ...bottomHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          bottomHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+
+    gallery: galleryData.imageForGallery.map((image) => ({
+      ...image.image,
+      public_id: `${cldFolder}/${image.image.public_id}`,
+      altText: image.altText,
+    })),
+    pageTitle:
+      businessData.title +
+      " | Services" +
       " | " +
       mainService.title +
       " | " +
-      business.city +
-      ", " +
-      business.province;
+      businessData.city +
+      " | " +
+      businessData.province,
+  };
 
   return {
     props: {
-      business,
-      services,
-      bottomHero,
-      topHero,
-      aboutUs,
-      pageTitle,
+      ...pageData,
     },
+    revalidate: 1,
   };
 }
 
