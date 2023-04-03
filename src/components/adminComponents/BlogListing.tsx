@@ -102,7 +102,7 @@ export default function BlogListing({ blogs, user }: Props) {
                     <AvatarDisplay
                       public_id={blog.author?.avatar || user?.avatar}
                       name={blog.author?.name || user?.name || "User"}
-                      size="20"
+                      size={20}
                     />
                   </div>
                   <span className="link italic">
@@ -152,7 +152,7 @@ export default function BlogListing({ blogs, user }: Props) {
                       await handleBlogFeaturedToggle(blog.id);
                     }}
                   >
-                    <div className="btn-outline btn btn-sm h-fit w-full  sm:w-fit">
+                    <div className="btn btn-outline btn-sm h-fit w-full  sm:w-fit">
                       <input
                         type="checkbox"
                         id={blog.id}
@@ -166,7 +166,7 @@ export default function BlogListing({ blogs, user }: Props) {
                 )}
                 <Link
                   href={`/admin/blog/${blog.id}`}
-                  className="btn-outline btn btn-sm"
+                  className="btn btn-outline btn-sm"
                 >
                   <IoMdConstruct className="mr-2" />
                   Edit
@@ -175,7 +175,7 @@ export default function BlogListing({ blogs, user }: Props) {
                   blog={blog}
                   handleBlogDelete={handleBlogDelete}
                 >
-                  <div className="btn-outline btn btn-error btn-sm w-full">
+                  <div className="btn btn-outline btn-error btn-sm w-full">
                     <IoMdTrash className="mr-2" />
                     Delete
                   </div>

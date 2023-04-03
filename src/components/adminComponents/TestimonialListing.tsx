@@ -168,12 +168,12 @@ export default function BlogListing({ testimonials }: Props) {
                   position="avatar"
                   originId={testimonial.id}
                 >
-                  <div className="btn-outline btn-square btn h-fit w-fit">
+                  <div className="btn btn-outline btn-square h-fit w-fit">
                     <div className="transition-all hover:brightness-125">
                       <AvatarDisplay
                         public_id={testimonial.image?.public_id}
                         name={testimonial.name}
-                        size="20"
+                        size={20}
                       />
                     </div>
                   </div>
@@ -204,7 +204,7 @@ export default function BlogListing({ testimonials }: Props) {
                       await handleTestimonialFeaturedToggle(testimonial.id);
                     }}
                   >
-                    <div className="btn-outline btn-sm btn h-fit w-full  sm:w-fit">
+                    <div className="btn btn-outline btn-sm h-fit w-full  sm:w-fit">
                       <input
                         type="checkbox"
                         id={testimonial.id}
@@ -220,7 +220,7 @@ export default function BlogListing({ testimonials }: Props) {
                   updateHandler={handleTestimonialUpdate}
                   testimonial={testimonial}
                 >
-                  <span className="btn-outline btn-sm btn">
+                  <span className="btn btn-outline btn-sm">
                     <IoMdConstruct className="mr-2" />
                     Edit
                   </span>
@@ -229,7 +229,7 @@ export default function BlogListing({ testimonials }: Props) {
                   handleTestimonialDelete={handleTestimonialDelete}
                   testimonial={{ name: testimonial.name, id: testimonial.id }}
                 >
-                  <div className="btn-outline btn-error btn-sm btn w-full">
+                  <div className="btn btn-outline btn-error btn-sm w-full">
                     <IoMdTrash className="mr-2" />
                     Delete
                   </div>
@@ -239,7 +239,7 @@ export default function BlogListing({ testimonials }: Props) {
           ))}
           <div className="rounded-lg bg-base-300 p-4 drop-shadow-2xl">
             <TestimonialEditDialog updateHandler={handleTestimonialCreate}>
-              <button className="btn-primary btn-block btn">
+              <button className="btn btn-primary btn-block">
                 Create New testimonial
               </button>
             </TestimonialEditDialog>
