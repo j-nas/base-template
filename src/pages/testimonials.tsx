@@ -1,10 +1,8 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "../server/api/trpc";
-import { appRouter } from "../server/api/root";
-
+import { prisma } from "~/server/db";
+import { env } from "~/env/client.mjs";
 const TopHero = dynamic(() => import("../components/TopHero"), {
   loading: () => <p>Loading...</p>,
 });
@@ -24,15 +22,8 @@ const Testimonial = dynamic(() => import("../components/Testimonial"), {
 export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
 ) => {
-  const {
-    business,
-    testimonials,
-    topHero,
-    services,
-    bottomHero,
-    aboutUs,
-    pageTitle,
-  } = props;
+  const { business, testimonials, topHero, services, bottomHero, pageTitle } =
+    props;
   return (
     <>
       <Head>
@@ -50,62 +41,138 @@ export const About: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </span>
           <h2 className="mt-2 font-bold text-5xl">What our clients say</h2>
           <p className="mx-2 mt-2 max-w-xl">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Hic qui
-            iure illo! Expedita consequuntur obcaecati omnis ipsum quis
-            deleniti? Temporibus!
+            Here is a few reviews from our happy customers. We are proud to have
+            a great team and we are always looking to improve our services.
           </p>
           {/* div with 2 cards in a grid */}
           <div className="mt-12 mb-6 grid grid-cols-1 justify-evenly gap-12 lg:grid-cols-2 lg:p-24 xl:grid-cols-3">
             {testimonials?.map((testimonial) => (
-              <Testimonial {...testimonial} key={testimonial.id} />
+              <Testimonial {...testimonial} key={testimonial.name} />
             ))}
           </div>
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
 };
 
 export async function getStaticProps() {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
+  const cldFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
+
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
   });
 
-  const business = await ssg.businessInfo.getActive.fetch();
-  const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  const testimonials = await ssg.testimonial.getAll.fetch();
-  const mainService =
-    services.find((service) => service.position === "SERVICE1") ?? null;
-  const pageTitle = !mainService
-    ? "About Us"
-    : business.title +
+  const serviceData = await prisma.service.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      secondaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+
+      title: true,
+
+      pageName: true,
+      position: true,
+    },
+  });
+  const mainService = serviceData.find(
+    (service) => service.position === "SERVICE1"
+  ) as (typeof serviceData)[0];
+
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+  const bottomHero = heroData.find(
+    (hero) => hero.position === "BOTTOM"
+  ) as (typeof heroData)[0];
+
+  const testimonialsData = await prisma.testimonial.findMany({
+    select: {
+      avatarImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      name: true,
+      company: true,
+      quote: true,
+      title: true,
+      highlighted: true,
+    },
+  });
+  const aboutUsData = await prisma.aboutUs.findFirstOrThrow({
+    where: { inUse: true },
+    select: {
+      summary: true,
+    },
+  });
+
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        pageName: service.pageName,
+        title: service.title,
+      })),
+
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    bottomHero: {
+      ...bottomHero,
+      primaryImage: {
+        ...bottomHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          bottomHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    testimonials: testimonialsData.map((testimonial) => ({
+      ...testimonial,
+      avatarImage: testimonial.avatarImage
+        ? `${cldFolder}/${testimonial.avatarImage.image.public_id}`
+        : null,
+    })),
+
+    pageTitle:
+      businessData.title +
+      " | Testimonials" +
       " | " +
       mainService.title +
       " | " +
-      business.city +
-      ", " +
-      business.province;
+      businessData.city +
+      " | " +
+      businessData.province,
+  };
 
   return {
     props: {
-      business,
-      services,
-      bottomHero,
-      topHero,
-      aboutUs,
-      pageTitle,
-      testimonials,
+      ...pageData,
     },
+    revalidate: 1,
   };
 }
 

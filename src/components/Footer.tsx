@@ -1,15 +1,19 @@
 import Socials from "./Socials";
-import type { RouterOutputs } from "../utils/api";
 import Link from "next/link";
 import Logo from "./Logo";
+import { type BusinessInfo } from "@prisma/client";
 
 type Props = {
-  business: RouterOutputs["businessInfo"]["getActive"];
-  services: RouterOutputs["service"]["getActive"];
-  aboutSummary: string;
+  business: BusinessInfo & {
+    aboutUs: string;
+  };
+  services: {
+    title: string;
+    pageName: string;
+  }[];
 };
 
-export default function Footer({ business, services, aboutSummary }: Props) {
+export default function Footer({ business, services }: Props) {
   return (
     <>
       <footer className="footer bg-base-200 p-10 text-base-content ">
@@ -38,22 +42,20 @@ export default function Footer({ business, services, aboutSummary }: Props) {
         </nav>
         <nav>
           <span className="footer-title text-base-content">Services</span>
-          {services
-            ?.sort((a, b) => a.position.localeCompare(b.position))
-            .map((service) => (
-              <Link
-                key={service.id}
-                href={`/services/${service.pageName}`}
-                className="link-hover link"
-              >
-                {service.title}
-              </Link>
-            ))}
+          {services.map((service) => (
+            <Link
+              key={service.title}
+              href={`/services/${service.pageName}`}
+              className="link-hover link"
+            >
+              {service.title}
+            </Link>
+          ))}
         </nav>
         {/* </div> */}
         <div className="prose">
           <h3>About us</h3>
-          <p className="">{aboutSummary.slice(0, 300)}</p>
+          <p className="">{business.aboutUs}</p>
         </div>
         <div className="">
           <div className="flex flex-col ">
@@ -80,7 +82,7 @@ export default function Footer({ business, services, aboutSummary }: Props) {
       <footer className="footer border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
         <div className=" flex grid-flow-col flex-col items-baseline ">
           <Link href="/">
-            <Logo className="btn btn-ghost z-50 h-auto w-[160px] fill-base-content" />
+            <Logo className="btn-ghost btn z-50 h-auto w-[160px] fill-base-content" />
           </Link>
 
           <p className="mx-auto">Copyright © {new Date().getFullYear()}</p>

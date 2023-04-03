@@ -1,19 +1,26 @@
 import { type Testimonial } from "@prisma/client";
-import { type RouterOutputs } from "../utils/api";
 import AvatarDisplay from "./AvatarDisplay";
 
-type Props = RouterOutputs["testimonial"]["getById"];
+type Props = {
+  name: string;
+  avatarImage: string | null;
+  company: string;
+  quote: string;
+  title: string;
+};
 
 export default function Testimonial(props: Props) {
-  const { id, name, image, company, quote, title } = props;
-  const { public_id } = image ?? {};
+  const { name, avatarImage, company, quote, title } = props;
 
   return (
-    <div
-      key={id}
-      className="relative mx-auto  mt-12 w-full rounded-lg bg-base-300 p-6 shadow-2xl"
-    >
-      <AvatarDisplay public_id={public_id} name={name} size={20} />
+    <div className="relative mx-auto  mt-12 w-full rounded-lg bg-base-300 p-6 shadow-2xl">
+      <div className="absolute -top-10 ">
+        <AvatarDisplay
+          public_id={avatarImage || undefined}
+          name={name}
+          size={20}
+        />
+      </div>
       <div className="grid grid-cols-2 grid-rows-3  sm:grid-rows-none">
         <p className="col-span-2 border-b-2 border-secondary pb-4 pt-8">
           {quote}

@@ -48,6 +48,6 @@ export const formattedResources = async () => {
 }
 
 export const cloudinaryUrlGenerator = (id = "", format = "") => {
-  return `https://res.cloudinary.com/dkascnwj7/image/upload/q_auto:eco,f_auto/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${id}.${format}`
+  return `https://res.cloudinary.com/dkascnwj7/image/upload/q_auto:eco,f_auto,w_1200,h_900,c_fill/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${id}.${format}`
 }
 

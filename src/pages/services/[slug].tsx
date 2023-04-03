@@ -1,45 +1,42 @@
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import type { GetStaticPropsContext, InferGetStaticPropsType } from "next";
-import superjson from "superjson";
 import { prisma } from "~/server/db";
-import { appRouter } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Link from "next/link";
 import { FaPhone } from "react-icons/fa";
+import LoadingSpinner from "@/LoadingSpinner";
+import { env } from "~/env/client.mjs";
 
 const TopHero = dynamic(() => import("@/TopHero"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
-const CldImg = dynamic(() => import("@/CldImg"), {
-  loading: () => <p>Loading...</p>,
-});
+const CldImage = dynamic(
+  () =>
+    import("next-cloudinary").then((mod) => {
+      return mod.CldImage;
+    }),
+  {
+    loading: () => <LoadingSpinner />,
+  }
+);
 const Footer = dynamic(() => import("@/Footer"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 const HeroBanner = dynamic(() => import("@/BottomHero"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 const Navbar = dynamic(() => import("@/Navbar"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 const InlineHTML = dynamic(() => import("@/InlineHTML"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 
 export const ServicePage = (
   props: InferGetStaticPropsType<typeof getStaticProps>
 ) => {
-  const {
-    service,
-    aboutUs,
-    pageTitle,
-    bottomHero,
-    business,
-    topHero,
-    services,
-  } = props;
+  const { services, pageTitle, bottomHero, business, topHero, serviceContent } =
+    props;
   return (
     <>
       <Head>
@@ -49,34 +46,32 @@ export const ServicePage = (
       </Head>
       <main className="mx-auto h-full">
         <Navbar business={business} services={services} />
-        <TopHero pageTitle={service.title} hero={topHero} />
+        <TopHero pageTitle={serviceContent.title} hero={topHero} />
 
         <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2">
           {/* image with inset image */}
           <div className="relative  mr-2 grid h-full grid-cols-12 ">
-            {service && (
+            {serviceContent && (
               <>
                 <div className="col-span-10 col-start-1 row-start-1 h-full ">
-                  <CldImg
-                    alt={service.title}
-                    format={service.primaryImage.format}
+                  <CldImage
+                    alt={serviceContent.title}
                     height={600}
                     width={800}
-                    public_id={service.primaryImage.public_id}
-                    id={service.primaryImage.id}
-                    blur={service.primaryImage.blur_url}
+                    src={serviceContent.primaryImage.public_id}
+                    blurDataURL={serviceContent.primaryImage.blur_url}
+                    placeholder="blur"
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
                   />
                 </div>
                 <div className="col-start-3 col-end-13 row-start-1 pt-20 md:pt-40 lg:pt-48">
-                  <CldImg
-                    alt="About us"
-                    format={service.secondaryImage.format}
+                  <CldImage
+                    alt={serviceContent.title}
                     height={600}
                     width={800}
-                    public_id={service.secondaryImage.public_id}
-                    id={service.secondaryImage.id}
-                    blur={service.secondaryImage.blur_url}
+                    src={serviceContent.secondaryImage.public_id}
+                    blurDataURL={serviceContent.secondaryImage.blur_url}
+                    placeholder="blur"
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
                 </div>
@@ -86,20 +81,22 @@ export const ServicePage = (
           {/* text */}
           <div className="prose flex flex-col justify-center">
             <span className="font-medium uppercase text-accent">
-              {service.summary}
+              {serviceContent.summary}
             </span>
-            <h2 className="mt-0 font-bold text-4xl">About {service.title}</h2>
+            <h2 className="mt-0 font-bold text-4xl">
+              About {serviceContent.title}
+            </h2>
             <InlineHTML
               allowImages
               className="text-lg"
-              content={service.content}
+              content={serviceContent.content}
             />
 
             <div className="flex">
               <div className="tooltip" data-tip={business.telephone}>
                 <Link
                   href={`tel:${business.telephone}`}
-                  className="btn btn-primary w-fit no-underline"
+                  className="btn-primary btn mt-4 w-fit text-primary-content no-underline"
                 >
                   <FaPhone className="mr-2" />
                   Give us a call
@@ -109,11 +106,7 @@ export const ServicePage = (
           </div>
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
@@ -141,38 +134,124 @@ export async function getStaticPaths() {
 export async function getStaticProps(
   context: GetStaticPropsContext<{ slug: string }>
 ) {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
-    transformer: superjson,
+  const cldFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
+
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
   });
 
-  const slug = context.params?.slug as string;
-  const service = await ssg.service.getByPageName.fetch({ pageName: slug });
-  const business = await ssg.businessInfo.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  const services = await ssg.service.getActive.fetch();
+  const serviceData = await prisma.service.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      secondaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
 
-  const pageTitle = !service
-    ? "Our Service"
-    : business.title +
+      title: true,
+      summary: true,
+      content: true,
+      pageName: true,
+      position: true,
+      icon: true,
+    },
+  });
+
+  const serviceContent = serviceData.find(
+    (service) => service.pageName === context.params?.slug
+  ) as (typeof serviceData)[0];
+
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+  const bottomHero = heroData.find(
+    (hero) => hero.position === "BOTTOM"
+  ) as (typeof heroData)[0];
+
+  const aboutUsData = await prisma.aboutUs.findFirst({
+    where: { inUse: true },
+    select: {
+      summary: true,
+      content: true,
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      secondaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+    },
+  });
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        pageName: service.pageName,
+        title: service.title,
+      })),
+
+    serviceContent: {
+      ...serviceContent,
+      primaryImage: {
+        ...serviceContent.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          serviceContent.primaryImage?.image?.public_id as string
+        }`,
+      },
+      secondaryImage: {
+        ...serviceContent.secondaryImage?.image,
+        public_id: `${cldFolder}/${
+          serviceContent.secondaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    bottomHero: {
+      ...bottomHero,
+      primaryImage: {
+        ...bottomHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          bottomHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+
+    pageTitle:
+      businessData.title +
       " | " +
-      service.title +
+      serviceContent.title +
       " | " +
-      business.city +
-      ", " +
-      business.province;
+      businessData.city +
+      " | " +
+      businessData.province,
+  };
+
   return {
     props: {
-      service,
-      business,
-      topHero,
-      pageTitle,
-      bottomHero,
-      aboutUs,
-      services,
+      ...pageData,
     },
+    revalidate: 1,
   };
 }

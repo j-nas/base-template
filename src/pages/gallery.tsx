@@ -1,9 +1,8 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "../server/api/trpc";
-import { appRouter } from "../server/api/root";
+import { prisma } from "~/server/db";
+import { env } from "~/env/client.mjs";
 
 const TopHero = dynamic(() => import("../components/TopHero"));
 const Footer = dynamic(() => import("../components/Footer"));
@@ -13,7 +12,7 @@ const MainGallery = dynamic(() => import("../components/MainGallery"));
 export const Gallery: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
-  const { business, topHero, services, aboutUs, pageTitle, gallery } = props;
+  const { business, topHero, services, pageTitle, gallery } = props;
 
   return (
     <>
@@ -32,50 +31,138 @@ export const Gallery: NextPage<
           <MainGallery gallery={gallery} />
         </section>
 
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
 };
 
 export async function getStaticProps() {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: createInnerTRPCContext({ session: null }),
+  const cldFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
+
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
   });
 
-  const business = await ssg.businessInfo.getActive.fetch();
-  const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  const gallery = await ssg.gallery.getMainGallery.fetch();
-  const mainService =
-    services.find((service) => service.position === "SERVICE1") ?? null;
-  const pageTitle = !mainService
-    ? "About Us"
-    : business.title +
+  const serviceData = await prisma.service.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      secondaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+
+      title: true,
+      summary: true,
+      content: true,
+      pageName: true,
+      position: true,
+      icon: true,
+    },
+  });
+  const mainService = serviceData.find(
+    (service) => service.position === "SERVICE1"
+  ) as (typeof serviceData)[0];
+
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+
+  const aboutUsData = await prisma.aboutUs.findFirst({
+    where: { inUse: true },
+    select: {
+      summary: true,
+      content: true,
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      secondaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+    },
+  });
+  const galleryData = await prisma.gallery.findFirstOrThrow({
+    where: { position: "MAIN" },
+    include: {
+      imageForGallery: {
+        select: {
+          image: {
+            select: {
+              public_id: true,
+              blur_url: true,
+              height: true,
+              width: true,
+            },
+          },
+          altText: true,
+          index: true,
+        },
+      },
+    },
+  });
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        pageName: service.pageName,
+        title: service.title,
+      })),
+
+    mainService: {
+      ...mainService,
+    },
+
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+
+    gallery: galleryData.imageForGallery
+      .sort((a, b) => (a.index || 0) - (b.index || 0))
+      .map((image) => ({
+        ...image.image,
+        public_id: `${cldFolder}/${image.image.public_id}`,
+        altText: image.altText,
+        index: image.index || 0,
+        height: image.image.height,
+        width: image.image.width,
+      })),
+    pageTitle:
+      businessData.title +
+      " | Gallery" +
       " | " +
       mainService.title +
       " | " +
-      business.city +
-      ", " +
-      business.province;
+      businessData.city +
+      " | " +
+      businessData.province,
+  };
 
   return {
     props: {
-      business,
-      services,
-      bottomHero,
-      topHero,
-      aboutUs,
-      pageTitle,
-      gallery,
+      ...pageData,
     },
+    revalidate: 1,
   };
 }
 

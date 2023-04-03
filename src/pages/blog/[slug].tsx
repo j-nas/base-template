@@ -5,44 +5,40 @@ import type {
 } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import superjson from "superjson";
 import { prisma } from "~/server/db";
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-import { createInnerTRPCContext } from "~/server/api/trpc";
-import { appRouter } from "~/server/api/root";
 import { env } from "~/env/client.mjs";
 import Link from "next/link";
+import LoadingSpinner from "@/LoadingSpinner";
+import AvatarDisplay from "~/components/AvatarDisplay";
 
 const TopHero = dynamic(() => import("@/TopHero"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
-const CldImage = dynamic(() =>
-  import("next-cloudinary").then((mod) => mod.CldImage)
+const CldImage = dynamic(
+  () =>
+    import("next-cloudinary").then((mod) => {
+      return mod.CldImage;
+    }),
+  {
+    loading: () => <LoadingSpinner />,
+  }
 );
 const Footer = dynamic(() => import("@/Footer"));
 const HeroBanner = dynamic(() => import("@/BottomHero"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 const Navbar = dynamic(() => import("@/Navbar"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 const InlineHTML = dynamic(() => import("@/InlineHTML"), {
-  loading: () => <p>Loading...</p>,
+  loading: () => <LoadingSpinner />,
 });
 
 export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
   props
 ) => {
-  const {
-    business,
-    topHero,
-    services,
-    bottomHero,
-    aboutUs,
-    pageTitle,
-    blog,
-    featured,
-  } = props;
+  const { business, topHero, services, bottomHero, pageTitle, blog, featured } =
+    props;
   return (
     <>
       <Head>
@@ -60,14 +56,11 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
             <article key={blog.id} className="m-0  flex flex-col   ">
               <figure className="relative h-80 w-full">
                 <CldImage
-                  src={
-                    env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                    "/" +
-                    (blog.image?.public_id || "")
-                  }
+                  src={blog.primaryImage.public_id}
                   placeholder="blur"
-                  blurDataURL={blog.image?.blur_url}
+                  blurDataURL={blog.primaryImage?.blur_url}
                   fill
+                  sizes="50vw"
                   alt={blog.title}
                   className="rounded-lg object-cover"
                 />
@@ -75,28 +68,11 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               <div className="row-span-2 row-start-2 rounded-b-lg  p-8">
                 <h3 className="my-8 font-semibold text-3xl">{blog.title}</h3>
                 <div className="mb-12 flex items-center border-b-2 border-b-secondary pb-2">
-                  {blog.author.image ? (
-                    <div className={`avatar max-w-fit justify-self-start p-2 `}>
-                      <div className="relative w-10 rounded-full">
-                        <CldImage
-                          src={
-                            env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                            "/" +
-                            blog.author.image?.public_id
-                          }
-                          fill
-                          alt={blog.title}
-                          className="rounded-t-lg"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="placeholder avatar max-w-fit justify-self-start p-2 ">
-                      <div className="relative w-10 rounded-full bg-neutral-focus text-neutral-content">
-                        {blog.author?.name.split(" ").map((n) => n[0] ?? "")}
-                      </div>
-                    </div>
-                  )}
+                  <AvatarDisplay
+                    name={blog.author.name || ""}
+                    public_id={blog.author.avatarImage.public_id || undefined}
+                    size={10}
+                  />
                   <span className="ml-4"> {blog.author?.name}</span>
                   <div className="mx-4 h-[3px] w-[3px] bg-accent"></div>
                   <span className="">
@@ -111,7 +87,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   <InlineHTML allowImages content={blog.content} />
                 </div>
                 <div className="">
-                  <Link className="btn btn-primary" href={`/blog`}>
+                  <Link className="btn-primary btn" href={`/blog`}>
                     Back to blogs
                   </Link>
                 </div>
@@ -134,17 +110,13 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   }`}
                 >
                   <Link href={`/blog/${blog.pageName}`} className="flex">
-                    {blog.image && (
+                    {blog.primaryImage && (
                       <div
                         className={`avatar max-w-fit justify-self-start p-2 `}
                       >
                         <div className="relative h-16 w-16 rounded-full">
                           <CldImage
-                            src={
-                              env.NEXT_PUBLIC_CLOUDINARY_FOLDER +
-                              "/" +
-                              blog.image?.public_id
-                            }
+                            src={blog.primaryImage?.public_id}
                             fill
                             alt={blog.title}
                             className="rounded-full"
@@ -173,11 +145,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </div>
         </section>
         <HeroBanner businessName={business.title} hero={bottomHero} />
-        <Footer
-          aboutSummary={aboutUs.summary}
-          business={business}
-          services={services}
-        />
+        <Footer business={business} services={services} />
       </main>
     </>
   );
@@ -186,14 +154,13 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
 export async function getStaticPaths() {
   const pageNames = await prisma.blog.findMany({
     select: {
-      title: true,
+      pageName: true,
     },
   });
-  console.log(pageNames, "pageNames");
   return {
     paths: pageNames.map((blog) => ({
       params: {
-        slug: blog.title.replace(/\s/g, "-").toLowerCase(),
+        slug: blog.pageName,
       },
     })),
     fallback: "blocking",
@@ -203,40 +170,177 @@ export async function getStaticPaths() {
 export async function getStaticProps(
   context: GetStaticPropsContext<{ slug: string }>
 ) {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    transformer: superjson,
-    ctx: createInnerTRPCContext({ session: null }),
-  });
-  const slug = context.params?.slug as string;
-  console.log(slug);
-  const business = await ssg.businessInfo.getActive.fetch();
-  const services = await ssg.service.getActive.fetch();
-  const topHero = await ssg.hero.getByPosition.fetch({ position: "TOP" });
-  const bottomHero = await ssg.hero.getByPosition.fetch({ position: "BOTTOM" });
-  const aboutUs = await ssg.aboutUs.getCurrent.fetch();
-  const featured = await ssg.blog.getSummaries
-    .fetch()
-    .then((data) => data.filter((blog) => blog.featured));
-  const blog = await ssg.blog.getByPageName.fetch({ pageName: slug });
-  const mainService =
-    services.find((service) => service.position === "SERVICE1") ?? null;
-  const pageTitle = !mainService
-    ? "Blog Post"
-    : blog.title + " | " + business.title;
+  const cldFolder = env.NEXT_PUBLIC_CLOUDINARY_FOLDER;
 
-  return {
-    props: {
-      business,
-      services,
-      bottomHero,
-      topHero,
-      aboutUs,
-      pageTitle,
-      featured,
-      blog,
+  const businessData = await prisma.businessInfo.findFirstOrThrow({
+    where: { isActive: true },
+  });
+
+  const serviceData = await prisma.service.findMany({
+    select: {
+      title: true,
+      pageName: true,
+      position: true,
     },
+  });
+  const mainService = serviceData.find(
+    (service) => service.position === "SERVICE1"
+  ) as (typeof serviceData)[0];
+
+  const heroData = await prisma.hero.findMany({
+    select: {
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+      ctaText: true,
+      heading: true,
+      position: true,
+    },
+  });
+  const topHero = heroData.find(
+    (hero) => hero.position === "TOP"
+  ) as (typeof heroData)[0];
+  const bottomHero = heroData.find(
+    (hero) => hero.position === "BOTTOM"
+  ) as (typeof heroData)[0];
+
+  const aboutUsData = await prisma.aboutUs.findFirst({
+    where: { inUse: true },
+    select: {
+      summary: true,
+    },
+  });
+  const blogData = await prisma.blog.findMany({
+    include: {
+      author: {
+        select: {
+          name: true,
+          avatarImage: {
+            select: { image: { select: { public_id: true, blur_url: true } } },
+          },
+        },
+      },
+      primaryImage: {
+        select: { image: { select: { public_id: true, blur_url: true } } },
+      },
+    },
+  });
+
+  const blogs = blogData.map((blog) => ({
+    ...blog,
+    createdAt: blog.createdAt.toISOString(),
+    updatedAt: blog.updatedAt.toISOString(),
+    primaryImage: {
+      ...blog.primaryImage?.image,
+      public_id: `${cldFolder}/${
+        blog.primaryImage?.image?.public_id as string
+      }`,
+    },
+    author: {
+      name: blog.author?.name,
+      avatarImage: {
+        ...blog.author?.avatarImage?.image,
+        public_id: blog.author?.avatarImage?.image.public_id
+          ? `${cldFolder}/${blog.author?.avatarImage?.image.public_id}`
+          : null,
+      },
+    },
+  }));
+  const pageData = {
+    business: {
+      ...businessData,
+      aboutUs: aboutUsData?.summary || "",
+    },
+    services: serviceData
+      .sort((a, b) => a.position.localeCompare(b.position))
+      .map((service) => ({
+        pageName: service.pageName,
+        title: service.title,
+      })),
+
+    topHero: {
+      ...topHero,
+      primaryImage: {
+        ...topHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          topHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    bottomHero: {
+      ...bottomHero,
+      primaryImage: {
+        ...bottomHero.primaryImage?.image,
+        public_id: `${cldFolder}/${
+          bottomHero.primaryImage?.image?.public_id as string
+        }`,
+      },
+    },
+    blogs: blogs,
+    featured: blogs.filter((blog) => blog.featured),
+
+    pageTitle:
+      businessData.title +
+      " | Home" +
+      " | " +
+      mainService.title +
+      " | " +
+      businessData.city +
+      " | " +
+      businessData.province,
   };
+
+  try {
+    const blog = await prisma.blog.findUniqueOrThrow({
+      where: { pageName: context.params?.slug },
+      include: {
+        primaryImage: {
+          select: { image: { select: { public_id: true, blur_url: true } } },
+        },
+        author: {
+          select: {
+            name: true,
+            avatarImage: {
+              select: {
+                image: { select: { public_id: true, blur_url: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return {
+      props: {
+        ...pageData,
+        blog: {
+          ...blog,
+          createdAt: blog.createdAt.toISOString(),
+          updatedAt: blog.updatedAt.toISOString(),
+          primaryImage: {
+            ...blog.primaryImage?.image,
+            public_id: `${cldFolder}/${
+              blog.primaryImage?.image?.public_id as string
+            }`,
+          },
+          author: {
+            name: blog.author?.name,
+            avatarImage: {
+              ...blog.author?.avatarImage?.image,
+              public_id: blog.author?.avatarImage?.image.public_id
+                ? `${cldFolder}/${blog.author?.avatarImage?.image.public_id}`
+                : null,
+            },
+          },
+        },
+      },
+      revalidate: 1,
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
 }
 
 export default Blog;
