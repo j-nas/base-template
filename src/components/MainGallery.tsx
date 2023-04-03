@@ -8,8 +8,10 @@ import Lightbox from "yet-another-react-lightbox";
 import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Captions from "yet-another-react-lightbox/plugins/captions";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "yet-another-react-lightbox/plugins/captions.css";
 type Props = {
   gallery: RouterOutputs["gallery"]["getMainGallery"];
 };
@@ -25,7 +27,9 @@ export default function MainGallery({ gallery }: Props) {
                 <CldImage
                   width={720}
                   height={720}
-                  src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_720/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${photo.public_id}.${photo.format}`}
+                  src={
+                    env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + photo.public_id
+                  }
                   alt={photo.altText || ""}
                   className="mb-4 aspect-auto max-h-72 object-cover shadow-2xl hover:brightness-125"
                   placeholder="blur"
@@ -42,7 +46,7 @@ export default function MainGallery({ gallery }: Props) {
       </section>
       <Lightbox
         carousel={{ preload: 10, imageFit: "cover" }}
-        plugins={[Fullscreen, Thumbnails, Zoom]}
+        plugins={[Fullscreen, Thumbnails, Zoom, Captions]}
         open={index >= 0}
         index={index}
         close={() => setIndex(-1)}
@@ -51,6 +55,7 @@ export default function MainGallery({ gallery }: Props) {
           key: image.id,
           height: image.height,
           width: image.width,
+          title: image.altText,
         }))}
         styles={{
           container: {
@@ -128,14 +133,15 @@ export default function MainGallery({ gallery }: Props) {
               >
                 <CldImage
                   fill
-                  src={`https://res.cloudinary.com/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/c_scale,w_2560/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${slide.src}`}
+                  src={`${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${
+                    slide.src.split(".")[0] as string
+                  }`}
                   loading="eager"
                   placeholder="blur"
                   className="border-none"
                   blurDataURL={
-                    gallery.filter(
-                      (i) => i.public_id === slide.src.split(".")[0]
-                    )[0]?.blur_url || ""
+                    gallery.find((i) => i.public_id === slide.src.split(".")[0])
+                      ?.blur_url || ""
                   }
                   alt={slide?.alt || ""}
                   sizes={
