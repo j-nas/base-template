@@ -1,19 +1,13 @@
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import cloudinary, {
-  type ConfigOptions,
-  type UploadApiResponse
+import {
+  v2 as cloudinary, type UploadApiResponse
 } from "cloudinary";
-import { env } from "../../../env/server.mjs";
+import { env } from "~/env/server.mjs";
 import
-getBase64ImageUrl from "../../../utils/generateBlurPlaceholder";
-
-import { exclude } from "../../../utils/exclude";
-const cloudinaryConfig: ConfigOptions = {
-  cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: env.CLOUDINARY_API_KEY,
-  api_secret: env.CLOUDINARY_API_SECRET,
-};
+getBase64ImageUrl from "~/utils/generateBlurPlaceholder";
+import { cloudinaryConfig } from "~/utils/cloudinaryApi";
+import { exclude } from "~/utils/exclude";
 
 
 export const imageRouter = createTRPCRouter({
@@ -56,9 +50,9 @@ export const imageRouter = createTRPCRouter({
 
       const fullPath = env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.public_id;
       console.log({ fullPath })
-      cloudinary.v2.config(cloudinaryConfig);
+      cloudinary.config(cloudinaryConfig);
 
-      const result = await cloudinary.v2.uploader.destroy(fullPath, { invalidate: true, resource_type: "image", }) as UploadApiResponse;
+      const result = await cloudinary.uploader.destroy(fullPath, { invalidate: true, resource_type: "image", }) as UploadApiResponse;
       console.log(result)
       if (result.result !== "ok") {
         throw new Error("Image deletion failed");
@@ -107,11 +101,11 @@ export const imageRouter = createTRPCRouter({
       public_id: z.string(),
     }))
     .mutation(async ({ ctx, input }) => {
-      cloudinary.v2.config(cloudinaryConfig);
+      cloudinary.config(cloudinaryConfig);
       try {
         const oldPublicId = env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.public_id;
         const newPublicId = env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + input.name;
-        const rename = await cloudinary.v2.uploader.rename(oldPublicId, newPublicId, { invalidate: true, }, function (error, result) {
+        const rename = await cloudinary.uploader.rename(oldPublicId, newPublicId, { invalidate: true, }, function (error, result) {
           console.log(result, error)
         }) as UploadApiResponse;
         const data = await ctx.prisma.image.update({
