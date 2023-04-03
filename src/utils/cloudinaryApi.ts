@@ -1,15 +1,14 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { env } from '../env/server.mjs'
 import getBase64ImageUrl from './generateBlurPlaceholder';
-import cloudinary, { type ConfigOptions } from "cloudinary";
+import { v2 as cloudinary, type ConfigOptions } from "cloudinary";
 
-const cloudinaryConfig: ConfigOptions = {
+export const cloudinaryConfig: ConfigOptions = {
   cloud_name: env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: env.CLOUDINARY_API_KEY,
   api_secret: env.CLOUDINARY_API_SECRET,
 };
-
-export const cloudinaryApi = cloudinary.v2.config(cloudinaryConfig)
+cloudinary.config(cloudinaryConfig);
 
 export type CloudinaryResource = {
   resources: [{
@@ -27,12 +26,14 @@ export type CloudinaryResource = {
 }
 
 export const getResources = async () => {
-  const response = await axios.get(
-    `https://${env.CLOUDINARY_API_KEY}:${env.CLOUDINARY_API_SECRET}@api.cloudinary.com/v1_1/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/resources/search`,
-    { data: { expression: `folder:${"base-template"}` } }
-  )
+  // const response = await axios.get(
+  //   `https://${env.CLOUDINARY_API_KEY}:${env.CLOUDINARY_API_SECRET}@api.cloudinary.com/v1_1/${env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/resources/search`,
+  //   { data: { expression: `folder:${"base-template"}` } }
+  // )
+  const response = await cloudinary.search.expression(`folder:${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}`).execute() as CloudinaryResource;
 
-  return response.data as CloudinaryResource
+
+  return response;
 
 }
 
@@ -47,6 +48,6 @@ export const formattedResources = async () => {
 }
 
 export const cloudinaryUrlGenerator = (id = "", format = "") => {
-  return `https://res.cloudinary.com/dkascnwj7/image/upload/q_auto:eco,f_auto/base-template/${id}.${format}`
+  return `https://res.cloudinary.com/dkascnwj7/image/upload/q_auto:eco,f_auto/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${id}.${format}`
 }
 
