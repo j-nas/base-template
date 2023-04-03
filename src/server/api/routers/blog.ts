@@ -236,6 +236,7 @@ export const blogRouter = createTRPCRouter({
       return ctx.prisma.blog.create({
         data: {
           title: input.title,
+          pageName: input.title.toLowerCase().replace(/ /g, "-"),
           summary: input.summary,
           content: input.content,
           userId: ctx.session.user.id,
