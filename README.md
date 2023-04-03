@@ -14,7 +14,7 @@ To get up and running you will need the following:
 
 - a [Cloudinary](https://cloudinary.com) account(free), for media hosting, and image optimization.
 - a PostgreSQL/MySQL database. (MongoDB could work, but you would need to re-write the Prisma schema) [Railway](https://railway.app/) is a great(free) option for this.
-- optionally, a [Netlify](https://netlify.com) account, for hosting(free). Other providers(like [Vercel](https://vercel.com/)) could work, but the serverless functions may need to be re-written.
+- optionally, a [Netlify](https://netlify.com) account, for hosting(free). Other providers(like [Vercel](https://vercel.com/)) could work, but the serverless functions may need to be re-written. Additionally, Vercel does not allow commercial use of their free tier.
 
 ### Installing
 
