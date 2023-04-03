@@ -129,9 +129,10 @@ async function main() {
       name: 'Front Page Gallery',
       imageForGallery: {
         createMany: {
-          data: images.slice(0, 9).map((image) => ({
+          data: images.slice(0, 9).map((image, index) => ({
             imageId: image.id,
             altText: faker.lorem.sentence(3),
+            index: index + 1
           })),
         }
       },
@@ -145,9 +146,10 @@ async function main() {
       name: 'Main Gallery',
       imageForGallery: {
         createMany: {
-          data: images.map((image) => ({
+          data: images.map((image, index) => ({
             imageId: image.id,
             altText: faker.lorem.sentence(3),
+            index: index + 1
           })),
         }
       },
