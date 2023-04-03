@@ -145,7 +145,6 @@ export const serviceRouter = createTRPCRouter({
     ),
   getByPosition: publicProcedure
     .output(serviceSchema.extend({
-      createdAt: z.date(),
       updatedAt: z.date(),
     }))
     .input(z.object({ position: z.nativeEnum(Services) }))

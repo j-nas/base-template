@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, adminProcedure } from "../trpc";
-import { exclude } from "../../../utils/exclude";
 
 export const businessProfileValidation = z.object({
   id: z.string(),
@@ -38,7 +37,7 @@ export const businessInfoRouter = createTRPCRouter({
       }
     });
 
-    return exclude(data, ["createdAt", "updatedAt"]);
+    return data;
 
   }),
   getActiveWithDateTime: publicProcedure.query(async ({ ctx }) => {

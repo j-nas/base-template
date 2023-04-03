@@ -78,8 +78,6 @@ model BusinessInfo {
     postalCode   String
     telephone    String
     email        String
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
     isActive     Boolean       @default(false)
     ownerName    String
     ownerTitle   String
@@ -103,7 +101,6 @@ model Hero {
     id           String        @id @default(cuid())
     heading      String
     ctaText      String
-    createdAt    DateTime      @default(now())
     position     HeroPosition  @unique
     primaryImage PrimaryImage?
 }
@@ -115,11 +112,10 @@ model Service {
     summary        String
     content        String
     icon           String
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
     position       Services        @unique
     primaryImage   PrimaryImage?
     secondaryImage SecondaryImage?
+    updatedAt      DateTime        @updatedAt
 }
 
 model AboutUs {
@@ -127,11 +123,10 @@ model AboutUs {
     title          String
     summary        String
     content        String
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
     inUse          Boolean         @default(false)
     primaryImage   PrimaryImage?
     secondaryImage SecondaryImage?
+    updatedAt      DateTime        @updatedAt
 }
 
 model Testimonial {
@@ -192,7 +187,6 @@ model Gallery {
     name     String
     position GalleryPosition @unique
 
-    createdAt       DateTime          @default(now())
     imageForGallery ImageForGallery[]
 }
 
