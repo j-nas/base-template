@@ -104,7 +104,7 @@ model Hero {
     heading      String
     ctaText      String
     createdAt    DateTime      @default(now())
-    position     HeroPosition? @unique
+    position     HeroPosition  @unique
     primaryImage PrimaryImage?
 }
 
@@ -159,7 +159,7 @@ model Blog {
 }
 
 model Image {
-    id              String            @id
+    id              String            @id @default(cuid())
     public_id       String            @unique
     format          String
     width           Int
@@ -254,6 +254,7 @@ enum HeroPosition {
     TOP
     BOTTOM
     FRONT
+    CONTACT
 }
 
 enum GalleryPosition {
