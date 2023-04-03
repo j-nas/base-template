@@ -8,6 +8,7 @@ import { env } from '~/env/server.mjs';
 import type * as icons from "react-icons/fa";
 import { v2 as cloudinary, type ResourceApiResponse } from 'cloudinary';
 import { cloudinaryConfig } from '~/utils/cloudinaryApi';
+import getBase64ImageUrl from "~/utils/generateBlurPlaceholder";
 type IconType = keyof typeof icons;
 
 export const prisma = new PrismaClient()
@@ -34,7 +35,7 @@ async function main() {
     {
       type: 'input',
       name: 'email',
-      message: "Enter user's email address",
+      message: "Enter administrator's email address",
       validate(value) {
         if (z.string().email("Please enter valid s email").parse(value)) {
           return true
@@ -90,20 +91,26 @@ async function main() {
       const newImages = await cloudinary.search
         .expression(`folder:${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}`)
         .execute() as ResourceApiResponse
-      return newImages.resources.map((resource) => ({
-        ...resource,
-        blur_url: cloudinary.url(resource.public_id, resource.format),
-      }))
+      return newImages.resources.map(async (resource) => {
+        const blurUrl = await getBase64ImageUrl(resource.public_id, resource.format)
+        return {
+          ...resource,
+          blur_url: blurUrl
+        }
+      })
     }
-    return images.resources.map((resource) => ({
-      ...resource,
-      blur_url: cloudinary.url(resource.public_id, resource.format),
-    }))
+    return images.resources.map(async (resource) => {
+      const blurUrl = await getBase64ImageUrl(resource.public_id, resource.format)
+      return {
+        ...resource,
+        blur_url: blurUrl
+      }
+    })
   }
   console.log('Cloudinary images fetched and/or uploaded')
-
+  const awaitedImages = await Promise.all(await cloudinaryImages())
   await prisma.image.createMany({
-    data: (await cloudinaryImages()).map((image) => ({
+    data: awaitedImages.map((image) => ({
       format: image.format,
       bytes: image.bytes,
       width: image.width,
