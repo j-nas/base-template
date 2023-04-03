@@ -151,6 +151,7 @@ model Blog {
     author       User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
     userId       String?
     primaryImage PrimaryImage?
+    pageName     String        @unique
 }
 
 model Image {

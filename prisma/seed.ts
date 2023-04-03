@@ -369,7 +369,7 @@ async function main() {
     data: blogPosts.map((post, index) => ({
       ...post,
       featured: index === 0 ? true : false,
-
+      pageName: post.title.replace(/\s+/g, '-').toLowerCase(),
       userId: index === 0 ? user.id : admin?.id
 
 
