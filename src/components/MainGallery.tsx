@@ -57,7 +57,6 @@ export default function MainGallery({ gallery }: Props) {
           key: image.index,
           height: image.height,
           width: image.width,
-          title: image.altText,
           description: image.altText,
         }))}
         styles={{
