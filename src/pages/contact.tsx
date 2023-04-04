@@ -2,21 +2,17 @@ import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import { env } from "~/env/client.mjs";
-import { contactFormValidationSchema } from "../utils/validationSchema";
-import { api } from "../utils/api";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { type z } from "zod";
+import { z } from "zod";
 import { prisma } from "~/server/db";
 import LoadingSpinner from "@/LoadingSpinner";
+import { Form, Field } from "houseform";
+import { toast, Toaster } from "react-hot-toast";
 
 const TopHero = dynamic(() => import("../components/TopHero"), {
   loading: () => <LoadingSpinner />,
 });
-const InputWrapper = dynamic(() => import("../components/InputWrapper"), {
-  loading: () => <LoadingSpinner />,
-});
+
 const Link = dynamic(() => import("next/link"), {
   loading: () => <LoadingSpinner />,
 });
@@ -36,31 +32,30 @@ const Navbar = dynamic(() => import("../components/Navbar"), {
   loading: () => <LoadingSpinner />,
 });
 
+type FormData = {
+  name: string;
+  email: string;
+  message: string;
+};
+
 export const Contact: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
 > = (props) => {
   const { business, topHero, services, pageTitle, contactPageHero } = props;
   const [submitted, setSubmitted] = useState(false);
-  const mutation = api.contactForm.sendContactForm.useMutation({
-    onSuccess: () => {
-      setSubmitted(true);
-    },
-    onError: () => {
-      alert("Error sending message");
-    },
-  });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<z.infer<typeof contactFormValidationSchema>>({
-    resolver: zodResolver(contactFormValidationSchema),
-  });
 
-  const onSubmit: SubmitHandler<
-    z.infer<typeof contactFormValidationSchema>
-  > = async (data) => {
-    await mutation.mutateAsync(data);
+  // const mutation = api.contactForm.sendContactForm.useMutation({
+  //   onSuccess: () => {
+  //     setSubmitted(true);
+  //   },
+  //   onError: () => {
+  //     alert("Error sending message");
+  //   },
+  // });
+
+  const messageSubmitHandler = (formData: FormData) => {
+    console.log(formData);
+    toast.success("Message sent!");
   };
 
   return (
@@ -74,10 +69,11 @@ export const Contact: NextPage<
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mx-auto h-full">
+        <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
         <Navbar business={business} services={services} />
         <TopHero pageTitle="Contact Us" hero={topHero} />
 
-        <section className="my-12 mx-8 flex flex-wrap bg-base-100">
+        <section className="my-12 flex flex-wrap bg-base-100">
           <div className="mx-auto max-w-max place-self-center ">
             <div className="m-12">
               <span className="font-medium uppercase text-accent">Contact</span>
@@ -87,58 +83,140 @@ export const Contact: NextPage<
                 form below.
               </p>
             </div>
-
-            <form
-              className="form-control m-4 flex flex-col  rounded-lg px-4 "
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <div className="input-group-lg my-4 flex flex-wrap  justify-between gap-4">
-                <InputWrapper
-                  htmlFor="email"
-                  error={errors.email?.message}
-                  label="Email"
-                  className=""
-                >
-                  <input
-                    className="input-bordered input w-full"
-                    type="text"
-                    id="email"
-                    {...register("email")}
-                  />
-                </InputWrapper>
-                <InputWrapper
-                  htmlFor="phone"
-                  label="Phone"
-                  error={errors.phone?.message}
-                >
-                  <input
-                    className="input-bordered input w-full"
-                    type="text"
-                    {...register("phone")}
-                  />
-                </InputWrapper>
-              </div>
-              <InputWrapper
-                htmlFor="message"
-                label="Message"
-                error={errors.message?.message}
-              >
-                <textarea
-                  id="message"
-                  className="textarea-bordered textarea mb-12 h-24  w-full"
-                  {...register("message")}
-                />
-              </InputWrapper>
-
-              {!submitted && (
-                <button type="submit" className="btn-primary btn-block btn">
-                  Submit
-                </button>
+            <Form<FormData> onSubmit={(values) => messageSubmitHandler(values)}>
+              {({ submit, errors }) => (
+                <>
+                  <form className="form-control m-4 flex flex-col  rounded-lg px-4 ">
+                    <div className="input-group-lg my-4 flex flex-wrap  justify-items-stretch gap-4">
+                      <Field<string>
+                        name="name"
+                        onChangeValidate={z
+                          .string()
+                          .min(1, { message: "Please enter a name" })
+                          .max(100, { message: "Name is too long" })}
+                      >
+                        {({ isDirty, onBlur, value, errors, setValue }) => (
+                          <div className="mx-auto flex w-full flex-col md:w-2/5">
+                            <label
+                              className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                            >
+                              Name
+                            </label>
+                            <input
+                              className={`input-bordered input w-full ${
+                                isDirty ? "input-success" : ""
+                              } ${errors.length > 0 ? "input-error" : ""}`}
+                              type="text"
+                              id="email"
+                              disabled={submitted}
+                              onChange={(e) => setValue(e.target.value)}
+                              value={value}
+                              onBlur={onBlur}
+                            />
+                          </div>
+                        )}
+                      </Field>
+                      <Field<string>
+                        name="email"
+                        onChangeValidate={z
+                          .string()
+                          .email("Please enter a valid email address")}
+                      >
+                        {({ isDirty, onBlur, value, errors, setValue }) => (
+                          <div className="mx-auto flex w-full flex-col md:w-2/5">
+                            <label
+                              className={`font-bold tracking-wide text-sm 
+                                ${errors.length > 0 ? "!text-error" : ""}
+                                
+                                ${isDirty ? "text-success" : ""}`}
+                            >
+                              Email
+                            </label>
+                            <input
+                              className={`input-bordered input w-full ${
+                                isDirty ? "input-success" : ""
+                              } ${errors.length > 0 ? "input-error" : ""}`}
+                              type="text"
+                              disabled={submitted}
+                              value={value}
+                              onBlur={onBlur}
+                              onChange={(e) => setValue(e.target.value)}
+                            />
+                          </div>
+                        )}
+                      </Field>
+                    </div>
+                    <Field<string>
+                      name="message"
+                      onChangeValidate={z
+                        .string()
+                        .min(5, { message: "Message is too short" })
+                        .max(1000, {
+                          message:
+                            "Please keep the message under 1000 characters",
+                        })}
+                    >
+                      {({ isDirty, value, onBlur, errors, setValue }) => (
+                        <div className="mx-6 flex w-full flex-col place-self-center md:w-11/12">
+                          <label
+                            className={`font-bold tracking-wide text-sm 
+                              ${errors.length > 0 ? "!text-error" : ""}
+                              
+                              ${isDirty ? "text-success" : ""}`}
+                          >
+                            Message
+                          </label>
+                          <textarea
+                            id="message"
+                            className={`textarea-bordered textarea mb-2 h-32  w-full ${
+                              isDirty ? "input-success" : ""
+                            } ${errors.length > 0 ? "input-error" : ""}`}
+                            value={value}
+                            disabled={submitted}
+                            onBlur={onBlur}
+                            onChange={(e) => setValue(e.target.value)}
+                            maxLength={1000}
+                          />
+                          <span className="mb-6">
+                            {1000 - value.length} characters remaining
+                          </span>
+                        </div>
+                      )}
+                    </Field>
+                    {!submitted ? (
+                      <button
+                        type="submit"
+                        className="btn-primary btn-block btn place-self-center md:w-11/12"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSubmitted(true);
+                          void submit();
+                        }}
+                      >
+                        Submit
+                      </button>
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <span className="text-success">Message sent!</span>
+                      </div>
+                    )}
+                    <div className="m-4 flex flex-col">
+                      {errors.map((error) => (
+                        <span key={error} className="text-error">
+                          {error}
+                        </span>
+                      ))}
+                    </div>
+                  </form>
+                </>
               )}
-            </form>
+            </Form>
           </div>
           <div className="mx-auto">
-            <div className="lg-auto relative mx-auto mt-8 h-max  max-w-xl place-self-stretch overflow-hidden rounded-lg">
+            <div className="lg-auto relative mx-8 mt-8 h-max  max-w-xl place-self-stretch overflow-hidden rounded-lg">
               <div className="peer absolute top-0 left-0 z-20 h-full w-full bg-base-300/60"></div>
               <div className="peer absolute bottom-0 left-0 z-30 ml-4 mb-4 flex h-fit  flex-col  ">
                 <span className="font-bold">Email</span>

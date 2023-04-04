@@ -2,7 +2,7 @@
 
 Heavily inspired by [Starter-Kit-V4-Eleventy](https://github.com/Oak-Harbor-Kits/Starter-Kit-V4-Eleventy)
 
-This is a basic template for a brochure style website. It includes a self hosted blog, and all written content is client editable from the admin panel. All public facing pages are statically generated, and the admin panel is a Next.js app.
+This is a basic template for a brochure style website. It includes a self hosted blog, and all written content is client editable from the admin panel. All public facing pages are statically generated.
 
 🚀 [Live Demo](https://shorecel-basic-template.netlify.app/)
 
@@ -34,7 +34,7 @@ pnpm i
 pnpm prisma db push
 ```
 
-5. Seed the database with some data. This script will ask you for your email adress. Make sure it is valid, as you will need it to log in to the admin dashboard.
+5. Seed the database with dummy data, and populate the Cloudinary folder with placeholder images. This script will ask you for your email adress. Make sure it is valid, as you will need it to log in to the admin dashboard.
 
 ```
 pnpm db-seed
@@ -70,11 +70,7 @@ netlify deploy
 
 ### Admin Dashboard
 
-The admin dashboard is in the `/admin` route. There you can edit all the content on the site. You can also add new blog posts, and upload images to your Cloudinary folder.
-
-### Contact Form
-
-The contact form is a serverless function, that sends an email to the email address you specify in the `.env` file. It takes advantage of Netlify's built in spam protection. You can read more about it [here](https://docs.netlify.com/forms/setup/#html-forms).
+The admin dashboard is in the `/admin` route. There you can edit all the content on the site. You can also add new blog posts, and upload images to the site's Cloudinary folder.
 
 ## Built With
 

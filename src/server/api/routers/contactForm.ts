@@ -9,7 +9,7 @@ export const contactFormRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const transporter = nodemailer.createTransport({
         host: env.EMAIL_HOST,
-        port: Number(env.EMAIL_PORT),
+        port: env.EMAIL_PORT,
         secure: true,
         auth: {
           user: env.EMAIL_USER,
