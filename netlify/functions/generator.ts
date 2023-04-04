@@ -1,16 +1,15 @@
 import chromium from "chrome-aws-lambda";
 import puppeteer from "puppeteer-core";
 import fs from "fs";
-import type { HandlerEvent, HandlerContext, HandlerResponse } from '@netlify/functions'
+import { type Handler, type HandlerEvent, type HandlerContext, type HandlerResponse } from '@netlify/functions'
 
-export const handler = async (_event: HandlerEvent, _context: HandlerContext): Promise<HandlerResponse> => {
+export const handler: Handler = async (_event: HandlerEvent, _context: HandlerContext): Promise<HandlerResponse> => {
   try {
     const localChrome =
-      "/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe";
+      "/usr/bin/google-chrome";
     const executable = fs.existsSync(localChrome)
       ? localChrome
       : await chromium.executablePath;
-    console.log(executable)
     const browser = await puppeteer.launch({
       args: chromium.args,
       executablePath: executable,
@@ -18,7 +17,6 @@ export const handler = async (_event: HandlerEvent, _context: HandlerContext): P
 
       defaultViewport: { height: 630, width: 1200 },
     });
-    console.log("hello")
 
     const page = await browser.newPage();
 
@@ -36,6 +34,7 @@ export const handler = async (_event: HandlerEvent, _context: HandlerContext): P
       },
       body: await page.screenshot({ type: "png", encoding: "base64" }) as string,
       isBase64Encoded: true,
+
     };
   } catch (e) {
     console.log(e)
