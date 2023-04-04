@@ -81,6 +81,8 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               src={frontHero.primaryImage?.public_id}
               height={900}
               width={1600}
+              loading="eager"
+              priority={true}
               crop="fill"
               alt="Hero Banner"
               placeholder="blur"
@@ -140,8 +142,11 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     alt="About us"
                     format="auto"
                     height={600}
-                    width={800}
+                    width={600}
                     placeholder="blur"
+                    sizes={
+                      "(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    }
                     src={aboutUs.primaryImage?.public_id}
                     blurDataURL={aboutUs.primaryImage?.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl  md:border-[12px]"
@@ -154,6 +159,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     placeholder="blur"
                     height={600}
                     width={800}
+                    sizes={
+                      "(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    }
                     src={aboutUs.secondaryImage?.public_id}
                     blurDataURL={aboutUs.secondaryImage?.blur_url}
                     className="rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
@@ -207,6 +215,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     height={600}
                     placeholder="blur"
                     width={800}
+                    sizes={
+                      "(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    }
                     src={mainService.primaryImage.public_id}
                     blurDataURL={mainService.primaryImage.blur_url}
                     className=" rounded-lg border-4 border-secondary  shadow-2xl md:border-[12px]"
@@ -220,6 +231,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                     height={600}
                     blurDataURL={mainService.secondaryImage.blur_url}
                     width={800}
+                    sizes={
+                      "(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                    }
                     src={mainService.secondaryImage.public_id}
                     className=" rounded-lg border-4 border-secondary shadow-2xl md:border-[12px]"
                   />
