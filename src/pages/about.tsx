@@ -2,7 +2,6 @@ import type { InferGetStaticPropsType, NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { FaPhone } from "react-icons/fa";
 import LoadingSpinner from "@/LoadingSpinner";
 import { prisma } from "~/server/db";
 import { env } from "~/env/client.mjs";
@@ -17,6 +16,12 @@ const CldImage = dynamic(
     }),
   {
     loading: () => <LoadingSpinner />,
+  }
+);
+const FaPhone = dynamic(
+  () => import("react-icons/fa").then((mod) => mod.FaPhone),
+  {
+    loading: () => <div>📞</div>,
   }
 );
 const Footer = dynamic(() => import("@/Footer"), {
