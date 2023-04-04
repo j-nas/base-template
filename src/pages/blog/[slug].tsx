@@ -9,7 +9,6 @@ import { prisma } from "~/server/db";
 import { env } from "~/env/client.mjs";
 import Link from "next/link";
 import LoadingSpinner from "@/LoadingSpinner";
-import AvatarDisplay from "~/components/AvatarDisplay";
 
 const TopHero = dynamic(() => import("@/TopHero"), {
   loading: () => <LoadingSpinner />,
@@ -31,6 +30,9 @@ const Navbar = dynamic(() => import("@/Navbar"), {
   loading: () => <LoadingSpinner />,
 });
 const InlineHTML = dynamic(() => import("@/InlineHTML"), {
+  loading: () => <LoadingSpinner />,
+});
+const AvatarDisplay = dynamic(() => import("@/AvatarDisplay"), {
   loading: () => <LoadingSpinner />,
 });
 
