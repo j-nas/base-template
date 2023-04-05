@@ -1,5 +1,4 @@
 import { CldImage } from "next-cloudinary";
-import { env } from "../env/client.mjs";
 
 const sizes = {
   10: "w-10 h-10",
@@ -20,7 +19,7 @@ export default function AvatarDisplay({ public_id, size, name }: Props) {
         <div className={`avatar max-w-fit justify-self-start p-2 `}>
           <div className={`relative w-${size} rounded-full`}>
             <CldImage
-              src={env.NEXT_PUBLIC_CLOUDINARY_FOLDER + "/" + public_id}
+              src={public_id}
               // fill
               height={228}
               width={228}

@@ -1,8 +1,8 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
-import Head from "next/head";
 import dynamic from "next/dynamic";
 import { prisma } from "~/server/db";
 import { env } from "~/env/client.mjs";
+import { NextSeo } from "next-seo";
 
 const TopHero = dynamic(() => import("../components/TopHero"));
 const Footer = dynamic(() => import("../components/Footer"));
@@ -16,14 +16,22 @@ export const Gallery: NextPage<
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta
-          name="description"
-          content={`${business.title}. Here is some of our work.`}
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <NextSeo
+        title={pageTitle}
+        description="Check out some of our work"
+        noindex={false}
+        nofollow={false}
+        canonical={env.NEXT_PUBLIC_SITE_URL + "/gallery"}
+        openGraph={{
+          title: "Gallery" + " | " + business?.title,
+          description: "Check out some of our work",
+          images: [
+            {
+              url: `${env.NEXT_PUBLIC_SITE_URL}/.netlify/functions/generator?title=Gallery&image=${topHero.primaryImage.public_id}`,
+            },
+          ],
+        }}
+      />
       <main className="mx-auto h-full">
         <Navbar business={business} services={services} />
         <TopHero pageTitle="Our gallery" hero={topHero} />

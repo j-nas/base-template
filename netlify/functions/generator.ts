@@ -2,7 +2,6 @@ import chromium from "chrome-aws-lambda";
 import puppeteer from "puppeteer-core";
 import fs from "fs";
 import { type Handler, type HandlerEvent, type HandlerContext, type HandlerResponse } from '@netlify/functions'
-import { env } from "~/env/client.mjs";
 
 type Data = {
   title?: string;
@@ -11,7 +10,7 @@ type Data = {
   default?: "true"
 };
 
-const cloudinaryUrl = `https://res.cloudinary.com/dkascnwj7/image/upload/c_fill,h_630,w_700/${env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/`
+const cloudinaryUrl = `https://res.cloudinary.com/dkascnwj7/image/upload/c_fill,h_630,w_700/`
 
 export const handler: Handler = async (event: HandlerEvent, _context: HandlerContext): Promise<HandlerResponse> => {
   try {

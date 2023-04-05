@@ -1,5 +1,4 @@
 import type { InferGetStaticPropsType, NextPage } from "next";
-import Head from "next/head";
 import dynamic from "next/dynamic";
 import { env } from "~/env/client.mjs";
 import { useState } from "react";
@@ -8,6 +7,7 @@ import { prisma } from "~/server/db";
 import LoadingSpinner from "@/LoadingSpinner";
 import { Form, Field } from "houseform";
 import { toast, Toaster } from "react-hot-toast";
+import { NextSeo } from "next-seo";
 
 const TopHero = dynamic(() => import("../components/TopHero"), {
   loading: () => <LoadingSpinner />,
@@ -44,15 +44,6 @@ export const Contact: NextPage<
   const { business, topHero, services, pageTitle, contactPageHero } = props;
   const [submitted, setSubmitted] = useState(false);
 
-  // const mutation = api.contactForm.sendContactForm.useMutation({
-  //   onSuccess: () => {
-  //     setSubmitted(true);
-  //   },
-  //   onError: () => {
-  //     alert("Error sending message");
-  //   },
-  // });
-
   const messageSubmitHandler = (formData: FormData) => {
     console.log(formData);
     toast.success("Message sent!");
@@ -60,14 +51,23 @@ export const Contact: NextPage<
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta
-          name="description"
-          content={`${business.title} Contact Form. Get in touch with us today!`}
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <NextSeo
+        title={pageTitle}
+        description={`Let's get in touch. Click here for our email contact form, or give us a call at ${business.telephone}.`}
+        noindex={false}
+        nofollow={false}
+        canonical={env.NEXT_PUBLIC_SITE_URL + "/contact"}
+        openGraph={{
+          url: env.NEXT_PUBLIC_SITE_URL + "/contact",
+          title: "Contact Us | " + business?.title,
+          description: `Let's get in touch. Click here for our email contact form, or give us a call at ${business.telephone}.`,
+          images: [
+            {
+              url: `${env.NEXT_PUBLIC_SITE_URL}/.netlify/functions/generator?title=Contact%20Us&image=${contactPageHero.primaryImage.public_id}`,
+            },
+          ],
+        }}
+      />
       <main className="mx-auto h-full">
         <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
         <Navbar business={business} services={services} />
