@@ -63,6 +63,7 @@ export const clientSchema = z.object({
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
   NEXT_PUBLIC_CLOUDINARY_FOLDER: z.string(),
   NEXT_PUBLIC_IMAGE_STORAGE_LIMIT: z.number(),
+  NEXT_PUBLIC_SITE_URL: z.string(),
 });
 
 /**
@@ -78,5 +79,6 @@ export const clientEnv = {
   NEXT_PUBLIC_IMAGE_STORAGE_LIMIT: Number(
     process.env.NEXT_PUBLIC_IMAGE_STORAGE_LIMIT
   ),
+  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };

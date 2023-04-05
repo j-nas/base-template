@@ -10,41 +10,14 @@ import type { ReactElement, ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 
+import { DefaultSeo } from "next-seo";
+import SEO from "../../next-seo.config";
+
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
 
-export const themes = [
-  "light",
-  "dark",
-  "cupcake",
-  "bumblebee",
-  "emerald",
-  "corporate",
-  "synthwave",
-  "retro",
-  "cyberpunk",
-  "valentine",
-  "halloween",
-  "garden",
-  "forest",
-  "aqua",
-  "lofi",
-  "pastel",
-  "fantasy",
-  "wireframe",
-  "black",
-  "luxury",
-  "dracula",
-  "cmyk",
-  "autumn",
-  "business",
-  "acid",
-  "lemonade",
-  "night",
-  "coffee",
-  "winter",
-];
+export const themes = ["light", "dark"];
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -58,6 +31,7 @@ const MyApp = (({
   return (
     <SessionProvider session={session as Session}>
       <ThemeProvider themes={themes} attribute="data-theme">
+        <DefaultSeo {...SEO} />
         {getLayout(<Component {...pageProps} />)}
       </ThemeProvider>
     </SessionProvider>
