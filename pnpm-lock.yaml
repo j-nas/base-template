@@ -10,6 +10,7 @@ specifiers:
   '@prisma/client': ^4.8.0
   '@radix-ui/react-dialog': ^1.0.2
   '@radix-ui/react-tooltip': ^1.0.4
+  '@sparticuz/chromium': ^112.0.2
   '@tailwindcss/typography': ^0.5.9
   '@tanstack/react-query': ^4.20.0
   '@tiptap/core': 2.0.0-beta.220
@@ -33,7 +34,6 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.47.1
   '@typescript-eslint/parser': ^5.47.1
   autoprefixer: ^10.4.7
-  chrome-aws-lambda: ~7.0.0
   cloudinary: ^1.35.0
   csstype: ^3.1.1
   daisyui: ^2.47.0
@@ -82,6 +82,7 @@ dependencies:
   '@prisma/client': 4.9.0_prisma@4.9.0
   '@radix-ui/react-dialog': 1.0.2_5ndqzdd6t4rivxsukjv3i3ak2q
   '@radix-ui/react-tooltip': 1.0.4_5ndqzdd6t4rivxsukjv3i3ak2q
+  '@sparticuz/chromium': 112.0.2
   '@tanstack/react-query': 4.22.3_biqbaboplfbrettd7655fr4n2y
   '@tiptap/core': 2.0.0-beta.220_@tiptap+pm@2.0.0-beta.220
   '@tiptap/extension-image': 2.0.0_7w7m52asdh3tod4ocz57yex63q
@@ -93,7 +94,6 @@ dependencies:
   '@trpc/next': 10.9.0_5s3od2n72ogwz6v32lrt5nbwjq
   '@trpc/react-query': 10.9.0_otezeanlcfehayqasmdzoxseqm
   '@trpc/server': 10.9.0
-  chrome-aws-lambda: 7.0.0_puppeteer-core@7.0.4
   cloudinary: 1.35.0
   csstype: 3.1.1
   daisyui: 2.47.0_gbtt6ss3tbiz4yjtvdr6fbrj44
@@ -850,6 +850,16 @@ packages:
   /@sindresorhus/is/0.7.0:
     resolution: {integrity: sha512-ONhaKPIufzzrlNbqtWFFd+jlnemX6lJAgq9ZeiZtS7I1PIf/la7CW4m83rTXRnVnsMbW2k56pGYu7AUFJD9Pow==}
     engines: {node: '>=4'}
+    dev: false
+
+  /@sparticuz/chromium/112.0.2:
+    resolution: {integrity: sha512-tpoY0o4vhrFE4/mXmJF3fcPLKIeKIQxbokfLgZB62rYW7KOIljbQTqCTBARzRXGN/k2+kLvhys1LVv6PWGwWNw==}
+    engines: {node: '>= 14.18.0'}
+    dependencies:
+      follow-redirects: 1.15.2
+      tar-fs: 2.1.1
+    transitivePeerDependencies:
+      - debug
     dev: false
 
   /@swc/helpers/0.4.14:
@@ -1957,16 +1967,6 @@ packages:
 
   /chownr/1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
-    dev: false
-
-  /chrome-aws-lambda/7.0.0_puppeteer-core@7.0.4:
-    resolution: {integrity: sha512-GbYXRPYtaA0DLfmxQpuZw1SKTP7rOA4UXiATwiFRJ4Ea6PBYSzqK0YjS7B2WimUBe//ybPfNpPIs8A3WpF0xvA==}
-    engines: {node: '>= 10.16'}
-    peerDependencies:
-      puppeteer-core: 7.0.x
-    dependencies:
-      lambdafs: 2.1.1
-      puppeteer-core: 7.0.4
     dev: false
 
   /cli-cursor/4.0.0:
@@ -3438,6 +3438,16 @@ packages:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
     dev: true
 
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
@@ -4450,14 +4460,6 @@ packages:
     dependencies:
       json-buffer: 3.0.0
     dev: false
-
-  /lambdafs/2.1.1:
-    resolution: {integrity: sha512-x5k8JcoJWkWLvCVBzrl4pzvkEHSgSBqFjg3Dpsc4AcTMq7oUMym4cL/gRTZ6VM4mUMY+M0dIbQ+V1c1tsqqanQ==}
-    engines: {node: '>= 10.16'}
-    hasBin: true
-    dev: false
-    bundledDependencies:
-      - tar-fs
 
   /language-subtag-registry/0.3.22:
     resolution: {integrity: sha512-tN0MCzyWnoz/4nHS6uxdlFWoUZT7ABptwKPQ52Ea7URk6vll88bWBVhodtnlfEuCcKWNGoc+uGbw1cwa9IKh/w==}

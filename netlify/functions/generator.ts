@@ -1,4 +1,4 @@
-import chromium from "chrome-aws-lambda";
+import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import fs from "fs";
 import { type Handler, type HandlerEvent, type HandlerContext, type HandlerResponse } from '@netlify/functions'
@@ -18,7 +18,7 @@ export const handler: Handler = async (event: HandlerEvent, _context: HandlerCon
       "/usr/bin/google-chrome";
     const executable = fs.existsSync(localChrome)
       ? localChrome
-      : await chromium.executablePath;
+      : await chromium.executablePath();
     const browser = await puppeteer.launch({
       args: chromium.args,
       executablePath: executable,
