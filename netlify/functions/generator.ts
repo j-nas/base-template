@@ -3,7 +3,13 @@ import puppeteer from "puppeteer-core";
 import fs from "fs";
 import { type Handler, type HandlerEvent, type HandlerContext, type HandlerResponse } from '@netlify/functions'
 
-export const handler: Handler = async (_event: HandlerEvent, _context: HandlerContext): Promise<HandlerResponse> => {
+type Data = {
+  title?: string;
+  subtitle?: string;
+  image?: string;
+};
+
+export const handler: Handler = async (event: HandlerEvent, _context: HandlerContext): Promise<HandlerResponse> => {
   try {
     const localChrome =
       "/usr/bin/google-chrome";
@@ -20,8 +26,13 @@ export const handler: Handler = async (_event: HandlerEvent, _context: HandlerCo
 
     const page = await browser.newPage();
 
-    const content = fs.readFileSync(__dirname + "/assets/image.html").toString();
+    let content = fs.readFileSync("netlify/functions/assets/image.html").toString();
 
+    content = populateTemplate(content, {
+      title: event.queryStringParameters?.title,
+      subtitle: event.queryStringParameters?.subtitle,
+      image: event.queryStringParameters?.image
+    })
 
 
     await page.setContent(content, { waitUntil: "domcontentloaded" });
@@ -52,4 +63,15 @@ export const handler: Handler = async (_event: HandlerEvent, _context: HandlerCo
   }
 
 };
+
+
+
+function populateTemplate(content: string, data: Data) {
+  // Replace all instances of e.g. `{{ title }}` with the title.
+  for (const [key, value] of Object.entries(data)) {
+    content = content.replace(new RegExp(`{{ ${key} }}`, 'g'), value)
+  }
+
+  return content;
+}
 
