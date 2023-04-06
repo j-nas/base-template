@@ -57,7 +57,12 @@ export const ServicePage = (
           description: `Here are some of the services we are proud to offer in ${business?.city}`,
           images: [
             {
-              url: `${env.NEXT_PUBLIC_SITE_URL}/.netlify/functions/generator?title=${serviceContent.title}&subtitle=Services&image=${bottomHero.primaryImage.public_id}`,
+              url: `${
+                env.NEXT_PUBLIC_SITE_URL
+              }/.netlify/functions/generator?title=${serviceContent.title.replace(
+                / /g,
+                "%20"
+              )}&subtitle=Services&image=${bottomHero.primaryImage.public_id}`,
             },
           ],
         }}

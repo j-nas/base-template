@@ -54,7 +54,14 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           description: blog.summary,
           images: [
             {
-              url: `${env.NEXT_PUBLIC_SITE_URL}/.netlify/functions/generator?title=${blog.title}&subtitle=Blog%20Post&image=${bottomHero.primaryImage.public_id}`,
+              url: `${
+                env.NEXT_PUBLIC_SITE_URL
+              }/.netlify/functions/generator?title=${blog.title.replace(
+                / /g,
+                "%20"
+              )}&subtitle=Blog%20Post&image=${
+                bottomHero.primaryImage.public_id
+              }`,
             },
           ],
         }}
