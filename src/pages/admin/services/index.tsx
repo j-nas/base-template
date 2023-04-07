@@ -72,14 +72,14 @@ export const ServiceManager = () => {
         {isLoading && <LoadingSpinner />}
         <div
           ref={parent}
-          className="flex w-full flex-col items-center justify-center gap-6"
+          className="container flex w-full flex-col items-center justify-center gap-6"
         >
           {services
             ?.sort((a, b) => a.position.localeCompare(b.position))
             .map((service) => (
               <div
                 key={service.id}
-                className="flex  rounded-lg bg-base-300 p-4 drop-shadow-2xl"
+                className="flex w-full  rounded-lg bg-base-300 p-4 drop-shadow-2xl"
               >
                 <div className=" flex place-items-center">
                   <IconDisplay icon={service.icon as IconList} />
@@ -91,7 +91,7 @@ export const ServiceManager = () => {
                         href={`services/${service?.position.toLowerCase()}`}
                       >
                         <span className="link mr-1">{service.title}</span>
-                        <span className="btn btn-outline btn-xs">
+                        <span className="btn-outline btn-xs btn">
                           <IoMdConstruct className="mr-2 " /> Edit
                         </span>
                       </Link>
@@ -110,7 +110,7 @@ export const ServiceManager = () => {
                 <div className="flex w-1/2 flex-col place-content-center place-self-end">
                   <select
                     id={service.id}
-                    className="btn btn-primary btn-sm ml-2 place-self-start px-1"
+                    className="btn-primary btn-sm btn ml-2 place-self-end px-1"
                     // defaultValue={service.position as string}
                     onChange={(e) =>
                       handleSwap(
@@ -127,7 +127,10 @@ export const ServiceManager = () => {
                       </option>
                     ))}
                   </select>
-                  <label htmlFor={service.id}>
+                  <label
+                    className="w-full place-self-end text-right"
+                    htmlFor={service.id}
+                  >
                     <span className="text-xs">Position</span>
                   </label>
                 </div>

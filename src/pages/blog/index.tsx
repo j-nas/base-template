@@ -97,7 +97,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   </div>
                   <div className="">
                     <Link
-                      className="btn-primary btn"
+                      className="btn btn-primary"
                       href={`/blog/${blog.pageName}`}
                     >
                       Read More
@@ -236,7 +236,7 @@ export async function getStaticProps() {
       avatarImage: {
         ...blog.author?.avatarImage?.image,
         public_id: blog.author?.avatarImage?.image.public_id
-          ? `${cldFolder}/${blog.author?.avatarImage?.image.public_id}`
+          ? blog.author?.avatarImage?.image.public_id
           : null,
       },
     },

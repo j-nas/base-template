@@ -112,7 +112,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <p className="mb-5 text-xl">{frontHero?.ctaText}</p>
                 <Link
                   href="/contact"
-                  className="btn-primary btn my-6 rounded-none"
+                  className="btn btn-primary my-6 rounded-none"
                 >
                   Get Started
                 </Link>
@@ -195,7 +195,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                 <span className={`text-base`}> - {business?.ownerTitle}</span>
               </div>
             </blockquote>
-            <Link href="/about" className="btn-primary btn w-fit">
+            <Link href="/about" className="btn btn-primary w-fit">
               More about us
             </Link>
           </div>
@@ -264,7 +264,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           </h2>
 
           <DynamicGallery gallery={gallery} />
-          <Link href="/gallery" className="btn-primary btn mt-8">
+          <Link href="/gallery" className="btn btn-primary mt-8">
             View full gallery{" "}
           </Link>
         </section>
@@ -285,7 +285,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
               <DynamicTestimonial {...testimonial} key={testimonial.name} />
             ))}
           </div>
-          <Link href="/testimonials" className="btn-primary btn">
+          <Link href="/testimonials" className="btn btn-primary">
             More reviews
           </Link>
         </section>
@@ -447,7 +447,7 @@ export async function getStaticProps() {
     testimonials: testimonialsData.map((testimonial) => ({
       ...testimonial,
       avatarImage: testimonial.avatarImage
-        ? `${cldFolder}/${testimonial.avatarImage.image.public_id}`
+        ? testimonial.avatarImage.image.public_id
         : null,
     })),
     aboutUs: {

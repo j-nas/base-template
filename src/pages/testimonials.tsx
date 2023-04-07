@@ -166,7 +166,7 @@ export async function getStaticProps() {
     testimonials: testimonialsData.map((testimonial) => ({
       ...testimonial,
       avatarImage: testimonial.avatarImage
-        ? `${cldFolder}/${testimonial.avatarImage.image.public_id}`
+        ? testimonial.avatarImage.image.public_id
         : null,
     })),
 

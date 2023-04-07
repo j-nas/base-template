@@ -3,9 +3,19 @@ import { Form, Field } from "houseform";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function Login() {
   const [success, setSuccess] = useState(false);
+  const { status } = useSession();
+
+  if (status === "loading")
+    return (
+      <div className="flex h-screen flex-col place-items-center">
+        <LoadingSpinner />
+      </div>
+    );
 
   return (
     <div className="flex h-screen  flex-col ">
@@ -43,7 +53,7 @@ export default function Login() {
                           value={value}
                           type="email"
                           autoComplete="off"
-                          className="input input-primary"
+                          className="input-primary input"
                           onBlur={onBlur}
                           onChange={(e) => setValue(e.target.value)}
                           onKeyUp={(e) => {

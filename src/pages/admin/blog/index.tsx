@@ -117,7 +117,7 @@ export const BlogManager = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col place-items-center overflow-auto">
-      <Breadcrumbs subName="Services Manager" subPath="services" />
+      <Breadcrumbs subName="Blog Management" subPath="blog" />
       <div>
         <h1 className="my-6 place-self-center text-center font-black  text-2xl">
           Blog Management

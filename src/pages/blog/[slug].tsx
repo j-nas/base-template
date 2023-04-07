@@ -110,7 +110,7 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
                   <InlineHTML allowImages content={blog.content} />
                 </div>
                 <div className="">
-                  <Link className="btn-primary btn" href={`/blog`}>
+                  <Link className="btn btn-primary" href={`/blog`}>
                     Back to blogs
                   </Link>
                 </div>
@@ -341,7 +341,7 @@ export async function getStaticProps(
             avatarImage: {
               ...blog.author?.avatarImage?.image,
               public_id: blog.author?.avatarImage?.image.public_id
-                ? `${cldFolder}/${blog.author?.avatarImage?.image.public_id}`
+                ? blog.author?.avatarImage?.image.public_id
                 : null,
             },
           },

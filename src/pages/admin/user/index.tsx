@@ -15,7 +15,6 @@ import AvatarDisplay from "../../../components/AvatarDisplay";
 import UserRoleToggleDialog from "../../../components/adminComponents/dialogs/UserRoleToggleDialog";
 import UserCreateDialog from "../../../components/adminComponents/dialogs/UserCreateDialog";
 import UserDeleteDialog from "../../../components/adminComponents/dialogs/UserDeleteDialog";
-
 export const UserManager = () => {
   const [isToggling, setIsToggling] = useState(false);
   const router = useRouter();
@@ -190,7 +189,7 @@ export const UserManager = () => {
                       handleToggleAdmin={handleToggleAdmin}
                     >
                       <div
-                        className={`btn btn-outline btn-sm w-full ${
+                        className={`btn-outline btn btn-sm w-full ${
                           (user.superAdmin && "btn-disabled ") || ""
                         }`}
                       >
@@ -209,7 +208,7 @@ export const UserManager = () => {
                   <div className="flex flex-col">
                     <Link
                       href={`/admin/user/${user?.id}`}
-                      className={`btn btn-outline btn-sm ${
+                      className={`btn-outline btn btn-sm ${
                         canEdit(user) ? "" : "btn-disabled "
                       }`}
                     >
@@ -226,7 +225,7 @@ export const UserManager = () => {
                       handleUserDelete={handleUserDelete}
                     >
                       <div
-                        className={`btn btn-outline btn-error btn-block btn-sm ${
+                        className={`btn-outline btn btn-error btn-block btn-sm ${
                           (user.superAdmin && "!btn-disabled ") || ""
                         }`}
                       >
