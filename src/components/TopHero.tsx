@@ -13,17 +13,17 @@ type Props = {
 export default function TopHero({ hero: { primaryImage }, pageTitle }: Props) {
   return (
     <section className="">
-      <div className=" hero relative min-h-[40vh]  ">
+      <div className=" hero relative min-h-[40vh] w-full  ">
         {primaryImage && (
           <CldImage
             alt={pageTitle}
             placeholder="blur"
-            blurDataURL={primaryImage?.blur_url}
+            blurDataURL={primaryImage?.blur_url || ""}
             format="auto"
             height={900}
             src={primaryImage?.public_id}
             width={1600}
-            className="h-[40vh] object-cover"
+            className="h-[40vh] w-full object-cover"
           />
         )}
         <div className="hero-overlay relative z-10 bg-black bg-opacity-60 "></div>

@@ -15,8 +15,8 @@ type Props = {
 
 export default function Footer({ business, services }: Props) {
   return (
-    <>
-      <footer className="footer bg-base-200 p-10 text-base-content ">
+    <div className="w-full bg-base-200">
+      <footer className="container footer mx-auto bg-base-200 p-10 text-base-content ">
         <nav>
           <span className="footer-title">Company</span>
           <Link href="/">Home</Link>
@@ -79,7 +79,7 @@ export default function Footer({ business, services }: Props) {
         </div>
       </footer>
 
-      <footer className="footer border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
+      <footer className="container footer mx-auto border-t border-base-300 bg-base-200 px-10 py-4 text-base-content">
         <div className=" flex grid-flow-col flex-col items-baseline ">
           <Link href="/">
             <Logo className="btn-ghost btn z-50 h-auto w-[160px] fill-base-content" />
@@ -99,6 +99,6 @@ export default function Footer({ business, services }: Props) {
           </a>
         </p>
       </footer>
-    </>
+    </div>
   );
 }

@@ -70,10 +70,13 @@ export const Blog: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         <Navbar business={business} services={services} />
         <TopHero pageTitle="" hero={topHero} />
 
-        <section className="mx-4 mt-12 flex flex-wrap place-content-center  sm:mx-12 lg:mx-auto lg:w-5/6  lg:flex-nowrap">
+        <section className="container mx-4 mt-12 flex flex-wrap place-content-center  sm:mx-12 lg:mx-auto lg:w-5/6  lg:flex-nowrap">
           {/* post*/}
           <div className="mb-12 flex w-full flex-col gap-12 lg:w-full">
-            <article key={blog.id} className="m-0  flex flex-col   ">
+            <article
+              key={blog.id}
+              className="m-0  flex flex-col place-items-end   "
+            >
               <figure className="relative h-80 w-full">
                 <CldImage
                   src={blog.primaryImage.public_id}

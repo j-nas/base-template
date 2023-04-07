@@ -19,7 +19,7 @@ export const HeroBanner = ({
 }: Props) => {
   return (
     <section className={`mx-0 mt-32 md:mx-14`}>
-      <div className={`hero`}>
+      <div className={`hero relative h-[80vh] `}>
         {primaryImage && (
           <CldImage
             src={primaryImage.public_id}
@@ -27,9 +27,8 @@ export const HeroBanner = ({
             alt={businessName}
             placeholder="blur"
             blurDataURL={primaryImage.blur_url || ""}
-            height={600}
-            width={1600}
-            className={`h-[80vh] object-cover`}
+            fill
+            className={`object-cover`}
           />
         )}
         <div className="hero-overlay   z-10 bg-black bg-opacity-60 "></div>

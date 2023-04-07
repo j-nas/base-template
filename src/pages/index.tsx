@@ -77,24 +77,24 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
           ],
         }}
       />
-      <main className="mx-auto h-full">
+      <main className="mx-auto h-full  ">
         <DynamicNavbar business={business} services={services} />
 
         {/* Hero Section */}
         <section className="">
           <div
-            className="hero relative min-h-[130vh] "
+            className="hero relative min-h-[130vh] overflow-hidden "
             style={{
               clipPath: "inset(0)",
             }}
           >
             <CldImage
               src={frontHero.primaryImage?.public_id}
-              height={900}
-              width={1600}
+              fill
+              format="auto"
+              sizes="100vw, (min-width: 768px) 768px, (min-width: 1024px) 1024px"
               loading="eager"
               priority={true}
-              crop="fill"
               alt="Hero Banner"
               placeholder="blur"
               blurDataURL={frontHero.primaryImage?.blur_url as string}
@@ -122,7 +122,7 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* Services summary Section */}
-        <section className=" mx-auto flex w-10/12 justify-center lg:w-5/6">
+        <section className="container mx-auto flex w-10/12 justify-center lg:w-5/6">
           <div className="z-30 -mt-32 grid w-fit justify-center gap-0 rounded-t-md border-t-8 border-primary shadow-lg lg:w-11/12 lg:grid-cols-3">
             <ServiceSummaryCard
               icon={service2.icon as IconList}
@@ -202,9 +202,9 @@ const Home: NextPage<InferGetStaticPropsType<typeof getStaticProps>> = (
         </section>
 
         {/* Middle Hero Section */}
-        <section className=" mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2 ">
+        <section className="container mx-auto mt-32 grid w-11/12 place-items-stretch gap-12 lg:grid-cols-2 ">
           {/* text */}
-          <div className="prose order-last flex flex-col justify-center prose-a:btn-primary prose-a:btn lg:order-first ">
+          <div className="prose order-last flex flex-col justify-center justify-self-end prose-a:btn-primary prose-a:btn lg:order-first ">
             <span className="mt-12 font-medium uppercase text-accent">
               {mainService?.summary}
             </span>

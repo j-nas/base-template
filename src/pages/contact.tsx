@@ -73,7 +73,7 @@ export const Contact: NextPage<
         <Navbar business={business} services={services} />
         <TopHero pageTitle="Contact Us" hero={topHero} />
 
-        <section className="my-12 flex flex-wrap bg-base-100">
+        <section className="container my-12 mx-auto flex flex-wrap bg-base-100">
           <div className="mx-auto max-w-max place-self-center ">
             <div className="m-12">
               <span className="font-medium uppercase text-accent">Contact</span>
