@@ -17,47 +17,83 @@ export default function Socials(props: Props) {
   return (
     <div className="flex flex-wrap justify-items-end gap-1">
       {props.facebookUrl && (
-        <Link href={props.facebookUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="facebook"
+          href={props.facebookUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaFacebook className="scale-[1.75]" />
         </Link>
       )}
       {props.instagramUrl && (
-        <Link href={props.instagramUrl} className="btn-ghost btn-sm btn">
+        <Link
+          href={props.instagramUrl}
+          className="btn btn-ghost btn-sm"
+          aria-label="instagram"
+        >
           <FaInstagram className="scale-[1.75]" />
         </Link>
       )}
       {props.twitterUrl && (
-        <Link href={props.twitterUrl} className="btn-ghost btn-sm btn">
+        <Link
+          href={props.twitterUrl}
+          className="btn btn-ghost btn-sm"
+          aria-label="twitter"
+        >
           <FaTwitter className="scale-[1.75]" />
         </Link>
       )}
       {props.youtubeUrl && (
-        <Link href={props.youtubeUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="youtube"
+          href={props.youtubeUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaYoutube className="scale-[1.75]" />
         </Link>
       )}
       {props.linkedInUrl && (
-        <Link href={props.linkedInUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="linkedin"
+          href={props.linkedInUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaLinkedin className="scale-[1.75]" />
         </Link>
       )}
       {props.pinterestUrl && (
-        <Link href={props.pinterestUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="pinterest"
+          href={props.pinterestUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaPinterest className="scale-[1.75]" />
         </Link>
       )}
       {props.tiktokUrl && (
-        <Link href={props.tiktokUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="tiktok"
+          href={props.tiktokUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaTiktok className="scale-[1.75]" />
         </Link>
       )}
       {props.snapchatUrl && (
-        <Link href={props.snapchatUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="snapchat"
+          href={props.snapchatUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaSnapchat className="scale-[1.75]" />
         </Link>
       )}
       {props.whatsappUrl && (
-        <Link href={props.whatsappUrl} className="btn-ghost btn-sm btn">
+        <Link
+          aria-label="whatsapp"
+          href={props.whatsappUrl}
+          className="btn btn-ghost btn-sm"
+        >
           <FaWhatsapp className="scale-[1.75]" />
         </Link>
       )}
