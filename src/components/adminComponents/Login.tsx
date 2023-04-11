@@ -28,6 +28,7 @@ export default function Login() {
                 signIn("email", {
                   email: values.email as string,
                   redirect: false,
+                  callbackUrl: "/admin",
                 }).then((res) => {
                   if (res && res.ok) {
                     setSuccess(true);
