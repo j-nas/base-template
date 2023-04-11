@@ -1,4 +1,4 @@
-const baseUrl = process.env.SITE_URL || "http://localhost:3000";
+const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {

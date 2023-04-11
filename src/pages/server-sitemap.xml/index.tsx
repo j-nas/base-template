@@ -3,7 +3,7 @@ import { type GetServerSideProps } from "next";
 import { prisma } from "~/server/db";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const baseUrl = process.env.SITE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const pageNames = await prisma.blog.findMany({
     select: {
       pageName: true,
